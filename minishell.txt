@@ -1,0 +1,6721 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:25:38 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:01:28 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static short ft_isspace(int c)
+{
+	if (c == 32 || (c >= 9 && c <= 13))
+		return (1);
+	return (0);
+}
+
+int ft_atoi(const char *str)
+{
+	int rtrn;
+	short sign;
+	size_t i;
+
+	rtrn = 0;
+	sign = 1;
+	i = 0;
+	while (ft_isspace(str[i]))
+		i++;
+	if (str[i] == '-')
+	{
+		sign = -1;
+		i++;
+	}
+	else if (str[i] == '+')
+		i++;
+	while (ft_isdigit(str[i]))
+	{
+		rtrn = (rtrn * 10) + (str[i] - 48);
+		i++;
+	}
+	return ((int)(rtrn * sign));
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:56:33 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/21 17:43:14 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_bzero(void *s, size_t n)
+{
+	char *cpys;
+	size_t i;
+
+	cpys = (char *)s;
+	i = 0;
+	while (i < n)
+	{
+		cpys[i] = 0;
+		i++;
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 19:52:26 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:01:21 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void *ft_calloc(size_t count, size_t size)
+{
+	char *rtrn;
+	size_t multiplied;
+	size_t i;
+
+	multiplied = count * size;
+	rtrn = (char *)malloc(multiplied);
+	if (!rtrn)
+		return (0);
+	i = 0;
+	while (i < multiplied)
+	{
+		rtrn[i] = 0;
+		i++;
+	}
+	return ((void *)rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:38:52 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:01:18 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int ft_isalnum(int c)
+{
+	if (ft_isalpha(c) || ft_isdigit(c))
+		return (1);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   isalpha.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:06:04 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/05 17:36:45 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+int ft_isalpha(int c)
+{
+	if (c >= 65 && c <= 90)
+		return (1);
+	else if (c >= 97 && c <= 122)
+		return (1);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isascii.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:41:40 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/05 17:42:32 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+int ft_isascii(int c)
+{
+	if (c >= 0 && c <= 127)
+		return (1);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   isdigit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:36:38 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/05 17:37:36 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+int ft_isdigit(int c)
+{
+	if (c >= 48 && c <= 57)
+		return (1);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isprint.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:42:48 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:08:01 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+int ft_isprint(int c)
+{
+	if (c >= 32 && c <= 126)
+		return (1);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_itoa.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:35:43 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/19 17:28:46 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static size_t ft_num_of_digit(int n)
+{
+	size_t counted;
+
+	counted = 0;
+	if (n < 0)
+	{
+		counted++;
+		n *= -1;
+	}
+	while (n > 9)
+	{
+		n /= 10;
+		counted++;
+	}
+	return (counted + 1);
+}
+
+char *ft_itoa(int n)
+{
+	char *rtrn;
+	size_t len;
+
+	if (n == -2147483648)
+		return (ft_strdup("-2147483648"));
+	len = ft_num_of_digit(n);
+	rtrn = (char *)malloc(len + 1);
+	if (!rtrn)
+		return (0);
+	rtrn[len] = 0;
+	if (n < 0)
+	{
+		n *= -1;
+		rtrn[0] = '-';
+	}
+	while (n >= 0)
+	{
+		rtrn[len - 1] = (n % 10) + 48;
+		n /= 10;
+		len--;
+		if (n == 0)
+			break;
+	}
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:35 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/10 18:44:10 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_lstadd_back(t_list **lst, t_list *new)
+{
+	t_list *temp;
+
+	if (!new)
+		return;
+	if (!lst || !*lst)
+	{
+		*lst = new;
+		return;
+	}
+	temp = *lst;
+	temp = ft_lstlast(temp);
+	temp->next = new;
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:33 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/10 17:13:09 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_lstadd_front(t_list **lst, t_list *new)
+{
+	if (!lst || !new)
+		return;
+	new->next = (*lst);
+	(*lst) = new;
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstclear.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:30 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 15:46:44 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_lstclear(t_list **lst, void (*del)(void *))
+{
+	t_list *temp;
+
+	if (!lst || !del)
+		return;
+	while (*lst)
+	{
+		temp = (*lst)->next;
+		del((*lst)->content);
+		free(*lst);
+		(*lst) = temp;
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:28 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/10 17:12:21 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_lstdelone(t_list *lst, void (*del)(void *))
+{
+	if (!lst || !del)
+		return;
+	del(lst->content);
+	free(lst);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstiter.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:26 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/10 17:15:32 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_lstiter(t_list *lst, void (*f)(void *))
+{
+	if (!lst || !f)
+		return;
+	while (lst)
+	{
+		f(lst->content);
+		lst = lst->next;
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstlast.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:24 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/10 17:13:55 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+t_list *ft_lstlast(t_list *lst)
+{
+	if (!lst)
+		return (0);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstmap.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:22 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/10 20:38:27 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+t_list *ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+{
+	t_list *rtrn;
+	t_list *changed;
+	void *temp;
+
+	if (!lst || !f || !del)
+		return (NULL);
+	rtrn = NULL;
+	while (lst)
+	{
+		temp = f(lst->content);
+		if (!temp)
+			return (ft_lstclear(&rtrn, del), NULL);
+		changed = ft_lstnew(temp);
+		if (!changed)
+			return (ft_lstclear(&rtrn, del), del(temp), NULL);
+		ft_lstadd_back(&rtrn, changed);
+		lst = lst->next;
+	}
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:14 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:01:03 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+t_list *ft_lstnew(void *content)
+{
+	t_list *rtrn;
+
+	rtrn = malloc(sizeof(t_list));
+	if (!rtrn)
+		return (0);
+	rtrn->content = content;
+	rtrn->next = 0;
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstsize.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/09 16:35:20 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/10 17:14:25 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int ft_lstsize(t_list *lst)
+{
+	int counted;
+
+	if (!lst)
+		return (0);
+	counted = 0;
+	while (lst->next)
+	{
+		counted++;
+		lst = lst->next;
+	}
+	return (counted + 1);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memchr.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:41:17 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/21 17:40:46 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void *ft_memchr(const void *s, int c, size_t len)
+{
+	t_uc *cpys;
+	size_t i;
+
+	cpys = (t_uc *)s;
+	i = 0;
+	while (i < len)
+	{
+		if (cpys[i] == (t_uc)c)
+			return ((void *)(cpys + i));
+		i++;
+	}
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memcmp.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:46:30 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:57 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int ft_memcmp(const void *s1, const void *s2, size_t n)
+{
+	t_uc *cpys1;
+	t_uc *cpys2;
+	size_t i;
+
+	cpys1 = (t_uc *)s1;
+	cpys2 = (t_uc *)s2;
+	i = 0;
+	while (i < n)
+	{
+		if (cpys1[i] != cpys2[i])
+			return (cpys1[i] - cpys2[i]);
+		i++;
+	}
+	if (i == n)
+		return (0);
+	return (cpys1[i] - cpys2[i]);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:54:10 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:55 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void *ft_memcpy(void *dst, const void *src, size_t n)
+{
+	char *cpydst;
+	char *cpysrc;
+	size_t i;
+
+	if (!dst && !src)
+		return (dst);
+	cpydst = (char *)dst;
+	cpysrc = (char *)src;
+	i = 0;
+	while (i < n)
+	{
+		cpydst[i] = cpysrc[i];
+		i++;
+	}
+	dst = (void *)cpydst;
+	return (dst);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 19:04:35 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:53 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void *ft_memmove(void *dst, const void *src, size_t len)
+{
+	size_t i;
+	short chngi;
+
+	if (!dst && !src)
+		return (dst);
+	chngi = 1;
+	if (dst <= src)
+		i = 0;
+	else
+	{
+		chngi = -1;
+		i = len - 1;
+	}
+	while (i < len)
+	{
+		((char *)dst)[i] = ((char *)src)[i];
+		if (i == 0 && chngi == -1)
+			break;
+		i = i + chngi;
+	}
+	dst = (void *)dst;
+	return (dst);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:33:52 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/21 17:29:16 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void *ft_memset(void *b, int c, size_t len)
+{
+	t_uc *cpyb;
+	size_t i;
+
+	cpyb = (t_uc *)b;
+	i = 0;
+	while (i < len)
+	{
+		cpyb[i] = c;
+		i++;
+	}
+	return ((void *)cpyb);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:39:15 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/21 17:41:13 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "unistd.h"
+
+void ft_putchar_fd(char c, int fd)
+{
+	write(fd, &c, 1);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:40:56 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/06 19:36:16 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_putendl_fd(char *s, int fd)
+{
+	ft_putstr_fd(s, fd);
+	ft_putchar_fd('\n', fd);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:42:22 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/06 22:03:04 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_putnbr_fd(int n, int fd)
+{
+	if (n == -2147483648)
+		ft_putstr_fd("-2147483648", fd);
+	else if (n < 0)
+	{
+		ft_putchar_fd('-', fd);
+		ft_putnbr_fd(-n, fd);
+	}
+	else
+	{
+		if (n > 9)
+		{
+			ft_putnbr_fd(n / 10, fd);
+		}
+		ft_putchar_fd((n % 10) + 48, fd);
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:39:54 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:43 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_putstr_fd(char *s, int fd)
+{
+	size_t i;
+
+	i = 0;
+	while (s[i])
+	{
+		ft_putchar_fd(s[i], fd);
+		i++;
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:32:28 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/17 14:37:33 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static int ft_count_word(const char *str, char c)
+{
+	size_t counted;
+	size_t i;
+	short state;
+
+	counted = 0;
+	i = 0;
+	while (str[i])
+	{
+		state = 0;
+		while (str[i] == c)
+			i++;
+		while (str[i] != c && str[i])
+		{
+			state = 1;
+			i++;
+		}
+		if (state == 1)
+			counted++;
+	}
+	return (counted);
+}
+
+char **ft_split(char const *s2, char c)
+{
+	char **rtrn;
+	size_t rtrni;
+	size_t index;
+	size_t ios;
+
+	if (!s2)
+		return (0);
+	rtrn = (char **)malloc(sizeof(char *) * (ft_count_word(s2, c) + 1));
+	if (!rtrn)
+		return (0);
+	index = 0;
+	rtrni = 0;
+	while (s2[index])
+	{
+		while (s2[index] == c)
+			index++;
+		ios = index;
+		while (s2[index] != c && s2[index] != '\0')
+			index++;
+		if (ios < index)
+			rtrn[rtrni++] = ft_substr(s2, ios, index - ios);
+	}
+	rtrn[rtrni] = 0;
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:50:55 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/19 17:31:04 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+char *ft_strchr(const char *s, int c)
+{
+	char *rtrn;
+	int i;
+
+	i = 0;
+	rtrn = (char *)s;
+	while (rtrn[i])
+	{
+		if (rtrn[i] == (char)c)
+			return (rtrn + i);
+		i++;
+	}
+	if (rtrn[i] == (char)c)
+		return (rtrn + i);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 19:53:28 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:36 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char *ft_strdup(const char *s1)
+{
+	char *rtrn;
+	size_t lens1;
+
+	lens1 = ft_strlen(s1);
+	rtrn = (char *)malloc(lens1 + 1);
+	if (!rtrn)
+		return (0);
+	rtrn = (char *)ft_memmove(rtrn, s1, lens1 + 1);
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_striteri.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:37:47 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:33 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void ft_striteri(char *s, void (*f)(t_ui, char *))
+{
+	size_t i;
+
+	i = 0;
+	while (s[i])
+	{
+		f((t_ui)i, &s[i]);
+		i++;
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem < yunozdem@student.42istanbul.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:30:32 by nozkara            #+#    #+#             */
+/*   Updated: 2024/10/06 01:01:12 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char *ft_strjoin(char *s1, char *s2)
+{
+	char *dst;
+	int i;
+	int j;
+
+	if (!s1)
+	{
+		s1 = malloc(sizeof(char) * 1);
+		s1[0] = '\0';
+	}
+	dst = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	if (!dst)
+		return (0);
+	i = -1;
+	while (s1[++i])
+		dst[i] = s1[i];
+	j = -1;
+	while (s2[++j])
+		dst[i + j] = s2[j];
+	dst[i + j] = 0;
+	return (dst);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlcat.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:15:57 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:28 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+size_t ft_strlcat(char *dst, const char *src, size_t dstsize)
+{
+	size_t lendst;
+	size_t lensrc;
+	size_t i;
+
+	lendst = ft_strlen(dst);
+	lensrc = ft_strlen(src);
+	if (dstsize <= lendst)
+		return (dstsize + lensrc);
+	i = 0;
+	while (src[i] && lendst + i + 1 < dstsize)
+	{
+		dst[lendst + i] = src[i];
+		i++;
+	}
+	dst[lendst + i] = 0;
+	return (lendst + lensrc);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:14:08 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:26 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+size_t ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t i;
+	size_t lensrc;
+
+	i = 0;
+	lensrc = ft_strlen(src);
+	while (src[i] && i + 1 < dstsize)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	if (dstsize != 0)
+		dst[i] = 0;
+	return (lensrc);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:44:50 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:21 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+size_t ft_strlen(const char *s)
+{
+	size_t i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:36:31 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:18 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char *ft_strmapi(char const *s, char (*f)(t_ui, char))
+{
+	char *rtrn;
+	size_t slen;
+	size_t i;
+
+	slen = ft_strlen(s);
+	rtrn = (char *)malloc(slen + 1);
+	if (!rtrn)
+		return (0);
+	i = 0;
+	while (s[i])
+	{
+		rtrn[i] = f((t_ui)i, s[i]);
+		i++;
+	}
+	rtrn[i] = 0;
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:03:25 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:16 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int ft_strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t i;
+
+	i = 0;
+	while (s1[i] && s2[i] && i < n)
+	{
+		if (s1[i] != s2[i])
+			return ((t_uc)s1[i] - (t_uc)s2[i]);
+		i++;
+	}
+	if (i == n)
+		return (0);
+	return ((t_uc)s1[i] - (t_uc)s2[i]);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 18:09:04 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:13 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char *ft_strnstr(const char *haystack, const char *needle, size_t len)
+{
+	size_t i;
+	size_t j;
+	size_t nlen;
+
+	if (!*needle)
+		return ((char *)haystack);
+	i = 0;
+	nlen = ft_strlen(needle);
+	while (haystack[i] && nlen <= len)
+	{
+		j = 0;
+		if (haystack[i] == needle[j] && !ft_strncmp(haystack + i, needle, nlen))
+			return ((char *)(haystack + i));
+		len--;
+		i++;
+	}
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:54:16 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/21 17:42:14 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char *ft_strrchr(const char *s, int c)
+{
+	char *rtrn;
+	int i;
+
+	i = (int)ft_strlen(s);
+	rtrn = (char *)s;
+	while (i)
+	{
+		if (rtrn[i] == (char)c)
+			return (rtrn + i);
+		i--;
+	}
+	if (rtrn[i] == (char)c)
+		return (rtrn + i);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strtrim.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:31:49 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:08 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char *ft_strtrim(char const *s1, char const *set)
+{
+	size_t fr;
+	size_t end;
+	size_t len1;
+
+	if (!s1 || !set)
+		return (0);
+	fr = 0;
+	while (s1[fr] && ft_strchr(set, s1[fr]))
+		fr++;
+	len1 = ft_strlen(s1);
+	if (fr == len1)
+		return (ft_strdup(""));
+	end = len1 - 1;
+	while (end > fr && ft_strchr(set, s1[end]))
+		end--;
+	return (ft_substr(s1, fr, end - fr + 1));
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_substr.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 20:29:04 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/15 16:00:00 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char *ft_substr(char const *s, t_ui start, size_t len)
+{
+	char *rtrn;
+	size_t i;
+	size_t cpystart;
+
+	i = ft_strlen(s);
+	cpystart = (size_t)start;
+	if (!s)
+		return (0);
+	if (i < cpystart)
+		return (ft_strdup(""));
+	if (i - cpystart < len)
+		len = i - (size_t)cpystart;
+	rtrn = (char *)malloc(len + 1);
+	if (!rtrn)
+		return (0);
+	i = 0;
+	while (s[cpystart] && i < len)
+	{
+		rtrn[i] = s[cpystart];
+		i++;
+		cpystart++;
+	}
+	rtrn[i] = 0;
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_tolower.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:49:36 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/05 17:50:10 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+int ft_tolower(int c)
+{
+	if (c >= 65 && c <= 90)
+		return (c + 32);
+	return (c);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_toupper.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/05 17:48:10 by nozkara            #+#    #+#             */
+/*   Updated: 2023/12/05 17:49:14 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+int ft_toupper(int c)
+{
+	if (c >= 97 && c <= 122)
+		return (c - 32);
+	return (c);
+}
+/*
+From: Jeff Solomon <jsolomon@stanford.edu>
+Date: Fri,  9 Apr 1999 10:13:27 -0700 (PDT)
+To: chet@po.cwru.edu
+Subject: new readline example
+Message-ID: <14094.12094.527305.199695@mrclean.Stanford.EDU>
+
+Chet,
+
+I've been using readline 4.0. Specifically, I've been using the perl
+version Term::ReadLine::Gnu. It works great.
+
+Anyway, I've been playing around the alternate interface and I wanted
+to contribute a little C program, callback.c, to you that you could
+use as an example of the alternate interface in the /examples
+directory of the readline distribution.
+
+My example shows how, using the alternate interface, you can
+interactively change the prompt (which is very nice imo). Also, I
+point out that you must roll your own terminal setting when using the
+alternate interface because readline depreps (using your parlance) the
+terminal while in the user callback. I try to demostrate what I mean
+with an example. I've included the program below.
+
+To compile, I just put the program in the examples directory and made
+the appropriate changes to the EXECUTABLES and OBJECTS line and added
+an additional target 'callback'.
+
+I compiled on my Sun Solaris2.6 box using Sun's cc.
+
+Let me know what you think.
+
+Jeff
+*/
+/*
+Copyright (C) 1999 Jeff Solomon
+*/
+
+#if defined (HAVE_CONFIG_H)
+#include <config.h>
+#endif
+
+#include <sys/types.h>
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <stdlib.h>
+
+#include <stdio.h>
+#include <termios.h>	/* xxx - should make this more general */
+
+#include <locale.h>
+
+#ifdef READLINE_LIBRARY
+#  include "readline.h"
+#else
+#  include <readline/readline.h>
+#endif
+
+#ifndef STDIN_FILENO
+#  define STDIN_FILENO 0
+#endif
+
+/* This little examples demonstrates the alternate interface to using readline.
+ * In the alternate interface, the user maintains control over program flow and
+ * only calls readline when STDIN is readable. Using the alternate interface,
+ * you can do anything else while still using readline (like talking to a
+ * network or another program) without blocking.
+ *
+ * Specifically, this program highlights two importants features of the
+ * alternate interface. The first is the ability to interactively change the
+ * prompt, which can't be done using the regular interface since rl_prompt is
+ * read-only.
+ * 
+ * The second feature really highlights a subtle point when using the alternate
+ * interface. That is, readline will not alter the terminal when inside your
+ * callback handler. So let's so, your callback executes a user command that
+ * takes a non-trivial amount of time to complete (seconds). While your
+ * executing the command, the user continues to type keystrokes and expects them
+ * to be re-echoed on the new prompt when it returns. Unfortunately, the default
+ * terminal configuration doesn't do this. After the prompt returns, the user
+ * must hit one additional keystroke and then will see all of his previous
+ * keystrokes. To illustrate this, compile and run this program. Type "sleep" at
+ * the prompt and then type "bar" before the prompt returns (you have 3
+ * seconds). Notice how "bar" is re-echoed on the prompt after the prompt
+ * returns? This is what you expect to happen. Now comment out the 4 lines below
+ * the line that says COMMENT LINE BELOW. Recompile and rerun the program and do
+ * the same thing. When the prompt returns, you should not see "bar". Now type
+ * "f", see how "barf" magically appears? This behavior is un-expected and not
+ * desired.
+ */
+
+void process_line(char *line);
+int  change_prompt(void);
+char *get_prompt(void);
+
+int prompt = 1;
+char prompt_buf[40], line_buf[256];
+tcflag_t old_lflag;
+cc_t     old_vtime;
+struct termios term;
+
+int 
+main()
+{
+    fd_set fds;
+
+    setlocale (LC_ALL, "");
+
+    /* Adjust the terminal slightly before the handler is installed. Disable
+     * canonical mode processing and set the input character time flag to be
+     * non-blocking.
+     */
+    if( tcgetattr(STDIN_FILENO, &term) < 0 ) {
+        perror("tcgetattr");
+        exit(1);
+    }
+    old_lflag = term.c_lflag;
+    old_vtime = term.c_cc[VTIME];
+    term.c_lflag &= ~ICANON;
+    term.c_cc[VTIME] = 1;
+    /* COMMENT LINE BELOW - see above */
+    if( tcsetattr(STDIN_FILENO, TCSANOW, &term) < 0 ) {
+        perror("tcsetattr");
+        exit(1);
+    }
+
+    rl_add_defun("change-prompt", change_prompt, CTRL('t'));
+    rl_callback_handler_install(get_prompt(), process_line);
+
+    while(1) {
+      FD_ZERO(&fds);
+      FD_SET(fileno(stdin), &fds);
+
+      if( select(FD_SETSIZE, &fds, NULL, NULL, NULL) < 0) {
+        perror("select");
+        exit(1);
+      }
+
+      if( FD_ISSET(fileno(stdin), &fds) ) {
+        rl_callback_read_char();
+      }
+    }
+}
+
+void
+process_line(char *line)
+{
+  if( line == NULL ) {
+    fprintf(stderr, "\n", line);
+
+    /* reset the old terminal setting before exiting */
+    term.c_lflag     = old_lflag;
+    term.c_cc[VTIME] = old_vtime;
+    if( tcsetattr(STDIN_FILENO, TCSANOW, &term) < 0 ) {
+        perror("tcsetattr");
+        exit(1);
+    }
+    exit(0);
+  }
+
+  if( strcmp(line, "sleep") == 0 ) {
+    sleep(3);
+  } else {
+    fprintf(stderr, "|%s|\n", line);
+  }
+
+  free (line);
+}
+
+int
+change_prompt(void)
+{
+  /* toggle the prompt variable */
+  prompt = !prompt;
+
+  /* save away the current contents of the line */
+  strcpy(line_buf, rl_line_buffer);
+
+  /* install a new handler which will change the prompt and erase the current line */
+  rl_callback_handler_install(get_prompt(), process_line);
+
+  /* insert the old text on the new line */
+  rl_insert_text(line_buf);
+
+  /* redraw the current line - this is an undocumented function. It invokes the
+   * redraw-current-line command.
+   */
+  rl_refresh_line(0, 0);
+}
+
+char *
+get_prompt(void)
+{
+  /* The prompts can even be different lengths! */
+  sprintf(prompt_buf, "%s", 
+    prompt ? "Hit ctrl-t to toggle prompt> " : "Pretty cool huh?> ");
+  return prompt_buf;
+}
+/* fileman.c - file manager example for readline library. */
+
+/* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* fileman.c -- A tiny application which demonstrates how to use the
+   GNU Readline library.  This application interactively allows users
+   to manipulate files and their modes. */
+
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
+#include <sys/types.h>
+#ifdef HAVE_SYS_FILE_H
+#  include <sys/file.h>
+#endif
+#include <sys/stat.h>
+
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+
+#include <fcntl.h>
+#include <stdio.h>
+#include <errno.h>
+
+#if defined (HAVE_STRING_H)
+#  include <string.h>
+#else /* !HAVE_STRING_H */
+#  include <strings.h>
+#endif /* !HAVE_STRING_H */
+
+#ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+#endif
+
+#include <time.h>
+
+#ifdef READLINE_LIBRARY
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+extern char *xmalloc PARAMS((size_t));
+
+void initialize_readline PARAMS((void));
+void too_dangerous PARAMS((char *));
+
+int execute_line PARAMS((char *));
+int valid_argument PARAMS((char *, char *));
+
+/* The names of functions that actually do the manipulation. */
+int com_list PARAMS((char *));
+int com_view PARAMS((char *));
+int com_rename PARAMS((char *));
+int com_stat PARAMS((char *));
+int com_pwd PARAMS((char *));
+int com_delete PARAMS((char *));
+int com_help PARAMS((char *));
+int com_cd PARAMS((char *));
+int com_quit PARAMS((char *));
+
+/* A structure which contains information on the commands this program
+   can understand. */
+
+typedef struct {
+  char *name;			/* User printable name of the function. */
+  rl_icpfunc_t *func;		/* Function to call to do the job. */
+  char *doc;			/* Documentation for this function.  */
+} COMMAND;
+
+COMMAND commands[] = {
+  { "cd", com_cd, "Change to directory DIR" },
+  { "delete", com_delete, "Delete FILE" },
+  { "help", com_help, "Display this text" },
+  { "?", com_help, "Synonym for `help'" },
+  { "list", com_list, "List files in DIR" },
+  { "ls", com_list, "Synonym for `list'" },
+  { "pwd", com_pwd, "Print the current working directory" },
+  { "quit", com_quit, "Quit using Fileman" },
+  { "rename", com_rename, "Rename FILE to NEWNAME" },
+  { "stat", com_stat, "Print out statistics on FILE" },
+  { "view", com_view, "View the contents of FILE" },
+  { (char *)NULL, (rl_icpfunc_t *)NULL, (char *)NULL }
+};
+
+/* Forward declarations. */
+char *stripwhite ();
+COMMAND *find_command ();
+
+/* The name of this program, as taken from argv[0]. */
+char *progname;
+
+/* When non-zero, this global means the user is done using this program. */
+int done;
+
+char *
+dupstr (s)
+     char *s;
+{
+  char *r;
+
+  r = xmalloc (strlen (s) + 1);
+  strcpy (r, s);
+  return (r);
+}
+
+int
+main (argc, argv)
+     int argc;
+     char **argv;
+{
+  char *line, *s;
+
+  progname = argv[0];
+
+  initialize_readline ();	/* Bind our completer. */
+
+  /* Loop reading and executing lines until the user quits. */
+  for ( ; done == 0; )
+    {
+      line = readline ("FileMan: ");
+
+      if (!line)
+        break;
+
+      /* Remove leading and trailing whitespace from the line.
+         Then, if there is anything left, add it to the history list
+         and execute it. */
+      s = stripwhite (line);
+
+      if (*s)
+        {
+          add_history (s);
+          execute_line (s);
+        }
+
+      free (line);
+    }
+  exit (0);
+}
+
+/* Execute a command line. */
+int
+execute_line (line)
+     char *line;
+{
+  register int i;
+  COMMAND *command;
+  char *word;
+
+  /* Isolate the command word. */
+  i = 0;
+  while (line[i] && whitespace (line[i]))
+    i++;
+  word = line + i;
+
+  while (line[i] && !whitespace (line[i]))
+    i++;
+
+  if (line[i])
+    line[i++] = '\0';
+
+  command = find_command (word);
+
+  if (!command)
+    {
+      fprintf (stderr, "%s: No such command for FileMan.\n", word);
+      return (-1);
+    }
+
+  /* Get argument to command, if any. */
+  while (whitespace (line[i]))
+    i++;
+
+  word = line + i;
+
+  /* Call the function. */
+  return ((*(command->func)) (word));
+}
+
+/* Look up NAME as the name of a command, and return a pointer to that
+   command.  Return a NULL pointer if NAME isn't a command name. */
+COMMAND *
+find_command (name)
+     char *name;
+{
+  register int i;
+
+  for (i = 0; commands[i].name; i++)
+    if (strcmp (name, commands[i].name) == 0)
+      return (&commands[i]);
+
+  return ((COMMAND *)NULL);
+}
+
+/* Strip whitespace from the start and end of STRING.  Return a pointer
+   into STRING. */
+char *
+stripwhite (string)
+     char *string;
+{
+  register char *s, *t;
+
+  for (s = string; whitespace (*s); s++)
+    ;
+    
+  if (*s == 0)
+    return (s);
+
+  t = s + strlen (s) - 1;
+  while (t > s && whitespace (*t))
+    t--;
+  *++t = '\0';
+
+  return s;
+}
+
+/* **************************************************************** */
+/*                                                                  */
+/*                  Interface to Readline Completion                */
+/*                                                                  */
+/* **************************************************************** */
+
+char *command_generator PARAMS((const char *, int));
+char **fileman_completion PARAMS((const char *, int, int));
+
+/* Tell the GNU Readline library how to complete.  We want to try to complete
+   on command names if this is the first word in the line, or on filenames
+   if not. */
+void
+initialize_readline ()
+{
+  /* Allow conditional parsing of the ~/.inputrc file. */
+  rl_readline_name = "FileMan";
+
+  /* Tell the completer that we want a crack first. */
+  rl_attempted_completion_function = fileman_completion;
+}
+
+/* Attempt to complete on the contents of TEXT.  START and END bound the
+   region of rl_line_buffer that contains the word to complete.  TEXT is
+   the word to complete.  We can use the entire contents of rl_line_buffer
+   in case we want to do some simple parsing.  Return the array of matches,
+   or NULL if there aren't any. */
+char **
+fileman_completion (text, start, end)
+     const char *text;
+     int start, end;
+{
+  char **matches;
+
+  matches = (char **)NULL;
+
+  /* If this word is at the start of the line, then it is a command
+     to complete.  Otherwise it is the name of a file in the current
+     directory. */
+  if (start == 0)
+    matches = rl_completion_matches (text, command_generator);
+
+  return (matches);
+}
+
+/* Generator function for command completion.  STATE lets us know whether
+   to start from scratch; without any state (i.e. STATE == 0), then we
+   start at the top of the list. */
+char *
+command_generator (text, state)
+     const char *text;
+     int state;
+{
+  static int list_index, len;
+  char *name;
+
+  /* If this is a new word to complete, initialize now.  This includes
+     saving the length of TEXT for efficiency, and initializing the index
+     variable to 0. */
+  if (!state)
+    {
+      list_index = 0;
+      len = strlen (text);
+    }
+
+  /* Return the next name which partially matches from the command list. */
+  while (name = commands[list_index].name)
+    {
+      list_index++;
+
+      if (strncmp (name, text, len) == 0)
+        return (dupstr(name));
+    }
+
+  /* If no names matched, then return NULL. */
+  return ((char *)NULL);
+}
+
+/* **************************************************************** */
+/*                                                                  */
+/*                       FileMan Commands                           */
+/*                                                                  */
+/* **************************************************************** */
+
+/* String to pass to system ().  This is for the LIST, VIEW and RENAME
+   commands. */
+static char syscom[1024];
+
+/* List the file(s) named in arg. */
+int
+com_list (arg)
+     char *arg;
+{
+  if (!arg)
+    arg = "";
+
+  sprintf (syscom, "ls -FClg %s", arg);
+  return (system (syscom));
+}
+
+int
+com_view (arg)
+     char *arg;
+{
+  if (!valid_argument ("view", arg))
+    return 1;
+
+#if defined (__MSDOS__)
+  /* more.com doesn't grok slashes in pathnames */
+  sprintf (syscom, "less %s", arg);
+#else
+  sprintf (syscom, "more %s", arg);
+#endif
+  return (system (syscom));
+}
+
+int
+com_rename (arg)
+     char *arg;
+{
+  too_dangerous ("rename");
+  return (1);
+}
+
+int
+com_stat (arg)
+     char *arg;
+{
+  struct stat finfo;
+
+  if (!valid_argument ("stat", arg))
+    return (1);
+
+  if (stat (arg, &finfo) == -1)
+    {
+      perror (arg);
+      return (1);
+    }
+
+  printf ("Statistics for `%s':\n", arg);
+
+  printf ("%s has %d link%s, and is %lu byte%s in length.\n",
+	  arg,
+          finfo.st_nlink,
+          (finfo.st_nlink == 1) ? "" : "s",
+          (unsigned long)finfo.st_size,
+          (finfo.st_size == 1) ? "" : "s");
+  printf ("Inode Last Change at: %s", ctime (&finfo.st_ctime));
+  printf ("      Last access at: %s", ctime (&finfo.st_atime));
+  printf ("    Last modified at: %s", ctime (&finfo.st_mtime));
+  return (0);
+}
+
+int
+com_delete (arg)
+     char *arg;
+{
+  too_dangerous ("delete");
+  return (1);
+}
+
+/* Print out help for ARG, or for all of the commands if ARG is
+   not present. */
+int
+com_help (arg)
+     char *arg;
+{
+  register int i;
+  int printed = 0;
+
+  for (i = 0; commands[i].name; i++)
+    {
+      if (!*arg || (strcmp (arg, commands[i].name) == 0))
+        {
+          printf ("%s\t\t%s.\n", commands[i].name, commands[i].doc);
+          printed++;
+        }
+    }
+
+  if (!printed)
+    {
+      printf ("No commands match `%s'.  Possibilities are:\n", arg);
+
+      for (i = 0; commands[i].name; i++)
+        {
+          /* Print in six columns. */
+          if (printed == 6)
+            {
+              printed = 0;
+              printf ("\n");
+            }
+
+          printf ("%s\t", commands[i].name);
+          printed++;
+        }
+
+      if (printed)
+        printf ("\n");
+    }
+  return (0);
+}
+
+/* Change to the directory ARG. */
+int
+com_cd (arg)
+     char *arg;
+{
+  if (chdir (arg) == -1)
+    {
+      perror (arg);
+      return 1;
+    }
+
+  com_pwd ("");
+  return (0);
+}
+
+/* Print out the current working directory. */
+int
+com_pwd (ignore)
+     char *ignore;
+{
+  char dir[1024], *s;
+
+  s = getcwd (dir, sizeof(dir) - 1);
+  if (s == 0)
+    {
+      printf ("Error getting pwd: %s\n", dir);
+      return 1;
+    }
+
+  printf ("Current directory is %s\n", dir);
+  return 0;
+}
+
+/* The user wishes to quit using this program.  Just set DONE non-zero. */
+int
+com_quit (arg)
+     char *arg;
+{
+  done = 1;
+  return (0);
+}
+
+/* Function which tells you that you can't do this. */
+void
+too_dangerous (caller)
+     char *caller;
+{
+  fprintf (stderr,
+           "%s: Too dangerous for me to distribute.  Write it yourself.\n",
+           caller);
+}
+
+/* Return non-zero if ARG is a valid argument for CALLER, else print
+   an error message and return zero. */
+int
+valid_argument (caller, arg)
+     char *caller, *arg;
+{
+  if (!arg || !*arg)
+    {
+      fprintf (stderr, "%s: Argument required.\n", caller);
+      return (0);
+    }
+
+  return (1);
+}
+/* hist_erasedups -- remove all duplicate entries from history file */
+
+/* Copyright (C) 2011 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#ifndef READLINE_LIBRARY
+#define READLINE_LIBRARY 1
+#endif
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#ifdef READLINE_LIBRARY
+#  include "history.h"
+#else
+#  include <readline/history.h>
+#endif
+
+#include <string.h>
+
+#define STREQ(a, b) ((a)[0] == (b)[0] && strcmp(a, b) == 0)
+#define STREQN(a, b, n) ((n == 0) ? (1) \
+                                  : ((a)[0] == (b)[0] && strncmp(a, b, n) == 0))
+
+int hist_erasedups (void);
+
+static void
+usage()
+{
+  fprintf (stderr, "hist_erasedups: usage: hist_erasedups [-t] [filename]\n");
+  exit (2);
+}
+
+int
+main (argc, argv)
+     int argc;
+     char **argv;
+{
+  char *fn;
+  int r;
+
+  while ((r = getopt (argc, argv, "t")) != -1)
+    {
+      switch (r)
+	{
+	case 't':
+	  history_write_timestamps = 1;
+	  break;
+	default:
+	  usage ();
+	}
+    }
+  argv += optind;
+  argc -= optind;
+
+  fn = argc ? argv[0] : getenv ("HISTFILE");
+  if (fn == 0)
+    {
+      fprintf (stderr, "hist_erasedups: no history file\n");
+      usage ();
+    }
+
+  if ((r = read_history (fn)) != 0)
+    {
+      fprintf (stderr, "hist_erasedups: read_history: %s: %s\n", fn, strerror (r));
+      exit (1);
+    }
+
+  hist_erasedups ();
+
+  if ((r = write_history (fn)) != 0)
+    {
+      fprintf (stderr, "hist_erasedups: write_history: %s: %s\n", fn, strerror (r));
+      exit (1);
+    }
+
+  exit (0);
+}
+
+int
+hist_erasedups ()
+{
+  int r, n;
+  HIST_ENTRY *h, *temp;
+
+  using_history ();
+  while (h = previous_history ())
+    {
+      r = where_history ();
+      for (n = 0; n < r; n++)
+	{
+	  temp = history_get (n+history_base);
+	  if (STREQ (h->line, temp->line))
+	    {
+	      remove_history (n);
+	      r--;			/* have to get one fewer now */
+	      n--;			/* compensate for above increment */
+	      history_offset--;		/* moving backwards in history list */
+	    }
+	}
+    }
+  using_history ();
+
+  return r;
+}
+/* hist_purgecmd -- remove all instances of command or pattern from history
+   file */
+
+/* Copyright (C) 2011 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#ifndef READLINE_LIBRARY
+#define READLINE_LIBRARY 1
+#endif
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <regex.h>
+
+#ifdef READLINE_LIBRARY
+#  include "history.h"
+#else
+#  include <readline/history.h>
+#endif
+
+#include <string.h>
+
+#define STREQ(a, b) ((a)[0] == (b)[0] && strcmp(a, b) == 0)
+#define STREQN(a, b, n) ((n == 0) ? (1) \
+                                  : ((a)[0] == (b)[0] && strncmp(a, b, n) == 0))
+
+#define PURGE_REGEXP	0x01
+
+int hist_purgecmd (char *, int);
+
+static void
+usage()
+{
+  fprintf (stderr, "hist_purgecmd: usage: hist_purgecmd [-r] [-t] [-f filename] command-spec\n");
+  exit (2);
+}
+
+int
+main (argc, argv)
+     int argc;
+     char **argv;
+{
+  char *fn;
+  int r, flags;
+
+  flags = 0;
+  fn = 0;
+  while ((r = getopt (argc, argv, "f:rt")) != -1)
+    {
+      switch (r)
+	{
+	case 'f':
+	  fn = optarg;
+	  break;
+	case 'r':
+	  flags |= PURGE_REGEXP;
+	  break;
+	case 't':
+	  history_write_timestamps = 1;
+	  break;
+	default:
+	  usage ();
+	}
+    }
+  argv += optind;
+  argc -= optind;
+
+  if (fn == 0)
+    fn = getenv ("HISTFILE");
+  if (fn == 0)
+    {
+      fprintf (stderr, "hist_purgecmd: no history file\n");
+      usage ();
+    }
+
+  if ((r = read_history (fn)) != 0)
+    {
+      fprintf (stderr, "hist_purgecmd: read_history: %s: %s\n", fn, strerror (r));
+      exit (1);
+    }
+
+  for (r = 0; r < argc; r++)
+    hist_purgecmd (argv[r], flags);
+
+  if ((r = write_history (fn)) != 0)
+    {
+      fprintf (stderr, "hist_purgecmd: write_history: %s: %s\n", fn, strerror (r));
+      exit (1);
+    }
+
+  exit (0);
+}
+
+int
+hist_purgecmd (cmd, flags)
+     char *cmd;
+     int flags;
+{
+  int r, n, rflags;
+  HIST_ENTRY *temp;
+  regex_t regex = { 0 };
+
+  if (flags & PURGE_REGEXP)
+    {
+      rflags = REG_EXTENDED|REG_NOSUB;
+      if (regcomp (&regex, cmd, rflags))
+	{
+	  fprintf (stderr, "hist_purgecmd: %s: invalid regular expression\n", cmd);
+	  return -1;
+	}
+    }
+
+  r = 0;
+  using_history ();
+  r = where_history ();
+  for (n = 0; n < r; n++)
+    {
+      temp = history_get (n+history_base);
+      if (((flags & PURGE_REGEXP) && (regexec (&regex, temp->line, 0, 0, 0) == 0)) ||
+	  ((flags & PURGE_REGEXP) == 0 && STREQ (temp->line, cmd)))
+	{
+	  remove_history (n);
+	  r--;			/* have to get one fewer now */
+	  n--;			/* compensate for above increment */
+	  history_offset--;	/* moving backwards in history list */
+	}
+    }
+  using_history ();
+
+  if (flags & PURGE_REGEXP)
+    regfree (&regex);
+
+  return r;
+}
+/* histexamp.c - history library example program. */
+
+/* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <stdio.h>
+
+#ifdef READLINE_LIBRARY
+#  include "history.h"
+#else
+#  include <readline/history.h>
+#endif
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+
+int
+main (argc, argv)
+     int argc;
+     char **argv;
+{
+  char line[1024], *t;
+  int len, done;
+
+  line[0] = 0;
+  done = 0;
+
+  using_history ();
+  while (!done)
+    {
+      printf ("history$ ");
+      fflush (stdout);
+      t = fgets (line, sizeof (line) - 1, stdin);
+      if (t && *t)
+	{
+	  len = strlen (t);
+	  if (t[len - 1] == '\n')
+	    t[len - 1] = '\0';
+	}
+
+      if (!t)
+	strcpy (line, "quit");
+
+      if (line[0])
+	{
+	  char *expansion;
+	  int result;
+
+	  using_history ();
+
+	  result = history_expand (line, &expansion);
+	  if (result)
+	    fprintf (stderr, "%s\n", expansion);
+
+	  if (result < 0 || result == 2)
+	    {
+	      free (expansion);
+	      continue;
+	    }
+
+	  add_history (expansion);
+	  strncpy (line, expansion, sizeof (line) - 1);
+	  free (expansion);
+	}
+
+      if (strcmp (line, "quit") == 0)
+	done = 1;
+      else if (strcmp (line, "save") == 0)
+	write_history ("history_file");
+      else if (strcmp (line, "read") == 0)
+	read_history ("history_file");
+      else if (strcmp (line, "list") == 0)
+	{
+	  register HIST_ENTRY **the_list;
+	  register int i;
+	  time_t tt;
+	  char timestr[128];
+
+	  the_list = history_list ();
+	  if (the_list)
+	    for (i = 0; the_list[i]; i++)
+	      {
+	      	tt = history_get_time (the_list[i]);
+		if (tt)
+		  strftime (timestr, sizeof (timestr), "%a %R", localtime(&tt));
+		else
+		  strcpy (timestr, "??");
+	        printf ("%d: %s: %s\n", i + history_base, timestr, the_list[i]->line);
+	      }
+	}
+      else if (strncmp (line, "delete", 6) == 0)
+	{
+	  int which;
+	  if ((sscanf (line + 6, "%d", &which)) == 1)
+	    {
+	      HIST_ENTRY *entry = remove_history (which);
+	      if (!entry)
+		fprintf (stderr, "No such entry %d\n", which);
+	      else
+		{
+		  free (entry->line);
+		  free (entry);
+		}
+	    }
+	  else
+	    {
+	      fprintf (stderr, "non-numeric arg given to `delete'\n");
+	    }
+	}
+    }
+}
+/* manexamp.c -- The examples which appear in the documentation are here. */
+
+/* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <stdio.h>
+#include <readline/readline.h>
+
+/* **************************************************************** */
+/*                                                                  */
+/*   			How to Emulate gets ()			    */
+/*                                                                  */
+/* **************************************************************** */
+
+/* A static variable for holding the line. */
+static char *line_read = (char *)NULL;
+
+/* Read a string, and return a pointer to it.  Returns NULL on EOF. */
+char *
+rl_gets ()
+{
+  /* If the buffer has already been allocated, return the memory
+     to the free pool. */
+  if (line_read)
+    {
+      free (line_read);
+      line_read = (char *)NULL;
+    }
+
+  /* Get a line from the user. */
+  line_read = readline ("");
+
+  /* If the line has any text in it, save it on the history. */
+  if (line_read && *line_read)
+    add_history (line_read);
+
+  return (line_read);
+}
+
+/* **************************************************************** */
+/*                                                                  */
+/*        Writing a Function to be Called by Readline.              */
+/*                                                                  */
+/* **************************************************************** */
+
+/* Invert the case of the COUNT following characters. */
+invert_case_line (count, key)
+     int count, key;
+{
+  register int start, end;
+
+  start = rl_point;
+
+  if (count < 0)
+    {
+      direction = -1;
+      count = -count;
+    }
+  else
+    direction = 1;
+      
+  /* Find the end of the range to modify. */
+  end = start + (count * direction);
+
+  /* Force it to be within range. */
+  if (end > rl_end)
+    end = rl_end;
+  else if (end < 0)
+    end = -1;
+
+  if (start > end)
+    {
+      int temp = start;
+      start = end;
+      end = temp;
+    }
+
+  if (start == end)
+    return;
+
+  /* Tell readline that we are modifying the line, so save the undo
+     information. */
+  rl_modifying (start, end);
+
+  for (; start != end; start += direction)
+    {
+      if (_rl_uppercase_p (rl_line_buffer[start]))
+	rl_line_buffer[start] = _rl_to_lower (rl_line_buffer[start]);
+      else if (_rl_lowercase_p (rl_line_buffer[start]))
+	rl_line_buffer[start] = _rl_to_upper (rl_line_buffer[start]);
+    }
+
+  /* Move point to on top of the last character changed. */
+  rl_point = end - direction;
+}
+/* Standard include files. stdio.h is required. */
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
+/* Used for select(2) */
+#include <sys/types.h>
+#include <sys/select.h>
+
+#include <signal.h>
+
+#include <errno.h>
+#include <stdio.h>
+
+#include <locale.h>
+
+/* Standard readline include files. */
+#if defined (READLINE_LIBRARY)
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+extern int errno;
+
+static void cb_linehandler (char *);
+static void signandler (int);
+
+int running, sigwinch_received;
+const char *prompt = "rltest$ ";
+
+/* Handle SIGWINCH and window size changes when readline is not active and
+   reading a character. */
+static void
+sighandler (int sig)
+{
+  sigwinch_received = 1;
+}
+
+/* Callback function called for each line when accept-line executed, EOF
+   seen, or EOF character read.  This sets a flag and returns; it could
+   also call exit(3). */
+static void
+cb_linehandler (char *line)
+{
+  /* Can use ^D (stty eof) or `exit' to exit. */
+  if (line == NULL || strcmp (line, "exit") == 0)
+    {
+      if (line == 0)
+        printf ("\n");
+      printf ("exit\n");
+      /* This function needs to be called to reset the terminal settings,
+	 and calling it from the line handler keeps one extra prompt from
+	 being displayed. */
+      rl_callback_handler_remove ();
+
+      running = 0;
+    }
+  else
+    {
+      if (*line)
+	add_history (line);
+      printf ("input line: %s\n", line);
+      free (line);
+    }
+}
+
+int
+main (int c, char **v)
+{
+  fd_set fds;
+  int r;
+
+  setlocale (LC_ALL, "");
+
+  /* Handle SIGWINCH */
+  signal (SIGWINCH, sighandler);
+  
+  /* Install the line handler. */
+  rl_callback_handler_install (prompt, cb_linehandler);
+
+  /* Enter a simple event loop.  This waits until something is available
+     to read on readline's input stream (defaults to standard input) and
+     calls the builtin character read callback to read it.  It does not
+     have to modify the user's terminal settings. */
+  running = 1;
+  while (running)
+    {
+      FD_ZERO (&fds);
+      FD_SET (fileno (rl_instream), &fds);    
+
+      r = select (FD_SETSIZE, &fds, NULL, NULL, NULL);
+      if (r < 0 && errno != EINTR)
+	{
+	  perror ("rltest: select");
+	  rl_callback_handler_remove ();
+	  break;
+	}
+      if (sigwinch_received)
+	{
+	  rl_resize_terminal ();
+	  sigwinch_received = 0;
+	}
+      if (r < 0)
+	continue;
+
+      if (FD_ISSET (fileno (rl_instream), &fds))
+	rl_callback_read_char ();
+    }
+
+  printf ("rltest: Event loop has exited\n");
+  return 0;
+}
+/*
+Date: Tue, 16 Mar 2004 19:38:40 -0800
+From: Harold Levy <Harold.Levy@synopsys.com>
+Subject: fgets(stdin) --> readline() redirector
+To: chet@po.cwru.edu
+
+Hi Chet,
+
+Here is something you may find useful enough to include in the readline
+distribution.  It is a shared library that redirects calls to fgets(stdin)
+to readline() via LD_PRELOAD, and it supports a custom prompt and list of
+command names.  Many people have asked me for this file, so I thought I'd
+pass it your way in hope of just including it with readline to begin with.
+
+Best Regards,
+
+-Harold
+*/
+
+/******************************************************************************
+*******************************************************************************
+  
+  FILE NAME:    fgets.c                  TARGET:   libfgets.so
+  AUTHOR:       Harold Levy              VERSION:  1.0
+                hlevy@synopsys.com
+  
+  ABSTRACT:  Customize fgets() behavior via LD_PRELOAD in the following ways:
+  
+    -- If fgets(stdin) is called, redirect to GNU readline() to obtain
+       command-line editing, file-name completion, history, etc.
+  
+    -- A list of commands for command-name completion can be configured by
+       setting the environment-variable FGETS_COMMAND_FILE to a file containing
+       the list of commands to be used.
+  
+    -- Command-line editing with readline() works best when the prompt string
+       is known; you can set this with the FGETS_PROMPT environment variable.
+  
+    -- There special strings that libfgets will interpret as internal commands:
+  
+           _fgets_reset_    reset the command list
+  
+           _fgets_dump_     dump status
+  
+           _fgets_debug_    toggle debug messages
+
+  HOW TO BUILD:  Here are examples of how to build libfgets.so on various
+  platforms; you will have to add -I and -L flags to configure access to
+  the readline header and library files.
+
+  (32-bit builds with gcc)
+  AIX:   gcc -fPIC fgets.c -shared -o libfgets.so -lc -ldl -lreadline -ltermcap
+  HP-UX: gcc -fPIC fgets.c -shared -o libfgets.so -lc -ldld -lreadline
+  Linux: gcc -fPIC fgets.c -shared -o libfgets.so -lc -ldl -lreadline
+  SunOS: gcc -fPIC fgets.c -shared -o libfgets.so -lc -ldl -lgen -lreadline
+
+  (64-bit builds without gcc)
+  SunOS: SUNWspro/bin/cc -D_LARGEFILE64_SOURCE=1 -xtarget=ultra -xarch=v9 \
+           -KPIC fgets.c -Bdynamic -lc -ldl -lgen -ltermcap -lreadline
+  
+  HOW TO USE:  Different operating systems have different levels of support
+  for the LD_PRELOAD concept.  The generic method for 32-bit platforms is to
+  put libtermcap.so, libfgets.so, and libreadline.so (with absolute paths)
+  in the LD_PRELOAD environment variable, and to put their parent directories
+  in the LD_LIBRARY_PATH environment variable.  Unfortunately there is no
+  generic method for 64-bit platforms; e.g. for 64-bit SunOS, you would have
+  to build both 32-bit and 64-bit libfgets and libreadline libraries, and
+  use the LD_FLAGS_32 and LD_FLAGS_64 environment variables with preload and
+  library_path configurations (a mix of 32-bit and 64-bit calls are made under
+  64-bit SunOS).
+  
+  EXAMPLE WRAPPER:  Here is an example shell script wrapper around the
+  program "foo" that uses fgets() for command-line input:
+
+      #!/bin/csh
+      #### replace this with the libtermcap.so directory:
+      set dir1 = "/usr/lib"
+      #### replace this with the libfgets.so directory:
+      set dir2 = "/usr/fgets"
+      #### replace this with the libreadline.so directory:
+      set dir3 = "/usr/local/lib"
+      set lib1 = "${dir1}/libtermcap.so"
+      set lib2 = "${dir2}/libfgets.so"
+      set lib3 = "${dir3}/libreadline.so"
+      if ( "${?LD_PRELOAD}" ) then
+        setenv LD_PRELOAD "${lib1}:${lib2}:${lib3}:${LD_PRELOAD}"
+      else
+        setenv LD_PRELOAD "${lib1}:${lib2}:${lib3}"
+      endif
+      if ( "${?LD_LIBRARY_PATH}" ) then
+        setenv LD_LIBRARY_PATH "${dir1}:${dir2}:${dir3}:${LD_LIBRARY_PATH}"
+      else
+        setenv LD_LIBRARY_PATH "${dir1}:${dir2}:${dir3}"
+      endif
+      setenv FGETS_COMMAND_FILE "${dir2}/foo.commands"
+      setenv FGETS_PROMPT       "foo> "
+      exec "foo" $*
+  
+  Copyright (C)�2003-2004 Harold Levy.
+  
+  This code links to the GNU readline library, and as such is bound by the
+  terms of the GNU General Public License as published by the Free Software
+  Foundation, either version 2 or (at your option) any later version.
+  
+  The GNU General Public License is often shipped with GNU software, and is
+  generally kept in a file called COPYING or LICENSE.  If you do not have a
+  copy of the license, write to the Free Software Foundation, 59 Temple Place,
+  Suite 330, Boston, MA 02111 USA.
+  
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+  details.
+  
+*******************************************************************************
+******************************************************************************/
+
+
+
+#include <dlfcn.h>
+#include <stdio.h>
+#include <strings.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include <readline/readline.h>
+#include <readline/history.h>
+
+
+
+/* for dynamically connecting to the native fgets() */
+#if defined(RTLD_NEXT)
+#define REAL_LIBC RTLD_NEXT
+#else
+#define REAL_LIBC ((void *) -1L)
+#endif
+typedef char * ( * fgets_t ) ( char * s, int n, FILE * stream ) ;
+
+
+
+/* private data */
+/* -- writeable data is stored in the shared library's data segment
+   -- every process that uses the shared library gets a private memory copy of
+      its entire data segment
+   -- static data in the shared library is not copied to the application
+   -- only read-only (i.e. 'const') data is stored in the shared library's
+      text segment
+*/
+static char ** my_fgets_names           = NULL ;
+static int     my_fgets_number_of_names = 0    ;
+static int     my_fgets_debug_flag      = 0    ;
+
+
+
+/* invoked with _fgets_reset_ */
+static void
+my_fgets_reset (
+  void
+) {
+  if ( my_fgets_names && (my_fgets_number_of_names > 0) ) {
+    int i ;
+    if ( my_fgets_debug_flag ) {
+      printf ( "libfgets:  removing command list\n" ) ;
+    }
+    for ( i = 0 ; i < my_fgets_number_of_names ; i ++ ) {
+      if ( my_fgets_names[i] ) free ( my_fgets_names[i] ) ;
+    }
+    free ( my_fgets_names ) ;
+  }
+  my_fgets_names = NULL ;
+  my_fgets_number_of_names = 0 ;
+}
+
+
+
+/* invoked with _fgets_dump_ */
+static void
+my_fgets_dump (
+  void
+) {
+  char * s ;
+  printf ( "\n" ) ;
+  s = getenv ( "FGETS_PROMPT" ) ;
+  printf ( "FGETS_PROMPT       = %s\n", s ? s : "" ) ;
+  s = getenv ( "FGETS_COMMAND_FILE" ) ;
+  printf ( "FGETS_COMMAND_FILE = %s\n", s ? s : "" ) ;
+  printf ( "debug flag         = %d\n", my_fgets_debug_flag ) ;
+  printf ( "#commands          = %d\n", my_fgets_number_of_names ) ;
+  if ( my_fgets_debug_flag ) {
+    if ( my_fgets_names && (my_fgets_number_of_names > 0) ) {
+      int i ;
+      for ( i = 0 ; i < my_fgets_number_of_names ; i ++ ) {
+        printf ( "%s\n", my_fgets_names[i] ) ;
+      }
+    }
+  }
+  printf ( "\n" ) ;
+}
+
+
+
+/* invoked with _fgets_debug_ */
+static void
+my_fgets_debug_toggle (
+  void
+) {
+  my_fgets_debug_flag = my_fgets_debug_flag ? 0 : 1 ;
+  if ( my_fgets_debug_flag ) {
+    printf ( "libfgets:  debug flag = %d\n", my_fgets_debug_flag ) ;
+  }
+}
+
+
+
+/* read the command list if needed, return the i-th name */
+static char *
+my_fgets_lookup (
+  int index
+) {
+  if ( (! my_fgets_names) || (! my_fgets_number_of_names) ) {
+    char * fname ;
+    FILE * fp ;
+    fgets_t _fgets ;
+    int i ;
+    char buf1[256], buf2[256] ;
+    fname = getenv ( "FGETS_COMMAND_FILE" ) ;
+    if ( ! fname ) {
+      if ( my_fgets_debug_flag ) {
+        printf ( "libfgets:  empty or unset FGETS_COMMAND_FILE\n" ) ;
+      }
+      return NULL ;
+    }
+    fp = fopen ( fname, "r" ) ;
+    if ( ! fp ) {
+      if ( my_fgets_debug_flag ) {
+        printf ( "libfgets:  cannot open '%s' for reading\n", fname ) ;
+      }
+      return NULL ;
+    }
+    _fgets = (fgets_t) dlsym ( REAL_LIBC, "fgets" ) ;
+    if ( ! _fgets ) {
+      fprintf ( stderr,
+        "libfgets:  failed to dynamically link to native fgets()\n"
+      ) ;
+      return NULL ;
+    }
+    for ( i = 0 ; _fgets(buf1,255,fp) ; i ++ ) ;
+    if ( ! i ) { fclose(fp) ; return NULL ; }
+    my_fgets_names = (char**) calloc ( i, sizeof(char*) ) ;
+    rewind ( fp ) ;
+    i = 0 ;
+    while ( _fgets(buf1,255,fp) ) {
+      buf1[255] = 0 ;
+      if ( 1 == sscanf(buf1,"%s",buf2) ) {
+        my_fgets_names[i] = strdup(buf2) ;
+        i ++ ;
+      }
+    }
+    fclose ( fp ) ;
+    my_fgets_number_of_names = i ;
+    if ( my_fgets_debug_flag ) {
+      printf ( "libfgets:  successfully read %d commands\n", i ) ;
+    }
+  }
+  if ( index < my_fgets_number_of_names ) {
+    return my_fgets_names[index] ;
+  } else {
+    return NULL ;
+  }
+}
+
+
+
+/* generate a list of partial name matches for readline() */
+static char *
+my_fgets_generator (
+  const char * text,
+  int          state
+)
+{
+  static int list_index, len ;
+  char *     name ;
+  if ( ! state ) {
+    list_index = 0 ;
+    len = strlen ( text ) ;
+  }
+  while ( ( name = my_fgets_lookup(list_index) ) ) {
+    list_index ++ ;
+    if ( ! strncmp ( name, text, len ) ) {
+      return ( strdup ( name ) ) ;
+    }
+  }
+  return ( NULL ) ;
+}
+
+
+
+/* partial name completion callback for readline() */
+static char **
+my_fgets_completion (
+  const char * text,
+  int          start,
+  int          end
+)
+{
+  char ** matches ;
+  matches = NULL ;
+  if ( ! start ) {
+    matches = rl_completion_matches ( text, my_fgets_generator ) ;
+  }
+  return ( matches ) ;
+}
+
+
+
+/* fgets() intercept */
+char *
+fgets (
+  char * s,
+  int    n,
+  FILE * stream
+)
+{
+  if ( ! s ) return NULL ;
+  if ( stream == stdin ) {
+    char * prompt ;
+    char * my_fgets_line ;
+    rl_already_prompted = 1 ;
+    rl_attempted_completion_function = my_fgets_completion ;
+    rl_catch_signals = 1 ;
+    rl_catch_sigwinch = 1 ;
+    rl_set_signals () ;
+    prompt = getenv ( "FGETS_PROMPT" ) ;
+    for (
+      my_fgets_line = 0 ; ! my_fgets_line ; my_fgets_line=readline(prompt)
+    ) ;
+    if ( ! strncmp(my_fgets_line, "_fgets_reset_", 13) ) {
+      my_fgets_reset () ;
+      free ( my_fgets_line ) ;
+      strcpy ( s, "\n" ) ;
+      return ( s ) ;
+    }
+    if ( ! strncmp(my_fgets_line, "_fgets_dump_", 12) ) {
+      my_fgets_dump () ;
+      free ( my_fgets_line ) ;
+      strcpy ( s, "\n" ) ;
+      return ( s ) ;
+    }
+    if ( ! strncmp(my_fgets_line, "_fgets_debug_", 13) ) {
+      my_fgets_debug_toggle () ;
+      free ( my_fgets_line ) ;
+      strcpy ( s, "\n" ) ;
+      return ( s ) ;
+    }
+    (void) strncpy ( s, my_fgets_line, n-1 ) ;
+    (void) strcat ( s, "\n" ) ;
+    if ( *my_fgets_line ) add_history ( my_fgets_line ) ;
+    free ( my_fgets_line ) ;
+    return ( s ) ;
+  } else {
+    static fgets_t _fgets ;
+    _fgets = (fgets_t) dlsym ( REAL_LIBC, "fgets" ) ;
+    if ( ! _fgets ) {
+      fprintf ( stderr,
+        "libfgets:  failed to dynamically link to native fgets()\n"
+      ) ;
+      strcpy ( s, "\n" ) ;
+      return ( s ) ;
+    }
+    return (
+      _fgets ( s, n, stream )
+    ) ;
+  }
+}
+/* rl-timeout: test various readline builtin timeouts. */
+
+/* Copyright (C) 2021 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* Standard include files. stdio.h is required. */
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <limits.h>
+
+/* Used for select(2) */
+#include <sys/types.h>
+#include <sys/select.h>
+
+#include <errno.h>
+#include <stdio.h>
+
+/* Standard readline include files. */
+#if defined (READLINE_LIBRARY)
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+extern int errno;
+
+static void cb_linehandler (char *);
+
+int timeout_secs = 1, timeout_usecs = 0;
+int running;
+const char *prompt = "rl-timeout$ ";
+
+/* **************************************************************** */
+/*								    */
+/* Example 1: readline () with rl_readline_state		    */
+/*								    */
+/* **************************************************************** */
+
+void
+rltest_timeout_readline1 ()
+{
+  const char *temp;
+
+  rl_set_timeout (timeout_secs, timeout_usecs);
+  temp = readline (prompt);
+  if (RL_ISSTATE (RL_STATE_TIMEOUT))
+    printf ("timeout\n");
+  else if (temp == NULL)
+    printf ("no input line\n");
+  else
+    printf ("input line: %s\n", temp);
+  free ((void *) temp);
+}
+
+/* **************************************************************** */
+/*								    */
+/* Example 2: readline () with rl_timeout_event_hook		    */
+/*								    */
+/* **************************************************************** */
+
+static int
+timeout_handler ()
+{
+  printf ("timeout\n");
+  return READERR;
+}
+
+void
+rltest_timeout_readline2 ()
+{
+  const char *temp;
+
+  rl_set_timeout (timeout_secs, timeout_usecs);
+  rl_timeout_event_hook = timeout_handler;
+  temp = readline (prompt);
+  if (temp == NULL)
+    printf ("no input line\n");
+  else
+    printf ("input line: %s\n", temp);
+  free ((void *)temp);
+}
+
+/* **************************************************************** */
+/*								    */
+/* Example 3: rl_callback_* () with rl_timeout_remaining	    */
+/*								    */
+/* **************************************************************** */
+
+/* Callback function called for each line when accept-line executed, EOF
+   seen, or EOF character read.  This sets a flag and returns; it could
+   also call exit(3). */
+static void
+cb_linehandler (char *line)
+{
+  /* Can use ^D (stty eof) or `exit' to exit. */
+  if (line == NULL || strcmp (line, "exit") == 0)
+    {
+      if (line == 0)
+	printf ("\n");
+      printf ("exit\n");
+      /* This function needs to be called to reset the terminal settings,
+	 and calling it from the line handler keeps one extra prompt from
+	 being displayed. */
+      rl_callback_handler_remove ();
+
+      running = 0;
+    }
+  else
+    {
+      if (*line)
+	add_history (line);
+      printf ("input line: %s\n", line);
+      free (line);
+    }
+}
+
+void
+rltest_timeout_callback1 ()
+{
+  fd_set fds;
+  int r;
+  unsigned sec, usec;
+
+  rl_set_timeout (timeout_secs, timeout_usecs);
+  rl_callback_handler_install (prompt, cb_linehandler);
+  running = 1;
+  while (running)
+    {
+      FD_ZERO (&fds);
+      FD_SET (fileno (rl_instream), &fds);
+      r = rl_timeout_remaining (&sec, &usec);
+      if (r == 1)
+	{
+	  struct timeval timeout = {sec, usec};
+	  r = select (FD_SETSIZE, &fds, NULL, NULL, &timeout);
+	}
+      if (r < 0 && errno != EINTR)
+	{
+	  perror ("rl-timeout: select");
+	  rl_callback_handler_remove ();
+	  break;
+	}
+      else if (r == 0)
+	{
+	  printf ("rl-timeout: timeout\n");
+	  rl_callback_handler_remove ();
+	  break;
+	}
+
+      if (FD_ISSET (fileno (rl_instream), &fds))
+	rl_callback_read_char ();
+    }
+
+  printf ("rl-timeout: Event loop has exited\n");
+}
+
+/* **************************************************************** */
+/*								    */
+/* Example 4: rl_callback_* () with rl_timeout_event_hook	    */
+/*								    */
+/* **************************************************************** */
+
+static int
+cb_timeouthandler ()
+{
+  printf ("timeout\n");
+  rl_callback_handler_remove ();
+  running = 0;
+  return READERR;
+}
+
+void
+rltest_timeout_callback2 ()
+{
+  int r;
+
+  rl_set_timeout (timeout_secs, timeout_usecs);
+  rl_timeout_event_hook = cb_timeouthandler;
+  rl_callback_handler_install (prompt, cb_linehandler);
+  running = 1;
+  while (running)
+    rl_callback_read_char ();
+
+  printf ("rl-timeout: Event loop has exited\n");
+}
+
+int
+main (int argc, char **argv)
+{
+  if (argc >= 2)
+    {
+      if (argc >= 3)
+	{
+	  double timeout = atof (argv[2]);
+	  if (timeout <= 0.0)
+	    {
+	      fprintf (stderr, "rl-timeout: specify a positive number for timeout.\n");
+	      return 2;
+	    }
+	  else if (timeout > UINT_MAX)
+	    {
+	      fprintf (stderr, "rl-timeout: timeout too large.\n");
+	      return 2;
+	    }
+	  timeout_secs = (unsigned) timeout;
+	  timeout_usecs = (unsigned) ((timeout - timeout_secs) * 1000000 + 0.5);
+	}
+
+      if (strcmp (argv[1], "readline1") == 0)
+	rltest_timeout_readline1 ();
+      else if (strcmp (argv[1], "readline2") == 0)
+	rltest_timeout_readline2 ();
+      else if (strcmp (argv[1], "callback1") == 0)
+	rltest_timeout_callback1 ();
+      else if (strcmp (argv[1], "callback2") == 0)
+	rltest_timeout_callback2 ();
+      else
+	return 2;
+    }
+  else
+    {
+      fprintf (stderr, "usage: rl-timeout [readline1 | readline2 | callback1 | callback2] [timeout]\n");
+      return 2;
+    }
+  return 0;
+}
+/*
+ * rl - command-line interface to read a line from the standard input
+ *      (or another fd) using readline.
+ *
+ * usage: rl [-p prompt] [-u unit] [-d default] [-n nchars]
+ */
+
+/* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#if defined (HAVE_CONFIG_H)
+#  include <config.h>
+#endif
+
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/types.h>
+
+#ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+#else 
+extern void exit();
+#endif
+
+#ifdef HAVE_LOCALE_H
+#  include <locale.h>
+#endif
+
+#if defined (READLINE_LIBRARY)
+#  include "posixstat.h"
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <sys/stat.h>
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+extern int optind;
+extern char *optarg;
+
+#if !defined (strchr) && !defined (__STDC__)
+extern char *strrchr();
+#endif
+
+static char *progname;
+static char *deftext;
+
+static int
+set_deftext ()
+{
+  if (deftext)
+    {
+      rl_insert_text (deftext);
+      deftext = (char *)NULL;
+      rl_startup_hook = (rl_hook_func_t *)NULL;
+    }
+  return 0;
+}
+
+static void
+usage()
+{
+  fprintf (stderr, "%s: usage: %s [-p prompt] [-u unit] [-d default] [-n nchars]\n",
+		progname, progname);
+}
+
+int
+main (argc, argv)
+     int argc;
+     char **argv;
+{
+  char *temp, *prompt;
+  struct stat sb;
+  int opt, fd, nch;
+  FILE *ifp;
+
+  progname = strrchr(argv[0], '/');
+  if (progname == 0)
+    progname = argv[0];
+  else
+    progname++;
+
+#ifdef HAVE_SETLOCALE
+  setlocale (LC_ALL, "");
+#endif
+
+  /* defaults */
+  prompt = "readline$ ";
+  fd = nch = 0;
+  deftext = (char *)0;
+
+  while ((opt = getopt(argc, argv, "p:u:d:n:")) != EOF)
+    {
+      switch (opt)
+	{
+	case 'p':
+	  prompt = optarg;
+	  break;
+	case 'u':
+	  fd = atoi(optarg);
+	  if (fd < 0)
+	    {
+	      fprintf (stderr, "%s: bad file descriptor `%s'\n", progname, optarg);
+	      exit (2);
+	    }
+	  break;
+	case 'd':
+	  deftext = optarg;
+	  break;
+	case 'n':
+	  nch = atoi(optarg);
+	  if (nch < 0)
+	    {
+	      fprintf (stderr, "%s: bad value for -n: `%s'\n", progname, optarg);
+	      exit (2);
+	    }
+	  break;
+	default:
+	  usage ();
+	  exit (2);
+	}
+    }
+
+  if (fd != 0)
+    {
+      if (fstat (fd, &sb) < 0)
+	{
+	  fprintf (stderr, "%s: %d: bad file descriptor\n", progname, fd);
+	  exit (1);
+	}
+      ifp = fdopen (fd, "r");
+      rl_instream = ifp;
+    }
+
+  if (deftext && *deftext)
+    rl_startup_hook = set_deftext;
+
+  if (nch > 0)
+    rl_num_chars_to_read = nch;
+
+  temp = readline (prompt);
+
+  /* Test for EOF. */
+  if (temp == 0)
+    exit (1);
+
+  printf ("%s\n", temp);
+  exit (0);
+}
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+#ifdef HAVE_LOCALE_H
+#  include <locale.h>
+#endif
+
+#if defined (READLINE_LIBRARY)
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+int
+main (int c, char **v)
+{
+	char *input;
+
+#ifdef HAVE_SETLOCALE
+	setlocale (LC_ALL, "");
+#endif
+
+	for (;;) {
+		input = readline ((char *)NULL);
+		if (input == 0)
+			break;
+		printf ("%s\n", input);
+		if (strcmp (input, "exit") == 0)
+			break;
+		free (input);
+	}
+	exit (0);
+}
+/*
+ * rlcat - cat(1) using readline
+ *
+ * usage: rlcat
+ */
+
+/* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#if defined (HAVE_CONFIG_H)
+#  include <config.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+
+#include <sys/types.h>
+#include "posixstat.h"
+
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <errno.h>
+
+#ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+#else 
+extern void exit();
+#endif
+
+#ifdef HAVE_LOCALE_H
+#  include <locale.h>
+#endif
+
+#ifndef errno
+extern int errno;
+#endif
+
+#if defined (READLINE_LIBRARY)
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+extern int optind;
+extern char *optarg;
+
+static int stdcat();
+
+static char *progname;
+static int vflag;
+
+static void
+usage()
+{
+  fprintf (stderr, "%s: usage: %s [-vEVN] [filename]\n", progname, progname);
+}
+
+int
+main (argc, argv)
+     int argc;
+     char **argv;
+{
+  char *temp;
+  int opt, Vflag, Nflag;
+
+#ifdef HAVE_SETLOCALE
+  setlocale (LC_ALL, "");
+#endif
+
+  progname = strrchr(argv[0], '/');
+  if (progname == 0)
+    progname = argv[0];
+  else
+    progname++;
+
+  vflag = Vflag = Nflag = 0;
+  while ((opt = getopt(argc, argv, "vEVN")) != EOF)
+    {
+      switch (opt)
+	{
+	case 'v':
+	  vflag = 1;
+	  break;
+	case 'V':
+	  Vflag = 1;
+	  break;
+	case 'E':
+	  Vflag = 0;
+	  break;
+	case 'N':
+	  Nflag = 1;
+	  break;
+	default:
+	  usage ();
+	  exit (2);
+	}
+    }
+
+  argc -= optind;
+  argv += optind;
+
+  if (isatty(0) == 0 || argc || Nflag)
+    return stdcat(argc, argv);
+
+  rl_variable_bind ("editing-mode", Vflag ? "vi" : "emacs");
+  while (temp = readline (""))
+    {
+      if (*temp)
+        add_history (temp);
+      printf ("%s\n", temp);
+    }
+
+  return (ferror (stdout));
+}
+
+static int
+fcopy(fp)
+     FILE *fp;
+{
+  int c;
+  char *x;
+
+  while ((c = getc(fp)) != EOF)
+    {
+      if (vflag && isascii ((unsigned char)c) && isprint((unsigned char)c) == 0)
+	{
+	  x = rl_untranslate_keyseq (c);
+	  if (fputs (x, stdout) == EOF)
+	    return 1;
+	}
+      else if (putchar (c) == EOF)
+        return 1;
+    }
+  return (ferror (stdout));
+}
+
+int
+stdcat (argc, argv)
+     int argc;
+     char **argv;
+{
+  int  i, fd, r;
+  char *s;
+  FILE *fp;
+
+  if (argc == 0)
+    return (fcopy(stdin));
+
+  for (i = 0, r = 1; i < argc; i++)
+    {
+      if (*argv[i] == '-' && argv[i][1] == 0)
+	fp = stdin;
+      else
+	{
+	  fp = fopen (argv[i], "r");
+	  if (fp == 0)
+	    {
+	      fprintf (stderr, "%s: %s: cannot open: %s\n", progname, argv[i], strerror(errno));
+	      continue;
+	    }
+        }
+      r = fcopy (fp);
+      if (fp != stdin)
+	fclose(fp);
+    }
+  return r;
+}
+/*
+ * rl - command-line interface to read a line from the standard input
+ *      (or another fd) using readline.
+ *
+ * usage: rl [-p prompt] [-u unit] [-d default] [-n nchars]
+ */
+
+/* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#if defined (HAVE_CONFIG_H)
+#  include <config.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#else
+extern int getopt();
+extern int sleep();
+#endif
+
+#include <stdio.h>
+#include <sys/types.h>
+
+#ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+#else 
+extern void exit();
+#endif
+
+#ifdef HAVE_LOCALE_H
+#  include <locale.h>
+#endif
+
+#if defined (READLINE_LIBRARY)
+#  include "posixstat.h"
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <sys/stat.h>
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+extern int optind;
+extern char *optarg;
+
+#if !defined (strchr) && !defined (__STDC__)
+extern char *strrchr();
+#endif
+
+static char *progname;
+static char *deftext;
+
+static int
+event_hook ()
+{
+  fprintf (stderr, "ding!\n");
+  sleep (1);
+  return 0;
+}
+
+static int
+set_deftext ()
+{
+  if (deftext)
+    {
+      rl_insert_text (deftext);
+      deftext = (char *)NULL;
+      rl_startup_hook = (rl_hook_func_t *)NULL;
+    }
+  return 0;
+}
+
+static void
+usage()
+{
+  fprintf (stderr, "%s: usage: %s [-p prompt] [-u unit] [-d default] [-n nchars]\n",
+		progname, progname);
+}
+
+int
+main (argc, argv)
+     int argc;
+     char **argv;
+{
+  char *temp, *prompt;
+  struct stat sb;
+  int opt, fd, nch;
+  FILE *ifp;
+
+#ifdef HAVE_SETLOCALE
+  setlocale (LC_ALL, "");
+#endif
+
+  progname = strrchr(argv[0], '/');
+  if (progname == 0)
+    progname = argv[0];
+  else
+    progname++;
+
+  /* defaults */
+  prompt = "readline$ ";
+  fd = nch = 0;
+  deftext = (char *)0;
+
+  while ((opt = getopt(argc, argv, "p:u:d:n:")) != EOF)
+    {
+      switch (opt)
+	{
+	case 'p':
+	  prompt = optarg;
+	  break;
+	case 'u':
+	  fd = atoi(optarg);
+	  if (fd < 0)
+	    {
+	      fprintf (stderr, "%s: bad file descriptor `%s'\n", progname, optarg);
+	      exit (2);
+	    }
+	  break;
+	case 'd':
+	  deftext = optarg;
+	  break;
+	case 'n':
+	  nch = atoi(optarg);
+	  if (nch < 0)
+	    {
+	      fprintf (stderr, "%s: bad value for -n: `%s'\n", progname, optarg);
+	      exit (2);
+	    }
+	  break;
+	default:
+	  usage ();
+	  exit (2);
+	}
+    }
+
+  if (fd != 0)
+    {
+      if (fstat (fd, &sb) < 0)
+	{
+	  fprintf (stderr, "%s: %d: bad file descriptor\n", progname, fd);
+	  exit (1);
+	}
+      ifp = fdopen (fd, "r");
+      rl_instream = ifp;
+    }
+
+  if (deftext && *deftext)
+    rl_startup_hook = set_deftext;
+
+  if (nch > 0)
+    rl_num_chars_to_read = nch;
+
+  rl_event_hook = event_hook;
+  temp = readline (prompt);
+
+  /* Test for EOF. */
+  if (temp == 0)
+    exit (1);
+
+  printf ("%s\n", temp);
+  exit (0);
+}
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+#if defined (READLINE_LIBRARY)
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+int
+main (int c, char **v)
+{
+  Keymap nmap, emacsmap, newemacs;
+  int r, errs;
+
+  errs = 0;
+  nmap = rl_make_keymap ();
+
+  r = rl_set_keymap_name ("emacs", nmap);
+  if (r >= 0)
+    {
+      fprintf (stderr, "rlkeymaps: error: able to rename `emacs' keymap\n");
+      errs++;
+    }
+
+  emacsmap = rl_get_keymap_by_name ("emacs");
+  r = rl_set_keymap_name ("newemacs", emacsmap);
+  if (r >= 0)
+    {
+      fprintf (stderr, "rlkeymaps: error: able to set new name for emacs keymap\n");
+      errs++;
+    }
+
+  r = rl_set_keymap_name ("newemacs", nmap);
+  if (r < 0)
+    {
+      fprintf (stderr, "rlkeymaps: error: newemacs: could not set keymap name\n");
+      errs++;
+    }
+
+  newemacs = rl_copy_keymap (emacsmap);
+  r = rl_set_keymap_name ("newemacs", newemacs);
+  if (r < 0)
+    {
+      fprintf (stderr, "rlkeymaps: error: newemacs: could not set `newemacs' keymap to new map\n");
+      errs++;
+    }
+
+  r = rl_set_keymap_name ("emacscopy", newemacs);
+  if (r < 0)
+    {
+      fprintf (stderr, "rlkeymaps: error: emacscopy: could not rename created keymap\n");
+      errs++;
+    }
+
+  exit (errs);
+}
+/*
+ *
+ * Another test harness for the readline callback interface.
+ *
+ * Author: Bob Rossi <bob@brasko.net>
+ */
+
+#if defined (HAVE_CONFIG_H)
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <curses.h>
+
+#include <stdlib.h>
+#include <unistd.h>
+
+#include <signal.h>
+
+#if 1	/* LINUX */
+#include <pty.h>
+#else
+#include <util.h>
+#endif
+
+#ifdef HAVE_LOCALE_H
+#  include <locale.h>
+#endif
+
+#ifdef READLINE_LIBRARY
+#  include "readline.h"
+#else
+#  include <readline/readline.h>
+#endif
+
+/**
+ * Master/Slave PTY used to keep readline off of stdin/stdout.
+ */
+static int masterfd = -1;
+static int slavefd;
+
+void
+sigint (s)
+     int s;
+{
+  tty_reset (STDIN_FILENO);
+  close (masterfd);
+  close (slavefd);
+  printf ("\n");
+  exit (0);
+}
+
+void
+sigwinch (s)
+     int s;
+{
+  rl_resize_terminal ();
+}
+
+static int 
+user_input()
+{
+  int size;
+  const int MAX = 1024;
+  char *buf = (char *)malloc(MAX+1);
+
+  size = read (STDIN_FILENO, buf, MAX);
+  if (size == -1)
+    return -1;
+
+  size = write (masterfd, buf, size);
+  if (size == -1)
+    return -1;
+
+  return 0;
+}
+
+static int 
+readline_input()
+{
+  const int MAX = 1024;
+  char *buf = (char *)malloc(MAX+1);
+  int size;
+
+  size = read (masterfd, buf, MAX);
+  if (size == -1)
+    {
+      free( buf );
+      buf = NULL;
+      return -1;
+    }
+
+  buf[size] = 0;
+
+  /* Display output from readline */
+  if ( size > 0 )
+    fprintf(stderr, "%s", buf);
+
+  free( buf );
+  buf = NULL;
+  return 0;
+}
+
+static void 
+rlctx_send_user_command(char *line)
+{
+  /* This happens when rl_callback_read_char gets EOF */
+  if ( line == NULL )
+    return;
+    
+  if (strcmp (line, "exit") == 0) {
+  	tty_reset (STDIN_FILENO);
+  	close (masterfd);
+  	close (slavefd);
+  	printf ("\n");
+	exit (0);
+  }
+  
+  /* Don't add the enter command */
+  if ( line && *line != '\0' )
+    add_history(line);
+}
+
+static void 
+custom_deprep_term_function ()
+{
+}
+
+static int 
+init_readline (int inputfd, int outputfd) 
+{
+  FILE *inputFILE, *outputFILE;
+
+  inputFILE = fdopen (inputfd, "r");
+  if (!inputFILE)
+    return -1;
+
+  outputFILE = fdopen (outputfd, "w");
+  if (!outputFILE)
+    return -1;
+
+  rl_instream = inputFILE;
+  rl_outstream = outputFILE;
+
+  /* Tell readline what the prompt is if it needs to put it back */
+  rl_callback_handler_install("(rltest):  ", rlctx_send_user_command);
+
+  /* Set the terminal type to dumb so the output of readline can be
+   * understood by tgdb */
+  if ( rl_reset_terminal("dumb") == -1 )
+    return -1;
+
+  /* For some reason, readline can not deprep the terminal.
+   * However, it doesn't matter because no other application is working on
+   * the terminal besides readline */
+  rl_deprep_term_function = custom_deprep_term_function;
+
+  using_history();
+  read_history(".history"); 
+
+  return 0;
+}
+
+static int 
+main_loop(void)
+{
+  fd_set rset;
+  int max;
+    
+  max = (masterfd > STDIN_FILENO) ? masterfd : STDIN_FILENO;
+  max = (max > slavefd) ? max : slavefd;
+
+  for (;;)
+    {
+      /* Reset the fd_set, and watch for input from GDB or stdin */
+      FD_ZERO(&rset);
+        
+      FD_SET(STDIN_FILENO, &rset);
+      FD_SET(slavefd, &rset);
+      FD_SET(masterfd, &rset);
+
+      /* Wait for input */
+      if (select(max + 1, &rset, NULL, NULL, NULL) == -1)
+        {
+          if (errno == EINTR)
+             continue;
+          else
+            return -1;
+        }
+
+      /* Input received through the pty:  Handle it 
+       * Wrote to masterfd, slave fd has that input, alert readline to read it. 
+       */
+      if (FD_ISSET(slavefd, &rset))
+        rl_callback_read_char();
+
+      /* Input received through the pty.
+       * Readline read from slavefd, and it wrote to the masterfd. 
+       */
+      if (FD_ISSET(masterfd, &rset))
+        if ( readline_input() == -1 )
+          return -1;
+
+      /* Input received:  Handle it, write to masterfd (input to readline) */
+      if (FD_ISSET(STDIN_FILENO, &rset))
+        if ( user_input() == -1 )
+          return -1;
+  }
+
+  return 0;
+}
+
+/* The terminal attributes before calling tty_cbreak */
+static struct termios save_termios;
+static struct winsize size;
+static enum { RESET, TCBREAK } ttystate = RESET;
+
+/* tty_cbreak: Sets terminal to cbreak mode. Also known as noncanonical mode.
+ *    1. Signal handling is still turned on, so the user can still type those.
+ *    2. echo is off
+ *    3. Read in one char at a time.
+ *
+ * fd    - The file descriptor of the terminal
+ * 
+ * Returns: 0 on success, -1 on error
+ */
+int tty_cbreak(int fd){
+   struct termios buf;
+    int ttysavefd = -1;
+   
+   if(tcgetattr(fd, &save_termios) < 0)
+      return -1;
+      
+   buf = save_termios;
+   buf.c_lflag &= ~(ECHO | ICANON);
+   buf.c_iflag &= ~(ICRNL | INLCR);
+   buf.c_cc[VMIN] = 1;
+   buf.c_cc[VTIME] = 0;
+
+#if defined (VLNEXT) && defined (_POSIX_VDISABLE)
+   buf.c_cc[VLNEXT] = _POSIX_VDISABLE;
+#endif
+
+#if defined (VDSUSP) && defined (_POSIX_VDISABLE)
+   buf.c_cc[VDSUSP] = _POSIX_VDISABLE;
+#endif
+
+  /* enable flow control; only stty start char can restart output */
+#if 0
+  buf.c_iflag |= (IXON|IXOFF);
+#ifdef IXANY
+  buf.c_iflag &= ~IXANY;
+#endif
+#endif
+
+  /* disable flow control; let ^S and ^Q through to pty */
+  buf.c_iflag &= ~(IXON|IXOFF);
+#ifdef IXANY
+  buf.c_iflag &= ~IXANY;
+#endif
+
+  if(tcsetattr(fd, TCSAFLUSH, &buf) < 0)
+      return -1;
+
+   ttystate = TCBREAK;
+   ttysavefd = fd;
+
+   /* set size */
+   if(ioctl(fd, TIOCGWINSZ, (char *)&size) < 0)
+      return -1;
+
+#ifdef DEBUG
+   err_msg("%d rows and %d cols\n", size.ws_row, size.ws_col);   
+#endif
+   
+   return (0);   
+}
+
+int 
+tty_off_xon_xoff (int fd)
+{
+  struct termios buf;
+  int ttysavefd = -1;
+
+  if(tcgetattr(fd, &buf) < 0)
+    return -1;
+     
+  buf.c_iflag &= ~(IXON|IXOFF);
+
+  if(tcsetattr(fd, TCSAFLUSH, &buf) < 0)
+    return -1;
+
+  return 0;   
+}
+
+/* tty_reset: Sets the terminal attributes back to their previous state.
+ * PRE: tty_cbreak must have already been called.
+ * 
+ * fd    - The file descrioptor of the terminal to reset.
+ * 
+ * Returns: 0 on success, -1 on error
+ */
+int tty_reset(int fd)
+{
+   if(ttystate != TCBREAK)
+      return (0);
+
+   if(tcsetattr(fd, TCSAFLUSH, &save_termios) < 0)
+      return (-1);
+      
+   ttystate = RESET;
+   
+   return 0;   
+}
+
+int 
+main()
+{
+  int val;
+
+#ifdef HAVE_SETLOCALE
+  setlocale (LC_ALL, "");
+#endif
+
+  val = openpty (&masterfd, &slavefd, NULL, NULL, NULL);
+  if (val == -1)
+    return -1;
+
+  val = tty_off_xon_xoff (masterfd);
+  if (val == -1)
+    return -1;
+
+  signal (SIGWINCH, sigwinch);
+  signal (SIGINT, sigint);
+
+  val = init_readline (slavefd, slavefd);
+  if (val == -1)
+    return -1;
+
+  val = tty_cbreak (STDIN_FILENO);
+  if (val == -1)
+    return -1;
+
+  val = main_loop ();
+
+  tty_reset (STDIN_FILENO);
+
+  if (val == -1)
+    return -1;
+
+  return 0;
+}
+/* **************************************************************** */
+/*								    */
+/*			Testing Readline			    */
+/*								    */
+/* **************************************************************** */
+
+/* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#if defined (HAVE_CONFIG_H)
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <sys/types.h>
+
+#ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+#else 
+extern void exit();
+#endif
+
+#ifdef HAVE_LOCALE_H
+#  include <locale.h>
+#endif
+
+#ifdef READLINE_LIBRARY
+#  include "readline.h"
+#  include "history.h"
+#else
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
+
+extern HIST_ENTRY **history_list ();
+
+int
+main ()
+{
+  char *temp, *prompt;
+  int done;
+
+#ifdef HAVE_SETLOCALE
+  setlocale (LC_ALL, "");
+#endif
+
+  temp = (char *)NULL;
+  prompt = "readline$ ";
+  done = 0;
+
+  while (!done)
+    {
+      temp = readline (prompt);
+
+      /* Test for EOF. */
+      if (!temp)
+	exit (1);
+
+      /* If there is anything on the line, print it and remember it. */
+      if (*temp)
+	{
+	  fprintf (stderr, "%s\r\n", temp);
+	  add_history (temp);
+	}
+
+      /* Check for `command' that we handle. */
+      if (strcmp (temp, "quit") == 0)
+	done = 1;
+
+      if (strcmp (temp, "list") == 0)
+	{
+	  HIST_ENTRY **list;
+	  register int i;
+
+	  list = history_list ();
+	  if (list)
+	    {
+	      for (i = 0; list[i]; i++)
+		fprintf (stderr, "%d: %s\r\n", i, list[i]->line);
+	    }
+	}
+      free (temp);
+    }
+  exit (0);
+}
+/*
+ * rlversion -- print out readline's version number
+ */
+
+/* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+
+   This file is part of the GNU Readline Library (Readline), a library for
+   reading lines of text with interactive input and history editing.
+
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#if defined (HAVE_CONFIG_H)
+#  include <config.h>
+#endif
+
+#include <stdio.h>
+#include <sys/types.h>
+#include "posixstat.h"
+
+#ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+#else
+extern void exit();
+#endif
+
+#ifdef READLINE_LIBRARY
+#  include "readline.h"
+#else
+#  include <readline/readline.h>
+#endif
+
+int
+main()
+{
+	printf ("%s\n", rl_library_version ? rl_library_version : "unknown");
+	exit (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   loop.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lalex-ku <lalex-ku@42sp.org.br>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/06/22 17:32:45 by lalex-ku          #+#    #+#             */
+/*   Updated: 2022/06/22 17:32:50 by lalex-ku         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+
+int	main(int argc, char const *argv[])
+{
+	int	pid;
+
+	pid = fork();
+	open("infile", O_RDONLY);
+	while (1)
+	{
+		printf("Helloo miniHELL %i\n", pid);
+		sleep(1);
+	}
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:36 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:32:37 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char cd(t_jobs *jobs, char *path)
+{
+	if (!path)
+	{
+		path = env_find_value_const(jobs->env, "HOME");
+		if (!path)
+			return (EXIT_FAILURE);
+	}
+	if (chdir(path) == -1)
+	{
+		jobs->mshell->quest_mark = 1;
+		perror("cd");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ctrl_builtins.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:40 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 18:14:49 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void built_in(t_job *job)
+{
+	if (!ft_strncmp(job->args[0], "pwd", 3) && ft_strlen(job->args[0]) == 3)
+		job->built_in = true;
+	else if (!ft_strncmp(job->args[0], "cd", 2) && ft_strlen(job->args[0]) == 2)
+		job->built_in = true;
+	else if (!ft_strncmp(job->args[0], "echo", 4) && ft_strlen(job->args[0]) == 4)
+		job->built_in = true;
+	else if (!ft_strncmp(job->args[0], "env", 3) && ft_strlen(job->args[0]) == 3)
+		job->built_in = true;
+	else if (!ft_strncmp(job->args[0], "exit", 4) && ft_strlen(job->args[0]) == 4)
+		job->built_in = true;
+	else if (!ft_strncmp(job->args[0], "unset", 5) && ft_strlen(job->args[0]) == 5)
+		job->built_in = true;
+	else if (!ft_strncmp(job->args[0], "export", 6) && ft_strlen(job->args[0]) == 6)
+		job->built_in = true;
+	else
+		job->built_in = false;
+}
+
+static char ctrl_builtins_lh(t_jobs *jobs, t_job *job)
+{
+	if (!ft_strncmp(job->args[0], "echo", 4) && ft_strlen(job->args[0]) == 4)
+		return (echo(jobs, job), jobs->mshell->quest_mark);
+	else if (!ft_strncmp(job->args[0], "env", 3) && ft_strlen(job->args[0]) == 3)
+		return (env(jobs), jobs->mshell->quest_mark);
+	else if (!ft_strncmp(job->args[0], "exit", 4) && ft_strlen(job->args[0]) == 4)
+		return (exit_d(jobs, job->args), jobs->mshell->quest_mark);
+	else if (!ft_strncmp(job->args[0], "unset", 5) && ft_strlen(job->args[0]) == 5)
+	{
+		jobs->mshell->quest_mark = unset(&jobs->env, job->args);
+		return (jobs->mshell->quest_mark);
+	}
+	else if (!ft_strncmp(job->args[0], "export", 6) && ft_strlen(job->args[0]) == 6)
+		return (export(jobs, job->args));
+	return (-1);
+}
+
+char ctrl_builtins(t_jobs *jobs, t_job *job)
+{
+	if (!ft_strncmp(job->args[0], "pwd", 3) && ft_strlen(job->args[0]) == 3)
+	{
+		jobs->mshell->quest_mark = pwd(jobs);
+		return (jobs->mshell->quest_mark);
+	}
+	else if (!ft_strncmp(job->args[0], "cd", 2) && ft_strlen(job->args[0]) == 2)
+	{
+		jobs->mshell->quest_mark = cd(jobs, job->args[1]);
+		return (jobs->mshell->quest_mark);
+	}
+	else if (ctrl_builtins_lh(jobs, job))
+		return (-1);
+	return (-1);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   echo.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:49 by apalaz            #+#    #+#             */
+/*   Updated: 2024/11/24 22:42:04 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static int is_n_flag(char *arg)
+{
+	int i;
+
+	if (!arg || arg[0] != '-' || arg[1] != 'n')
+		return (0);
+	i = 2;
+	while (arg[i])
+	{
+		if (arg[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void echo(t_jobs *jobs, t_job *job)
+{
+	int i;
+	int newline;
+
+	newline = 1;
+	i = 1;
+	while (job->args[i] && is_n_flag(job->args[i]))
+	{
+		newline = 0;
+		i++;
+	}
+
+	while (job->args[i])
+	{
+		if (job->args[i][0] == '\0')
+			ft_putchar_fd('\0', 1);
+		else
+			ft_putstr_fd(job->args[i], 1);
+		if (job->args[i + 1])
+			ft_putchar_fd(' ', 1);
+		i++;
+	}
+	if (newline)
+		ft_putchar_fd('\n', 1);
+	jobs->mshell->quest_mark = 0;
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:51 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:32:52 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void env(t_jobs *jobs)
+{
+	int i;
+
+	i = -1;
+	while (++i < jobs->env->len)
+	{
+		write(1, jobs->env->key[i], ft_strlen(jobs->env->key[i]));
+		write(1, "=", 1);
+		write(1, jobs->env->value[i], ft_strlen(jobs->env->value[i]));
+		write(1, "\n", 1);
+	}
+	jobs->mshell->quest_mark = 0;
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:57 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 16:19:30 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char *strip_quotes(char *str)
+{
+	char *new_str;
+	int i;
+	int j;
+
+	new_str = malloc(ft_strlen(str) + 1);
+	if (!new_str)
+		return (NULL);
+	j = 0;
+	i = -1;
+	while (str[++i])
+	{
+		if (str[i] != '"' && str[i] != '\'')
+			new_str[j++] = str[i];
+	}
+	new_str[j] = '\0';
+	return (new_str);
+}
+
+char exit_error(t_jobs *jobs, char *arg, const char *msg)
+{
+	jobs->mshell->quest_mark = 255;
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putstr_fd((char *)msg, 2);
+	return (EXIT_FAILURE);
+}
+
+void exit_d(t_jobs *jobs, char **args)
+{
+    char *stripped;
+
+    ft_putendl_fd("exit", 1);
+    if (!args[1])
+    {
+        jobs->mshell->quest_mark = 0;
+        exit(jobs->mshell->quest_mark);
+    }
+    stripped = strip_quotes(args[1]);
+    if (!stripped)
+    {
+        exit_error(jobs, args[1], "memory allocation error\n");
+        exit(jobs->mshell->quest_mark);
+    }
+    handle_exit_argument(jobs, args, stripped);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit_helpers.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:55 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 16:19:01 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+#include "limits.h"
+
+static char calculate_result(const char *str, int *index, long *result)
+{
+	while (str[*index] && ft_isdigit(str[*index]))
+	{
+		if (*result > (LONG_MAX - (str[*index] - '0')) / 10)
+			return (EXIT_FAILURE);
+		*result = *result * 10 + (str[*index] - '0');
+		(*index)++;
+	}
+	return (EXIT_SUCCESS);
+}
+
+static int get_exit_value(char *str)
+{
+	long result;
+	int sign;
+	int i;
+
+	i = 0;
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == ' ')
+		i++;
+	sign = 1;
+	if (str[i] == '-')
+	{
+		sign = -1;
+		i++;
+	}
+	else if (str[i] == '+')
+		i++;
+	result = 0;
+	if (calculate_result(str, &i, &result))
+		return (EXIT_FAILURE);
+	result = (result * sign) % 256;
+	if (result < 0)
+		result += 256;
+	return (result);
+}
+
+static char is_all_digit(char *str)
+{
+	int i;
+
+	i = 0;
+	if (!str || !str[i])
+		return (EXIT_FAILURE);
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (EXIT_FAILURE);
+		i++;
+	}
+	return (EXIT_SUCCESS);
+}
+
+void handle_exit_argument(t_jobs *jobs, char **args, char *stripped)
+{
+	if (is_all_digit(stripped))
+	{
+		exit_error(jobs, args[1], "numeric argument required\n");
+		free(stripped);
+		exit(jobs->mshell->quest_mark);
+	}
+	if (args[2])
+	{
+		jobs->mshell->quest_mark = 1;
+		write(2, "minishell: exit: too many arguments\n", 37);
+		free(stripped);
+		return;
+	}
+	jobs->mshell->quest_mark = get_exit_value(stripped);
+	free(stripped);
+	exit(jobs->mshell->quest_mark);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:02 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 13:36:23 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char export_errors(t_jobs *jobs, char *arg, const char *msg)
+{
+	jobs->mshell->quest_mark = 1;
+	ft_putstr_fd("minishell: export: `", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putstr_fd("': ", 2);
+	ft_putendl_fd((char *)msg, 2);
+	return (EXIT_FAILURE);
+}
+
+static char validate(char *arg, char state)
+{
+	char alpha_state;
+	int i;
+
+	alpha_state = 0;
+	i = -1;
+	while (arg[++i])
+	{
+		if (state && arg[i] == '=')
+			i++;
+		if (ft_isalpha(arg[i]))
+			alpha_state = 1;
+		if (!ft_isalnum(arg[i]) && arg[i] != '_')
+			return (EXIT_FAILURE);
+	}
+	if (!alpha_state)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+static char export_arg(t_jobs *jobs, char *arg)
+{
+	char *key;
+	char *value;
+	char state;
+	int i;
+
+	i = 0;
+	while (arg[i] && arg[i] != '=')
+		i++;
+	key = ft_substr(arg, 0, i);
+	if (validate(key, 0))
+		return (free(key), export_errors(jobs, arg, "not a valid identifier"));
+	value = ft_substr(arg, i + 1, ft_strlen(arg) - i);
+	if (!value)
+		return (free(key), EXIT_FAILURE);
+	state = update_env(jobs->env, key, value);
+	if (state == -1)
+		return (free(key), free(value), EXIT_FAILURE);
+	if (state)
+		if (env_add(jobs->env, key, value))
+			return (free(key), free(value), EXIT_FAILURE);
+	return (free(key), free(value), EXIT_SUCCESS);
+}
+
+static void print_values(t_env *env)
+{
+	int i;
+
+	i = -1;
+	while (++i < env->len)
+	{
+		ft_putstr_fd("declare -x ", 1);
+		ft_putstr_fd(env->key[i], 1);
+		if (env->value[i][0])
+		{
+			ft_putstr_fd("=\"", 1);
+			ft_putstr_fd(env->value[i], 1);
+			ft_putstr_fd("\"\n", 1);
+		}
+		else
+			ft_putstr_fd("\n", 1);
+	}
+}
+
+char export(t_jobs *jobs, char **args)
+{
+	int i;
+
+	if (!args[1])
+	{
+		print_values(jobs->env);
+		jobs->mshell->quest_mark = 0;
+		return (EXIT_SUCCESS);
+	}
+	i = 0;
+	while (args[++i])
+	{
+		if (export_arg(jobs, args[i]))
+			return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export_helpers.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:59 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 17:09:32 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char update_env(t_env *env, char *key, char *value)
+{
+	size_t key_len;
+	int i;
+
+	key_len = ft_strlen(key);
+	i = -1;
+	while (env->key[++i])
+	{
+		if (!ft_strncmp(env->key[i], key, key_len) && key_len == ft_strlen(env->key[i]))
+		{
+			free(env->value[i]);
+			env->value[i] = NULL;
+			env->value[i] = ft_strdup(value);
+			if (!env->value[i])
+				return (-1);
+			return (EXIT_SUCCESS);
+		}
+	}
+	return (EXIT_FAILURE);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pwd.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:05 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:33:06 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char pwd(t_jobs *jobs)
+{
+	char wd[512];
+
+	if (!getcwd(wd, 512))
+	{
+		jobs->mshell->quest_mark = 1;
+		perror("pwd");
+		return (EXIT_FAILURE);
+	}
+	write(1, wd, ft_strlen(wd));
+	write(1, "\n", 1);
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:07 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:33:08 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char unset(t_env **env, char **keys)
+{
+	char *value;
+	int i;
+
+	if (!*env)
+		return (EXIT_FAILURE);
+	if (!keys)
+		return (EXIT_SUCCESS);
+	i = -1;
+	while (keys[++i])
+	{
+		value = env_find_value(*env, keys[i]);
+		if (!value)
+			continue;
+		if (env_del_element(env, keys[i], value))
+			return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_handle1.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:18 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 13:35:51 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char env_del_element(t_env **env, char *key, char *value)
+{
+	t_env *temp;
+	int len1;
+	int len2;
+	int i;
+
+	if (!key || !value)
+		return (EXIT_FAILURE);
+	len1 = ft_strlen(key);
+	temp = *env;
+	i = -1;
+	while (temp->key[++i])
+	{
+		len2 = ft_strlen(temp->key[i]);
+		if (len1 == len2 && !ft_strncmp(temp->key[i], key, len1))
+			return (env_del_index(env, i));
+	}
+	return (EXIT_SUCCESS);
+}
+
+char env_add(t_env *env, char *key, char *value)
+{
+	env->key = str_arr_realloc(env->key, key);
+	if (!env->key)
+		return (EXIT_FAILURE);
+	if (value)
+	{
+		env->value = str_arr_realloc(env->value, value);
+		if (!env->value)
+			return (EXIT_FAILURE);
+	}
+	else
+	{
+		value = ft_strdup("");
+		if (!value)
+			return (EXIT_FAILURE);
+		env->value = str_arr_realloc(env->value, value);
+		if (!env->value)
+			return (EXIT_FAILURE);
+	}
+	env->len += 1;
+	return (EXIT_SUCCESS);
+}
+
+char *env_find_value(t_env *env, char *key)
+{
+	int key_len;
+	int i;
+
+	if (!env || !key)
+		return (NULL);
+	key_len = ft_strlen(key);
+	i = -1;
+	while (env->key[++i])
+	{
+		if ((int)ft_strlen(env->key[i]) == key_len && !ft_strncmp(env->key[i],
+																  key, key_len))
+			return (env->value[i]);
+	}
+	return (NULL);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_handle2.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:20 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 20:27:54 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char get_first_env(t_jobs *jobs, char **env)
+{
+	char **splitted;
+	int i;
+
+	jobs->env = ft_calloc(1, sizeof(t_env));
+	if (!jobs->env)
+		return (EXIT_FAILURE);
+	i = -1;
+	while (env[++i])
+	{
+		splitted = ft_split(env[i], '=');
+		if (!splitted)
+			return (EXIT_FAILURE);
+		if (env_add(jobs->env, splitted[0], splitted[1]))
+			return (free_str_arr(splitted), EXIT_FAILURE);
+		free_str_arr(splitted);
+	}
+	return (EXIT_SUCCESS);
+}
+
+static char calloc_key_value(char ***key, char ***value, int len)
+{
+	*key = ft_calloc(len, sizeof(char *));
+	if (!*key)
+		return (EXIT_FAILURE);
+	*value = ft_calloc(len, sizeof(char *));
+	if (!*value)
+		return (free(*key), EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+static char env_del_index_lh(t_env **env, t_env *temp, int index)
+{
+	char state;
+	int i;
+
+	state = 0;
+	i = -1;
+	while (++i < temp->len)
+	{
+		if (i == index)
+			state = 1;
+		temp->key[i] = ft_strdup((*env)->key[i + state]);
+		if (!temp->key[i])
+			return (free_env(temp), EXIT_FAILURE);
+		temp->value[i] = ft_strdup((*env)->value[i + state]);
+		if (!temp->value[i])
+			return (free_env(temp), EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
+char env_del_index(t_env **env, int index)
+{
+	t_env *temp;
+
+	temp = ft_calloc(1, sizeof(t_env));
+	if (!temp)
+		return (EXIT_FAILURE);
+	temp->len = (*env)->len - 1;
+	if (calloc_key_value(&temp->key, &temp->value, temp->len + 1))
+		return (EXIT_FAILURE);
+	if (env_del_index_lh(env, temp, index))
+		return (EXIT_FAILURE);
+	free_env(*env);
+	*env = temp;
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:29 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 21:07:34 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void wait_child(t_mshell *mshell)
+{
+	t_job *temp_job;
+	int temp_status;
+	int i;
+
+	temp_job = mshell->jobs->job_list;
+	if (mshell->jobs->len == 1 && temp_job->built_in == true)
+		return;
+	while (temp_job)
+	{
+		signal(SIGINT, &handler_sigint);
+		i = waitpid(temp_job->pid, &temp_status, 0);
+		if (i < 0)
+			continue;
+		built_in(temp_job);
+		if (mshell->jobs->len == 1 && temp_job->built_in == true)
+			break;
+		if (WIFEXITED(temp_status))
+			mshell->quest_mark = WEXITSTATUS(temp_status);
+		else if (WIFSIGNALED(temp_status))
+			mshell->quest_mark = 128 + WTERMSIG(temp_status);
+		temp_job = temp_job->next_job;
+	}
+}
+
+static int executer_while(t_mshell *mshell, t_job *temp_job)
+{
+	if (mshell->jobs->len == 1)
+	{
+		if (temp_job->redir->eof && heredoc(mshell->jobs, temp_job, 1))
+			return (0);
+		if (no_pipe(mshell->jobs, temp_job))
+			return (0);
+	}
+	else
+	{
+		if (temp_job->redir->eof && heredoc(mshell->jobs, temp_job, 0))
+			return (0);
+		if (mshell->quest_mark == 130)
+			return (0);
+		if (pipe_handle(mshell->jobs, temp_job))
+			return (0);
+		mshell->quest_mark = 0;
+	}
+	return (1);
+}
+
+void get_backup(t_mshell *mshell)
+{
+	dup2(mshell->backup[0], 0);
+	close(mshell->backup[0]);
+	dup2(mshell->backup[1], 1);
+	close(mshell->backup[1]);
+}
+
+char executor(t_mshell *mshell)
+{
+	t_job *temp_job;
+	int state;
+
+	state = 1;
+	mshell->backup[0] = dup(STDIN_FILENO);
+	mshell->backup[1] = dup(STDOUT_FILENO);
+	temp_job = mshell->jobs->job_list;
+	while (temp_job)
+	{
+		state = executer_while(mshell, temp_job);
+		if (state != 1)
+			break;
+		temp_job = temp_job->next_job;
+	}
+	get_backup(mshell);
+	if (state)
+		wait_child(mshell);
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_helpers1.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:24 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 11:10:41 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char no_pipe(t_jobs *jobs, t_job *job)
+{
+	int fd;
+
+	built_in(job);
+	fd = get_fd(jobs, job);
+	if (fd == -1)
+		return (EXIT_FAILURE);
+	if (job->built_in == false)
+	{
+		job->pid = fork();
+		if (job->pid == 0)
+		{
+			set_signal(CHILD);
+			run_cmd(jobs, job);
+			exit(jobs->mshell->quest_mark);
+		}
+	}
+	else
+		return (ctrl_builtins(jobs, job));
+	return (EXIT_SUCCESS);
+}
+
+static void pipe_handle_child(t_jobs *jobs, t_job *job, int pipe_fd[2])
+{
+	int fd;
+
+	set_signal(CHILD);
+	close(pipe_fd[0]);
+	if (job->next_job)
+	{
+		dup2(pipe_fd[1], 1);
+		close(pipe_fd[1]);
+	}
+	fd = 1;
+	if (job->redir->in_f || job->redir->out_f || job->redir->app_f)
+	{
+		fd = get_fd(jobs, job);
+		if (fd == -1)
+			exit(1);
+	}
+	built_in(job);
+	if (job->built_in == false)
+		run_cmd(jobs, job);
+	exit(ctrl_builtins(jobs, job));
+}
+
+char pipe_handle(t_jobs *jobs, t_job *job)
+{
+	int pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+	{
+		perror("pipe");
+		exit(127);
+	}
+	job->pid = fork();
+	if (job->pid == 0)
+		pipe_handle_child(jobs, job, pipe_fd);
+	dup2(pipe_fd[0], 0);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	return (EXIT_SUCCESS);
+}
+
+static char *get_env_for_exec_lh(char *key)
+{
+	char *temp;
+	char *arg;
+
+	arg = ft_strdup(key);
+	if (!arg)
+		return (NULL);
+	temp = arg;
+	arg = ft_strjoin_const(arg, "=");
+	free(temp);
+	return (arg);
+}
+
+char **get_env_for_exec(t_env *env)
+{
+	char **rtrn;
+	char *arg;
+	char *temp;
+	int i;
+
+	rtrn = NULL;
+	i = -1;
+	while (++i < env->len)
+	{
+		arg = get_env_for_exec_lh(env->key[i]);
+		if (!arg)
+			return (NULL);
+		temp = arg;
+		arg = ft_strjoin_const(arg, env->value[i]);
+		free(temp);
+		if (!arg)
+			return (NULL);
+		rtrn = str_arr_realloc(rtrn, arg);
+		free(arg);
+	}
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_helpers2.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem < yunozdem@student.42istanbul.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:26 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 01:10:27 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void run_cmd_error_ctrl(t_jobs *jobs, char *path)
+{
+	t_stat stat_t;
+
+	stat(path, &stat_t);
+	if (S_ISDIR(stat_t.st_mode))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, path, ": Is a directory\n");
+		exit(126);
+	}
+	else if (!S_ISREG(stat_t.st_mode))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, path, ": No such file or directory\n");
+		exit(127);
+	}
+	if (access(path, R_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, path, ":  Permission denied\n");
+		exit(126);
+	}
+}
+
+static char *accessor(char *env_path, char *cmd)
+{
+	char **splitted;
+	char *temp1;
+	char *temp2;
+	int i;
+
+	splitted = ft_split(env_path, ':');
+	if (!splitted)
+		return (NULL);
+	i = -1;
+	while (splitted[++i])
+	{
+		temp1 = ft_strjoin_const(splitted[i], "/");
+		temp2 = temp1;
+		temp1 = ft_strjoin(temp1, cmd);
+		free(temp2);
+		if (!temp1)
+			return (free_str_arr(splitted), NULL);
+		if (!access(temp1, X_OK))
+			return (free_str_arr(splitted), temp1);
+		free(temp1);
+	}
+	return (free_str_arr(splitted), NULL);
+}
+
+static char *get_exec_path(t_jobs *jobs, t_job *job, char *env_path)
+{
+	char *rtrn;
+
+	if (ft_strchr(job->args[0], '/'))
+	{
+		run_cmd_error_ctrl(jobs, job->args[0]);
+		rtrn = ft_strdup(job->args[0]);
+	}
+	else
+		rtrn = accessor(env_path, job->args[0]);
+	if (!rtrn)
+	{
+		error_msg(jobs, job->args[0], ": command not found\n");
+		exit(127);
+	}
+	return (rtrn);
+}
+
+static char handle_env_path_null(t_jobs *jobs, t_job *job, char **env)
+{
+	if (!access(job->args[0], X_OK))
+	{
+		execve(job->args[0], job->args, env);
+		exit(127);
+	}
+	else
+	{
+		jobs->mshell->quest_mark = 1;
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(job->args[0], 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
+void run_cmd(t_jobs *jobs, t_job *job)
+{
+	char **env;
+	char *exec_path;
+	char *env_path;
+
+	env_path = env_find_value_const(jobs->env, "PATH");
+	env = get_env_for_exec(jobs->env);
+	if (!env_path && handle_env_path_null(jobs, job, env))
+		return;
+	exec_path = get_exec_path(jobs, job, env_path);
+	jobs->mshell->quest_mark = 0;
+	execve(exec_path, job->args, env);
+	exit(127);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:44 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:33:45 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void expander(t_jobs *jobs, char **prompt)
+{
+	char *expanded;
+
+	if (!*prompt)
+		return;
+	expanded = expand_env_vars(jobs, *prompt);
+	if (!expanded)
+		return;
+	free(*prompt);
+	*prompt = expanded;
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander_helpers_1.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:34 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 17:09:38 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void	expand_var_helper(char *value, char *result, int *temps)
+{
+	if (value)
+	{
+		ft_strlcpy(result + temps[1], value, ft_strlen(value) + 1);
+		temps[1] += ft_strlen(value);
+	}
+}
+
+static void	expand_variable(char *prompt, char *result, t_jobs *jobs,
+		int *temps)
+{
+	char	*key;
+	char	*value;
+	int		start;
+
+	start = temps[0];
+	while (ft_isalnum(prompt[start]) || prompt[start] == '_')
+		start++;
+	key = ft_substr(prompt, temps[0], start - temps[0]);
+	if (!key)
+		return ;
+	value = env_find_value(jobs->env, key);
+	free(key);
+	expand_var_helper(value, result, temps);
+	temps[0] = start;
+}
+
+static void	process_quest_mark(char *result, t_jobs *jobs, int *temps)
+{
+	char	*value;
+
+	value = ft_itoa(jobs->mshell->quest_mark);
+	if (!value)
+		return ;
+	ft_strlcpy(result + temps[1], value, ft_strlen(value) + 1);
+	temps[1] += ft_strlen(value);
+	free(value);
+	temps[0]++;
+}
+
+static void	process_variable(char *prompt, char *result, t_jobs *jobs,
+		int *temps)
+{
+	temps[0]++;
+	if (!prompt[temps[0]] || prompt[temps[0]] == ' ')
+    {
+        result[temps[1]++] = '$';
+        return;
+    }
+	if (prompt[temps[0]] == '"' || prompt[temps[0]] == '"'
+		|| (prompt[temps[0]] == '\'' && prompt[temps[0] + 1] == '\''))
+	{
+        temps[0] += 2;
+        return;
+    }
+	else if (prompt[temps[0]] == '?')
+		process_quest_mark(result, jobs, temps);
+	else if (ft_isalnum(prompt[temps[0]]) || prompt[temps[0]] == '_')
+		expand_variable(prompt, result, jobs, temps);
+	else
+		result[temps[1]++] = '$';
+}
+
+static char *init_expand_vars(t_jobs *jobs, char *prompt, int **temps)
+{
+    char *result;
+    t_quote_state state;
+
+    if (!prompt)
+        return (NULL);
+    *temps = ft_calloc(3, sizeof(int));
+    if (!*temps)
+        return (NULL);
+    state = (t_quote_state){false, false};
+    (*temps)[2] = calc_len(jobs, prompt, state);
+    result = ft_calloc(1, (*temps)[2] + 2);
+    if (!result)
+        return (free(*temps), NULL);
+    return (result);
+}
+
+char *expand_env_vars(t_jobs *jobs, char *prompt)
+{
+    t_quote_state state;
+    char *result;
+    int *temps;
+
+    result = init_expand_vars(jobs, prompt, &temps);
+    if (!result)
+        return (NULL);
+    state = (t_quote_state){false, false};
+    while (prompt[temps[0]])
+    {
+        update_quote_state(&state, prompt[temps[0]]);
+        if (prompt[temps[0]] == '$' && !state.in_single)
+        {
+            if (!prompt[temps[0] + 1] || prompt[temps[0] + 1] == ' ') // $ işareti kontrolü eklendi
+            {
+                result[temps[1]++] = prompt[temps[0]++];
+                continue;
+            }
+            process_variable(prompt, result, jobs, temps);
+        }
+        else
+            result[temps[1]++] = prompt[temps[0]++];
+    }
+    result[temps[1]] = '\0';
+    return (free(temps), result);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander_helpers_2.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:42 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 17:09:40 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void update_quote_state(t_quote_state *state, char c)
+{
+	if (c == '\'' && !state->in_double)
+		state->in_single = !state->in_single;
+	else if (c == '\"' && !state->in_single)
+		state->in_double = !state->in_double;
+}
+
+static int handle_env_var(t_jobs *jobs, char *prompt, int *index)
+{
+	char *key;
+	char *value;
+	int start;
+	int len;
+	
+	start = *index;
+	while (ft_isalnum(prompt[*index]) || prompt[*index] == '_')
+		(*index)++;
+	key = ft_substr(prompt, start, *index - start);
+	if (!key)
+		return (0);
+	value = env_find_value(jobs->env, key);
+	len = value ? ft_strlen(value) : 0;
+	free(key);
+	return (len);
+}
+
+static int calc_env_var_len(t_jobs *jobs, char *prompt, int *index)
+{
+	if (prompt[*index] == '"' || prompt[*index] == '\0' ||
+		(prompt[*index] == '\'' && prompt[*index + 1] == '\''))
+		return (0);
+	return (handle_env_var(jobs, prompt, index));
+}
+
+static int handle_quest_mark(t_jobs *jobs, int *index)
+{
+   char *temp;
+	int len;
+
+	temp = ft_itoa(jobs->mshell->quest_mark);
+	if (!temp)
+		return (0);
+	len = ft_strlen(temp);
+	free(temp);
+	(*index)++;
+	return (len);
+}
+
+static int calc_special_len(t_jobs *jobs, char *prompt, int *index)
+{
+	(*index)++;
+	if (prompt[*index] == '?')
+		return (handle_quest_mark(jobs, index));
+	return (calc_env_var_len(jobs, prompt, index));
+}
+
+int calc_len(t_jobs *jobs, char *prompt, t_quote_state state)
+{
+	int len;
+	int index;
+
+	len = 0;
+	index = 0;
+	state.in_single = false;
+	state.in_double = false;
+	while (prompt[index])
+	{
+		update_quote_state(&state, prompt[index]);
+		if (prompt[index] == '$' && !state.in_single)
+		{
+            len += calc_special_len(jobs, prompt, &index);
+        }
+		else
+		{
+            len++;
+            index++;
+        }
+    }
+    return (len + 1);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_helpers_1.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:50 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 11:03:13 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void free_str_arr(char **arr)
+{
+	int i;
+
+	if (!arr)
+		return;
+	i = -1;
+	while (arr[++i])
+		free(arr[i]);
+	free(arr);
+}
+
+void free_jobs(t_jobs *jobs)
+{
+	t_job *temp1;
+	t_job *temp2;
+
+	if (!jobs)
+		return;
+	if (jobs->job_list)
+	{
+		temp1 = jobs->job_list;
+		while (temp1)
+		{
+			temp2 = temp1->next_job;
+			free_job_list(temp1);
+			temp1 = temp2;
+		}
+	}
+	if (jobs->env)
+		free_env(jobs->env);
+	free(jobs);
+}
+
+void free_job_list(t_job *job_list)
+{
+	if (!job_list)
+		return;
+	if (job_list->args)
+		free_str_arr_null(&job_list->args);
+	if (job_list->redir)
+	{
+		free_redir(job_list->redir);
+		job_list->redir = NULL;
+	}
+	free(job_list);
+}
+
+void free_redir(t_redir *redir)
+{
+	if (!redir)
+		return;
+	if (redir->files)
+		free_str_arr_null(&redir->files);
+	if (redir->eof)
+		free_str_arr_null(&redir->eof);
+	if (redir->in_f)
+		free_str_arr_null(&redir->in_f);
+	if (redir->out_f)
+		free_str_arr_null(&redir->out_f);
+	if (redir->app_f)
+		free_str_arr_null(&redir->app_f);
+	free(redir);
+}
+
+void free_mshell(t_mshell *mshell)
+{
+	if (!mshell)
+		return;
+	if (mshell->jobs)
+		free_jobs(mshell->jobs);
+	free(mshell);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_helpers_2.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:53 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 11:03:09 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void free_nec(t_mshell *mshell)
+{
+	t_job *temp;
+	t_job *next;
+
+	temp = mshell->jobs->job_list;
+	while (temp)
+	{
+		next = temp->next_job;
+		free_job_list(temp);
+		temp = next;
+	}
+	mshell->jobs->job_list = NULL;
+}
+
+void free_str_arr_null(char ***arr)
+{
+	free_str_arr(*arr);
+	*arr = NULL;
+}
+
+void free_env(t_env *env)
+{
+	free_str_arr_null(&env->key);
+	free_str_arr_null(&env->value);
+	free(env);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   helpers.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:57 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:33:58 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char *env_find_value_const(t_env *env, const char *key)
+{
+	int key_len;
+	int i;
+
+	if (!env || !key)
+		return (NULL);
+	key_len = ft_strlen(key);
+	i = -1;
+	while (env->key[++i])
+	{
+		if ((int)ft_strlen(env->key[i]) == key_len && !ft_strncmp(env->key[i],
+																  key, key_len))
+			return (env->value[i]);
+	}
+	return (NULL);
+}
+
+char *ft_strjoin_const(char *s1, const char *s2)
+{
+	char *dst;
+	int i;
+	int j;
+
+	if (!s1)
+	{
+		s1 = malloc(sizeof(char) * 1);
+		s1[0] = '\0';
+	}
+	dst = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	if (!dst)
+		return (0);
+	i = -1;
+	while (s1[++i])
+		dst[i] = s1[i];
+	j = -1;
+	while (s2[++j])
+		dst[i + j] = s2[j];
+	dst[i + j] = 0;
+	return (dst);
+}
+
+int str_arr_len(char **arr)
+{
+	int i;
+
+	i = 0;
+	while (arr[i])
+		i++;
+	return (i);
+}
+
+char **str_arr_realloc(char **arr, char *element)
+{
+	char **rtrn;
+	int i;
+
+	if (!arr)
+	{
+		rtrn = ft_calloc(2, sizeof(char *));
+		if (!rtrn)
+			return (NULL);
+		rtrn[0] = ft_strdup(element);
+		return (rtrn);
+	}
+	rtrn = ft_calloc(str_arr_len(arr) + 2, sizeof(char *));
+	i = -1;
+	if (!rtrn)
+		return (NULL);
+	while (arr[++i])
+		rtrn[i] = ft_strdup(arr[i]);
+	free_str_arr(arr);
+	rtrn[i] = ft_strdup(element);
+	return (rtrn);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:36 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 13:21:25 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../inc/minishell.h"
+
+static char nuller(t_mshell *mshell)
+{
+	t_job *temp;
+	t_job *next;
+
+	temp = mshell->jobs->job_list;
+	while (temp)
+	{
+		next = temp->next_job;
+		free_job_list(temp);
+		temp = next;
+	}
+	mshell->jobs->job_list = ft_calloc(1, sizeof(t_job));
+	if (!mshell->jobs->job_list)
+		return (EXIT_FAILURE);
+	mshell->jobs->job_list->redir = ft_calloc(1, sizeof(t_redir));
+	if (!mshell->jobs->job_list->redir)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+static t_mshell *mshell_init(char **env)
+{
+	t_mshell *mshell;
+
+	mshell = ft_calloc(1, sizeof(t_mshell));
+	if (!mshell)
+		return (NULL);
+	mshell->jobs = ft_calloc(1, sizeof(t_jobs));
+	if (!mshell->jobs)
+		return (free(mshell), NULL);
+	if (get_first_env(mshell->jobs, env))
+		return (free(mshell->jobs), free(mshell), NULL);
+	mshell->jobs->mshell = mshell;
+	return (mshell);
+}
+
+static char process(t_mshell *mshell, char *prompt)
+{
+	t_job *temp;
+
+	if (parser(mshell->jobs, prompt))
+		return (EXIT_FAILURE);
+	temp = mshell->jobs->job_list;
+	while (temp)
+	{
+		if (!temp->args)
+		{
+			ft_putendl_fd("Syntax error special char got used as a command.",
+						  2);
+			mshell->quest_mark = 2;
+			return (EXIT_FAILURE);
+		}
+		temp = temp->next_job;
+	}
+	if (executor(mshell))
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+static void start_mshell(t_mshell *mshell)
+{
+	char *prompt;
+	char *trim;
+
+	while (1)
+	{
+		set_signal(MAIN);
+		prompt = readline(PROMPT);
+		if (!prompt)
+			break;
+		trim = ft_strtrim(prompt, " \t\r\f\v");
+		free(prompt);
+		if (!trim)
+			break;
+		set_signal(314);
+		if (nuller(mshell))
+		{
+			free(trim);
+			break;
+		}
+		if (process(mshell, trim))
+			continue;
+	}
+}
+
+int main(int argc, char **argv, char **env)
+{
+	t_mshell *mshell;
+
+	(void)argv;
+	if (argc != 1)
+		return (1);
+	mshell = mshell_init(env);
+	if (!mshell)
+		return (EXIT_FAILURE);
+	start_mshell(mshell);
+	free_mshell(mshell);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+
+	+:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+
+	+#+        */
+/*                                                +#+#+#+#+#+
+	+#+           */
+/*   Created: 2024/11/20 21:34:07 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:07 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char job_init(t_job **temp, char **splitted)
+{
+	(*temp)->next_job = ft_calloc(1, sizeof(t_job));
+	if (!(*temp)->next_job)
+		return (free_str_arr(splitted), EXIT_FAILURE);
+	*temp = (*temp)->next_job;
+	(*temp)->redir = ft_calloc(1, sizeof(t_redir));
+	if (!(*temp)->redir)
+		return (free_str_arr(splitted), EXIT_FAILURE);
+	(*temp)->redir->app_file = -1;
+	(*temp)->redir->in_file = -1;
+	(*temp)->redir->out_file = -1;
+	(*temp)->redir->last_in = 0;
+	(*temp)->redir->last_out = 0;
+	return (EXIT_SUCCESS);
+}
+
+char distribute(t_mshell *mshell, char **splitted)
+{
+	t_job *temp;
+	char redir_status;
+	int i;
+
+	redir_status = -1;
+	mshell->jobs->len = 1;
+	temp = mshell->jobs->job_list;
+	i = -1;
+	while (splitted[++i])
+	{
+		if (splitted[i][0] == '|')
+		{
+			mshell->jobs->len += 1;
+			if (job_init(&temp, splitted))
+				return (EXIT_FAILURE);
+		}
+		else if (handle_distribute(temp, splitted[i], &redir_status))
+			return (free_str_arr(splitted), EXIT_FAILURE);
+	}
+	return (free_str_arr(splitted), EXIT_SUCCESS);
+}
+
+char parser(t_jobs *jobs, char *prompt)
+{
+	char **splitted;
+
+	add_history(prompt);
+	expander(jobs, &prompt);
+	if (!prompt[0] || check_unclosed_quotes(jobs, prompt))
+		return (free(prompt), EXIT_FAILURE);
+	splitted = word_split(prompt);
+	free(prompt);
+	if (!splitted)
+		return (EXIT_FAILURE);
+	if (check_syntax_errors(jobs, splitted))
+		return (free_str_arr(splitted), EXIT_FAILURE);
+	return (distribute(jobs->mshell, splitted));
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_helpers1.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:02 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:03 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char append_files(t_job *temp, char *arg)
+{
+	temp->redir->files = str_arr_realloc(temp->redir->files, arg);
+	if (!temp->redir->files)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+static void get_status(char *arg, char *redir_status)
+{
+	if (arg[0] == '<' && !arg[1])
+		*redir_status = 0;
+	else if (arg[0] == '>' && !arg[1])
+		*redir_status = 1;
+	else if (arg[0] == '<' && arg[1] == arg[0] && !arg[2])
+		*redir_status = 2;
+	else if (arg[0] == '>' && arg[1] == arg[0] && !arg[2])
+		*redir_status = 3;
+	else
+		*redir_status = -1;
+}
+
+static char ctrl_redirect_line_helper(t_job *job, char *arg, char *redir_status)
+{
+	if (*redir_status == 2)
+	{
+		*redir_status = -1;
+		job->redir->last_in = 2;
+		job->redir->eof = str_arr_realloc(job->redir->eof, arg);
+		if (!job->redir->eof || append_files(job, arg))
+			return (EXIT_FAILURE);
+	}
+	else if (*redir_status == 3)
+	{
+		*redir_status = -1;
+		job->redir->last_out = 2;
+		job->redir->app_f = str_arr_realloc(job->redir->app_f, arg);
+		if (!job->redir->app_f || append_files(job, arg))
+			return (EXIT_FAILURE);
+	}
+	else
+		get_status(arg, redir_status);
+	return (EXIT_SUCCESS);
+}
+
+static char ctrl_redirect(t_job *job, char *arg, char *redir_status)
+{
+	if (*redir_status == 0)
+	{
+		*redir_status = -1;
+		job->redir->last_in = 1;
+		job->redir->in_f = str_arr_realloc(job->redir->in_f, arg);
+		if (!job->redir->in_f || append_files(job, arg))
+			return (EXIT_FAILURE);
+	}
+	else if (*redir_status == 1)
+	{
+		*redir_status = -1;
+		job->redir->last_out = 1;
+		job->redir->out_f = str_arr_realloc(job->redir->out_f, arg);
+		if (!job->redir->out_f || append_files(job, arg))
+			return (EXIT_FAILURE);
+	}
+	return (ctrl_redirect_line_helper(job, arg, redir_status));
+}
+
+char handle_distribute(t_job *temp, char *arg, char *redir_status)
+{
+	char state;
+	char **temp_args;
+
+	temp_args = temp->args;
+	if (!*arg)
+		return (EXIT_FAILURE);
+	state = ctrl_redirect(temp, arg, redir_status);
+	if (arg[0] == '<' && !arg[1])
+		return (EXIT_SUCCESS);
+	else if (arg[0] == '>' && !arg[1])
+		return (EXIT_SUCCESS);
+	else if (arg[0] == '<' && arg[1] == arg[0] && !arg[2])
+		return (EXIT_SUCCESS);
+	else if (arg[0] == '>' && arg[1] == arg[0] && !arg[2])
+		return (EXIT_SUCCESS);
+	if (state == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	else if (*redir_status == -1 && !ctrl_append(temp->redir, arg))
+	{
+		temp->args = str_arr_realloc(temp_args, arg);
+		if (!temp->args)
+			return (free_str_arr(temp->args), EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_helpers2.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:05 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:44:41 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char check_redir(char **redir_list, char *arg_trimmed)
+{
+	int len_str;
+	int len_arg;
+	int len;
+
+	if (!redir_list)
+		return (EXIT_SUCCESS);
+	len = str_arr_len(redir_list);
+	len_arg = ft_strlen(arg_trimmed);
+	len_str = ft_strlen(redir_list[len - 1]);
+	if (!ft_strncmp(redir_list[len - 1], arg_trimmed, len_str) && len_str == len_arg)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+char ctrl_append(t_redir *redir, char *arg)
+{
+	char *trimmed;
+
+	trimmed = ft_strtrim(arg, "\"");
+	if (!trimmed)
+		return (1);
+	if (check_redir(redir->app_f, trimmed) || check_redir(redir->in_f, trimmed) || check_redir(redir->out_f, trimmed) || check_redir(redir->eof, trimmed))
+	{
+		free(trimmed);
+		return (1);
+	}
+	free(trimmed);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   word_split.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:10 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:41:48 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static int get_word_len(t_parser_state *parser, char *prompt)
+{
+	int len;
+
+	if (prompt[parser->i] == '<' || prompt[parser->i] == '>' || prompt[parser->i] == '|')
+	{
+		if (prompt[parser->i] != '|' && prompt[parser->i] == prompt[parser->i + 1])
+			return (2);
+		else
+			return (1);
+	}
+	len = -1;
+	while (prompt[++len + parser->i])
+	{
+		if (prompt[parser->i + len] == '\'' || prompt[parser->i + len] == '\"')
+			update_quote_state(parser->state, prompt[parser->i + len]);
+		else if (!parser->state->in_single && !parser->state->in_double && (prompt[parser->i + len] == ' ' || prompt[parser->i + len] == '<' || prompt[parser->i + len] == '>' || prompt[parser->i + len] == '|'))
+			break;
+	}
+	return (len);
+}
+
+static char *get_word(t_parser_state *parser, char *prompt)
+{
+	char *word;
+	int i;
+
+	while (prompt[parser->i] && (prompt[parser->i] == ' ' || prompt[parser->i] == '\t' || prompt[parser->i] == '\v' || prompt[parser->i] == '\f' || prompt[parser->i] == '\r'))
+		parser->i++;
+	if (!prompt[parser->i])
+		return (NULL);
+	parser->len = get_word_len(parser, prompt);
+	word = ft_calloc(1, parser->len + 1);
+	if (!word)
+		return (NULL);
+	i = 0;
+	while (i < parser->len)
+		word[i++] = prompt[parser->i++];
+	word[i] = 0;
+	return (word);
+}
+
+static char *get_trimmed(char *word)
+{
+	char *trimmed;
+
+	if (word[0] == '\"')
+		trimmed = ft_strtrim(word, "\"");
+	else if (word[0] == '\'')
+		trimmed = ft_strtrim(word, "\'");
+	else
+		trimmed = ft_strdup(word);
+	return (trimmed);
+}
+
+char **word_split(char *prompt)
+{
+	t_quote_state quote_state;
+	t_parser_state parser;
+	char **words;
+	char *word;
+	char *trimmed;
+
+	quote_state = (t_quote_state){false, false};
+	parser = (t_parser_state){&quote_state, 0, 0};
+	words = NULL;
+	while (prompt[parser.i])
+	{
+		word = get_word(&parser, prompt);
+		if (!word)
+			break;
+		trimmed = get_trimmed(word);
+		free(word);
+		if (!trimmed)
+			return (free_str_arr(words), NULL);
+		words = str_arr_realloc(words, trimmed);
+		free(trimmed);
+		if (!words)
+			return (NULL);
+	}
+	return (words);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error_ctrl.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:18 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:19 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void error_msg(t_jobs *jobs, char *file, const char *message)
+{
+	jobs->mshell->quest_mark = 1;
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(file, 2);
+	ft_putstr_fd((char *)message, 2);
+}
+
+char redir_error(t_jobs *jobs, t_job *job, char *file_i, int fd)
+{
+	t_stat stat_t;
+
+	if (fd == -1)
+	{
+		jobs->mshell->quest_mark = 1;
+		stat(file_i, &stat_t);
+		if (S_ISDIR(stat_t.st_mode))
+			error_msg(jobs, file_i, ": Is a directory\n");
+		else if (!S_ISDIR(stat_t.st_mode))
+			error_msg(jobs, file_i, ": No such file or directory\n");
+		if (jobs->len == 1)
+			return (EXIT_FAILURE);
+		if (jobs->len != 1 || job->built_in == false)
+			exit(1);
+	}
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_fd.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:22 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 21:51:06 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void get_fd_init(int indexes[4])
+{
+	indexes[0] = 0;
+	indexes[1] = 0;
+	indexes[2] = 0;
+	indexes[4] = -1;
+}
+
+int get_fd(t_jobs *jobs, t_job *job)
+{
+	int fd;
+	int indexes[5];
+
+	fd = 1;
+	get_fd_init(indexes);
+	if (job->redir->files)
+	{
+		indexes[3] = -1;
+		while (job->redir->files[++indexes[3]])
+		{
+			fd = get_fd_lh(jobs, job, indexes);
+			if (fd == -1)
+			{
+				jobs->mshell->quest_mark = 1;
+				return (get_backup(jobs->mshell), -1);
+			}
+			if (fd != 1 && indexes[4] == 1)
+				dup2(fd, 1);
+			else if (fd != 0 && !indexes[4])
+				dup2(fd, 0);
+			if (fd != 0 && fd != 1)
+				close(fd);
+		}
+	}
+	return (fd);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_fd_helpers.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:20 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:21 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static int open_out(t_jobs *jobs, t_job *job, char *file, int indexes[5])
+{
+	int fd;
+
+	if (!file)
+		return (-1);
+	fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (access(file, F_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": No such file or directory\n");
+		return (-1);
+	}
+	if (access(file, W_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": Permission denied\n");
+		return (-1);
+	}
+	if (redir_error(jobs, job, file, fd))
+		return (-1);
+	job->redir->out_file = fd;
+	indexes[4] = 1;
+	return (fd);
+}
+
+static int open_app(t_jobs *jobs, t_job *job, char *file, int indexes[5])
+{
+	int fd;
+
+	if (!file)
+		return (-1);
+	fd = open(file, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	if (access(file, F_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": No such file or directory\n");
+		return (-1);
+	}
+	if (access(file, W_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": Permission denied\n");
+		return (-1);
+	}
+	if (redir_error(jobs, job, file, fd))
+		return (-1);
+	job->redir->app_file = fd;
+	indexes[4] = 1;
+	return (fd);
+}
+
+static int open_in(t_jobs *jobs, t_job *job, char *file, int indexes[5])
+{
+	int fd;
+
+	if (!file)
+		return (-1);
+	fd = open(file, O_RDONLY);
+	if (access(file, F_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": No such file or directory\n");
+		return (-1);
+	}
+	if (access(file, R_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": Permission denied\n");
+		return (-1);
+	}
+	if (redir_error(jobs, job, file, fd))
+		return (-1);
+	job->redir->in_file = fd;
+	indexes[4] = 0;
+	return (fd);
+}
+
+static char get_fd_lh_if(char *ctrl_str, char *file, int len1)
+{
+	int len2;
+
+	if (!ctrl_str)
+		return (-1);
+	len2 = ft_strlen(ctrl_str);
+	return (!ft_strncmp(file, ctrl_str, len1) && len1 == len2);
+}
+
+int get_fd_lh(t_jobs *jobs, t_job *job, int indexes[5])
+{
+	int fd;
+	char *file;
+
+	fd = 1;
+	file = NULL;
+	if (job->redir->files)
+		file = job->redir->files[indexes[3]];
+	if (job->redir->out_f && get_fd_lh_if(job->redir->out_f[indexes[0]], file,
+										  ft_strlen(file)) != -1)
+		fd = open_out(jobs, job, job->redir->out_f[indexes[0]++], indexes);
+	else if (job->redir->app_f && get_fd_lh_if(job->redir->app_f[indexes[1]],
+											   file, ft_strlen(file)) != -1)
+		fd = open_app(jobs, job, job->redir->app_f[indexes[1]++], indexes);
+	else if (job->redir->in_f && get_fd_lh_if(job->redir->in_f[indexes[2]],
+											  file, ft_strlen(file)) != -1)
+		fd = open_in(jobs, job, job->redir->in_f[indexes[2]++], indexes);
+	return (fd);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:24 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 10:27:02 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char calc_state(char *arg, char *test)
+{
+	int len;
+	int len_test;
+
+	len = ft_strlen(arg);
+	len_test = ft_strlen(test);
+	return (!ft_strncmp(arg, test, len) && len == len_test);
+}
+
+static void handle_arg(t_jobs *jobs, t_job *job, int pipe_fd[2])
+{
+	char *arg;
+	char c_state;
+	int i;
+
+	i = 0;
+	while (job->redir->eof[i])
+	{
+		arg = readline(">");
+		if (!arg)
+		{
+			jobs->mshell->quest_mark = 130;
+			exit(jobs->mshell->quest_mark);
+		}
+		c_state = calc_state(arg, job->redir->eof[i]);
+		if (!c_state && arg && !job->redir->eof[i + 1])
+			ft_putendl_fd(arg, pipe_fd[1]);
+		if (c_state)
+			i++;
+		free(arg);
+	}
+}
+
+static void heredoc_child(t_jobs *jobs, t_job *job, int pipe_fd[2], char state)
+{
+	if (state)
+		set_signal(HDOC);
+	dup2(jobs->mshell->backup[0], 0);
+	handle_arg(jobs, job, pipe_fd);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	exit(0);
+}
+
+char heredoc(t_jobs *jobs, t_job *job, char state)
+{
+	int temp_status;
+	int pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+		return (EXIT_FAILURE);
+	dup2(pipe_fd[0], 0);
+	job->pid = fork();
+	if (job->pid == 0)
+		heredoc_child(jobs, job, pipe_fd, state);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	waitpid(job->pid, &temp_status, 0);
+	if (state)
+	{
+		if (WIFEXITED(temp_status))
+			jobs->mshell->quest_mark = WEXITSTATUS(temp_status);
+	}
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signal_handle.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:32 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:33 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void handler_sigint(int sig)
+{
+	if (sig == SIGINT)
+	{
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+	}
+}
+
+static void handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+}
+
+static void handler_heredoc(int status)
+{
+	if (status == SIGINT)
+	{
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		exit(130);
+	}
+}
+
+void set_signal(int c)
+{
+	if (c == MAIN)
+	{
+		signal(SIGINT, &handler);
+		signal(SIGQUIT, SIG_IGN);
+	}
+	else if (c == CHILD)
+	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+	}
+	else if (c == HDOC)
+	{
+		signal(SIGINT, &handler_heredoc);
+		signal(SIGQUIT, SIG_IGN);
+	}
+	else
+		signal(SIGINT, SIG_IGN);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   syntax_check.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:40 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 18:34:02 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../inc/minishell.h"
+
+bool is_special_char(const char *token)
+{
+	return (ft_strncmp(token, "|", 2) == 0 || ft_strncmp(token, "<", 2) == 0 || ft_strncmp(token, ">", 2) == 0 || ft_strncmp(token, "<<", 3) == 0 || ft_strncmp(token, ">>", 3) == 0);
+}
+
+static bool cse_lh(t_jobs *jobs, const char *msg)
+{
+	jobs->mshell->quest_mark = 2;
+	ft_putendl_fd((char *)msg, 2);
+	return (true);
+}
+
+bool check_syntax_errors(t_jobs *jobs, char **tokens)
+{
+	int i;
+
+	i = -1;
+	while (tokens[++i])
+	{
+		if (ft_strncmp(tokens[i], "|", 2) == 0)
+		{
+			if (i == 0 || tokens[i + 1] == NULL || is_special_char(tokens[i + 1]))
+				return (cse_lh(jobs, "Syntax error near unexpected token '|'"));
+		}
+		if (is_special_char(tokens[i]) && ft_strncmp(tokens[i], "|", 2) != 0)
+		{
+			if (tokens[i + 1] == NULL || is_special_char(tokens[i + 1]))
+				return (cse_lh(jobs, "Syntax error near unexpected token"));
+		}
+	}
+	return (false);
+}
+
+bool check_unclosed_quotes(t_jobs *jobs, const char *input)
+{
+	char quote;
+
+	quote = 0;
+	while (*input)
+	{
+		if ((*input == '\'' || *input == '"') && (quote == '\0' || quote == *input))
+		{
+			if (!quote)
+				quote = *input;
+			else
+				quote = 0;
+		}
+		input++;
+	}
+	if (quote)
+	{
+		ft_putendl_fd("Syntax error: Unclosed quote", 2);
+		jobs->mshell->quest_mark = 2;
+		return (true);
+	}
+	return (false);
+}
