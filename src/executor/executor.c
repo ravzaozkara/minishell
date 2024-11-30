@@ -14,78 +14,87 @@
 
 static void wait_child(t_mshell *mshell)
 {
-	t_job *temp_job;
-	int temp_status;
-	int i;
+    t_job *current;
+    int process_status;
+    int final_status;
 
-	temp_job = mshell->jobs->job_list;
-	if (mshell->jobs->len == 1 && temp_job->built_in == true)
-		return;
-	while (temp_job)
-	{
-		signal(SIGINT, &handler_sigint);
-		i = waitpid(temp_job->pid, &temp_status, 0);
-		if (i < 0)
-			continue;
-		built_in(temp_job);
-		if (mshell->jobs->len == 1 && temp_job->built_in == true)
-			break;
-		if (WIFEXITED(temp_status))
-			mshell->quest_mark = WEXITSTATUS(temp_status);
-		else if (WIFSIGNALED(temp_status))
-			mshell->quest_mark = 128 + WTERMSIG(temp_status);
-		temp_job = temp_job->next_job;
-	}
+    current = mshell->jobs->job_list;
+    if (mshell->jobs->len == 1 && current->built_in == true)
+        return;
+
+    final_status = 0;
+    for (; current != NULL; current = current->next_job)
+    {
+        signal(SIGINT, &handler_sigint);
+        if (current->pid <= 0)
+            continue;
+            
+        if (waitpid(current->pid, &process_status, 0) > 0)
+        {
+            final_status = WIFEXITED(process_status) ? 
+                          WEXITSTATUS(process_status) : 
+                          (WIFSIGNALED(process_status) ? 128 + WTERMSIG(process_status) : 0);
+        }
+    }
+    
+    mshell->quest_mark = (mshell->quest_mark == 130) ? 
+                        mshell->quest_mark : final_status;
 }
 
-static int executer_while(t_mshell *mshell, t_job *temp_job)
+static int executer_while(t_mshell *mshell, t_job *current_job)
 {
-	if (mshell->jobs->len == 1)
-	{
-		if (temp_job->redir->eof && heredoc(mshell->jobs, temp_job, 1))
-			return (0);
-		if (no_pipe(mshell->jobs, temp_job))
-			return (0);
-	}
-	else
-	{
-		if (temp_job->redir->eof && heredoc(mshell->jobs, temp_job, 0))
-			return (0);
-		if (mshell->quest_mark == 130)
-			return (0);
-		if (pipe_handle(mshell->jobs, temp_job))
-			return (0);
-		mshell->quest_mark = 0;
-	}
-	return (1);
+    const int is_single_job = mshell->jobs->len == 1;
+    
+    if (is_single_job)
+    {
+        if (current_job->redir->eof && 
+            heredoc(mshell->jobs, current_job, 1))
+            return (0);
+        else if (no_pipe(mshell->jobs, current_job))
+            return (0);
+    }
+    else
+    {
+        if (current_job->redir->eof && 
+            heredoc(mshell->jobs, current_job, 0))
+            return (0);
+        else if (mshell->quest_mark == 130 || 
+            pipe_handle(mshell->jobs, current_job))
+            return (0);
+        mshell->quest_mark = 0;
+    }
+    return (1);
 }
 
 void get_backup(t_mshell *mshell)
 {
-	dup2(mshell->backup[0], 0);
-	close(mshell->backup[0]);
-	dup2(mshell->backup[1], 1);
-	close(mshell->backup[1]);
+    const int stdin_backup = mshell->backup[0];
+    const int stdout_backup = mshell->backup[1];
+    
+    if (dup2(stdin_backup, STDIN_FILENO) != -1)
+        close(stdin_backup);
+        
+    if (dup2(stdout_backup, STDOUT_FILENO) != -1)
+        close(stdout_backup);
 }
 
 char executor(t_mshell *mshell)
 {
-	t_job *temp_job;
-	int state;
+    t_job *current_job;
+    int execution_status;
 
-	state = 1;
-	mshell->backup[0] = dup(STDIN_FILENO);
-	mshell->backup[1] = dup(STDOUT_FILENO);
-	temp_job = mshell->jobs->job_list;
-	while (temp_job)
+    execution_status = 1;
+    mshell->backup[0] = dup(STDIN_FILENO);
+    mshell->backup[1] = dup(STDOUT_FILENO);
+    
+    current_job = mshell->jobs->job_list;
+	while (current_job && execution_status == 1)
 	{
-		state = executer_while(mshell, temp_job);
-		if (state != 1)
-			break;
-		temp_job = temp_job->next_job;
+		execution_status = executer_while(mshell, current_job);
+		current_job = current_job->next_job;
 	}
-	get_backup(mshell);
-	if (state)
-		wait_child(mshell);
-	return (EXIT_SUCCESS);
+    get_backup(mshell);
+    if (execution_status)
+        wait_child(mshell);
+    return (EXIT_SUCCESS);
 }

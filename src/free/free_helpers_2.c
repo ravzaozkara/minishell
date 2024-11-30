@@ -14,28 +14,37 @@
 
 void free_nec(t_mshell *mshell)
 {
-	t_job *temp;
-	t_job *next;
+   t_job *current;
+   t_job *next;
 
-	temp = mshell->jobs->job_list;
-	while (temp)
-	{
-		next = temp->next_job;
-		free_job_list(temp);
-		temp = next;
-	}
-	mshell->jobs->job_list = NULL;
+   if (!mshell || !mshell->jobs)
+       return;
+
+   current = mshell->jobs->job_list;
+   while (current) {
+       next = current->next_job;
+       free_job_list(current);
+       current = next;
+   }
+   
+   mshell->jobs->job_list = NULL;
 }
 
-void free_str_arr_null(char ***arr)
+void free_str_arr_null(char ***array)
 {
-	free_str_arr(*arr);
-	*arr = NULL;
+   if (!array || !*array)
+       return;
+       
+   free_str_arr(*array);
+   *array = NULL;
 }
 
 void free_env(t_env *env)
 {
-	free_str_arr_null(&env->key);
-	free_str_arr_null(&env->value);
-	free(env);
+   if (!env)
+       return;
+       
+   free_str_arr_null(&env->key);
+   free_str_arr_null(&env->value);
+   free(env);
 }

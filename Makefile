@@ -1,6 +1,6 @@
 NAME = minishell
 
-CFLAGS = -Wall -Wextra -Werror -I $(READLINE)include/ -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I $(READLINE)include/ # -g -fsanitize=address
 
 LIBFT_PATH = inc/libft/
 LIBFT_FLAGS = -L $(LIBFT_PATH) -lft
@@ -16,7 +16,7 @@ B_SRC = $(B_PATH)ctrl_builtins.c $(B_PATH)cd.c $(B_PATH)pwd.c $(B_PATH)echo.c $(
 $(B_PATH)export.c $(B_PATH)export_helpers.c $(B_PATH)unset.c $(B_PATH)exit.c $(B_PATH)exit_helpers.c
 
 EX_PATH = $(SRC_PATH)executor/
-EX_SRC = $(EX_PATH)executor.c $(EX_PATH)executor_helpers1.c $(EX_PATH)executor_helpers2.c
+EX_SRC = $(EX_PATH)executor.c $(EX_PATH)executor_helpers1.c $(EX_PATH)executor_helpers2.c $(EX_PATH)executor_helpers3.c
 
 EXP_PATH = $(SRC_PATH)expander/
 EXP_SRC = $(EXP_PATH)expander.c $(EXP_PATH)expander_helpers_1.c $(EXP_PATH)expander_helpers_2.c
@@ -66,4 +66,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re test

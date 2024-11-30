@@ -14,21 +14,24 @@
 
 char unset(t_env **env, char **keys)
 {
-	char *value;
-	int i;
+    char *env_value;
+    int key_index;
 
-	if (!*env)
-		return (EXIT_FAILURE);
-	if (!keys)
-		return (EXIT_SUCCESS);
-	i = -1;
-	while (keys[++i])
-	{
-		value = env_find_value(*env, keys[i]);
-		if (!value)
-			continue;
-		if (env_del_element(env, keys[i], value))
-			return (EXIT_FAILURE);
-	}
-	return (EXIT_SUCCESS);
+    if (!*env)
+        return (EXIT_FAILURE);
+        
+    if (!keys)
+        return (EXIT_SUCCESS);
+
+    for (key_index = 0; keys[key_index]; key_index++) {
+        env_value = env_find_value(*env, keys[key_index]);
+        
+        if (!env_value)
+            continue;
+            
+        if (env_del_element(env, keys[key_index], env_value))
+            return (EXIT_FAILURE);
+    }
+    
+    return (EXIT_SUCCESS);
 }

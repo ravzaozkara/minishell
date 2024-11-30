@@ -12,103 +12,89 @@
 
 #include "../inc/minishell.h"
 
-static char nuller(t_mshell *mshell)
+static char reset_jobs(t_mshell *mshell)
 {
-	t_job *temp;
-	t_job *next;
+    t_job *current;
+    t_job *next;
 
-	temp = mshell->jobs->job_list;
-	while (temp)
-	{
-		next = temp->next_job;
-		free_job_list(temp);
-		temp = next;
-	}
-	mshell->jobs->job_list = ft_calloc(1, sizeof(t_job));
-	if (!mshell->jobs->job_list)
-		return (EXIT_FAILURE);
-	mshell->jobs->job_list->redir = ft_calloc(1, sizeof(t_redir));
-	if (!mshell->jobs->job_list->redir)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+    current = mshell->jobs->job_list;
+    while (current)
+    {
+        next = current->next_job;
+        free_job_list(current);
+        current = next;
+    }
+    mshell->jobs->job_list = ft_calloc(1, sizeof(t_job));
+    if (!mshell->jobs->job_list)
+        return (EXIT_FAILURE);
+    mshell->jobs->job_list->redir = ft_calloc(1, sizeof(t_redir));
+    if (!mshell->jobs->job_list->redir)
+        return (EXIT_FAILURE);
+    return (EXIT_SUCCESS);
 }
 
-static t_mshell *mshell_init(char **env)
+static t_mshell *initialize_mshell(char **env)
 {
-	t_mshell *mshell;
+    t_mshell *mshell;
 
-	mshell = ft_calloc(1, sizeof(t_mshell));
-	if (!mshell)
-		return (NULL);
-	mshell->jobs = ft_calloc(1, sizeof(t_jobs));
-	if (!mshell->jobs)
-		return (free(mshell), NULL);
-	if (get_first_env(mshell->jobs, env))
-		return (free(mshell->jobs), free(mshell), NULL);
-	mshell->jobs->mshell = mshell;
-	return (mshell);
+    mshell = ft_calloc(1, sizeof(t_mshell));
+    if (!mshell)
+        return (NULL);
+    mshell->jobs = ft_calloc(1, sizeof(t_jobs));
+    if (!mshell->jobs)
+        return (free(mshell), NULL);
+    if (get_first_env(mshell->jobs, env))
+        return (free(mshell->jobs), free(mshell), NULL);
+    mshell->jobs->mshell = mshell;
+    return (mshell);
 }
 
-static char process(t_mshell *mshell, char *prompt)
+static char execute_process(t_mshell *mshell, char *prompt)
 {
-	t_job *temp;
-
-	if (parser(mshell->jobs, prompt))
-		return (EXIT_FAILURE);
-	temp = mshell->jobs->job_list;
-	while (temp)
-	{
-		if (!temp->args)
-		{
-			ft_putendl_fd("Syntax error special char got used as a command.",
-						  2);
-			mshell->quest_mark = 2;
-			return (EXIT_FAILURE);
-		}
-		temp = temp->next_job;
-	}
-	if (executor(mshell))
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+    if (parser(mshell->jobs, prompt))
+        return (EXIT_FAILURE);
+    if (executor(mshell))
+        return (EXIT_FAILURE);
+    return (EXIT_SUCCESS);
 }
 
-static void start_mshell(t_mshell *mshell)
+static void  run_mshell(t_mshell *mshell)
 {
-	char *prompt;
-	char *trim;
+    char *prompt;
+    char *trimmed_prompt;
 
-	while (1)
-	{
-		set_signal(MAIN);
-		prompt = readline(PROMPT);
-		if (!prompt)
-			break;
-		trim = ft_strtrim(prompt, " \t\r\f\v");
-		free(prompt);
-		if (!trim)
-			break;
-		set_signal(314);
-		if (nuller(mshell))
-		{
-			free(trim);
-			break;
-		}
-		if (process(mshell, trim))
-			continue;
-	}
+    while (1)
+    {
+        set_signal(MAIN);
+        prompt = readline(PROMPT);
+        if (!prompt)
+            break;
+        trimmed_prompt = ft_strtrim(prompt, " \t\r\f\v");
+        free(prompt);
+        if (!trimmed_prompt)
+            break;
+        set_signal(SIGNAL_IGNORE);
+        if (reset_jobs(mshell))
+        {
+            free(trimmed_prompt);
+            break;
+        }
+        if (execute_process(mshell, trimmed_prompt))
+            continue;
+    }
 }
 
 int main(int argc, char **argv, char **env)
 {
-	t_mshell *mshell;
+    t_mshell *mshell;
 
-	(void)argv;
-	if (argc != 1)
-		return (1);
-	mshell = mshell_init(env);
-	if (!mshell)
-		return (EXIT_FAILURE);
-	start_mshell(mshell);
-	free_mshell(mshell);
-	return (0);
+    (void)argv;
+    if (argc != 1)
+        return (1);
+    mshell = initialize_mshell(env);
+    if (!mshell)
+        return (EXIT_FAILURE);
+    run_mshell(mshell);
+    free_mshell(mshell);
+    return (EXIT_SUCCESS);
 }

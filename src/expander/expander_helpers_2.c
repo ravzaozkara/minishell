@@ -14,82 +14,90 @@
 
 void update_quote_state(t_quote_state *state, char c)
 {
-	if (c == '\'' && !state->in_double)
-		state->in_single = !state->in_single;
-	else if (c == '\"' && !state->in_single)
-		state->in_double = !state->in_double;
+    if (c == '\'' && !state->in_double)
+        state->in_single = !state->in_single;
+    else if (c == '\"' && !state->in_single)
+        state->in_double = !state->in_double;
 }
 
-static int handle_env_var(t_jobs *jobs, char *prompt, int *index)
+static int measure_env_var_length(t_jobs *jobs, char *prompt, int *index)
 {
-	char *key;
-	char *value;
-	int start;
-	int len;
-	
-	start = *index;
-	while (ft_isalnum(prompt[*index]) || prompt[*index] == '_')
-		(*index)++;
-	key = ft_substr(prompt, start, *index - start);
-	if (!key)
-		return (0);
-	value = env_find_value(jobs->env, key);
-	len = value ? ft_strlen(value) : 0;
-	free(key);
-	return (len);
+    char *key;
+    char *value;
+    int start_pos;
+    int value_len;
+    
+    start_pos = *index;
+    while (ft_isalnum(prompt[*index]) || prompt[*index] == '_')
+        (*index)++;
+
+    key = ft_substr(prompt, start_pos, *index - start_pos);
+    if (!key)
+        return (0);
+
+    value = env_find_value(jobs->env, key);
+    value_len = value ? ft_strlen(value) : 0;
+    
+    free(key);
+    return (value_len);
 }
 
-static int calc_env_var_len(t_jobs *jobs, char *prompt, int *index)
+static int get_env_var_length(t_jobs *jobs, char *prompt, int *index)
 {
-	if (prompt[*index] == '"' || prompt[*index] == '\0' ||
-		(prompt[*index] == '\'' && prompt[*index + 1] == '\''))
-		return (0);
-	return (handle_env_var(jobs, prompt, index));
+    if (prompt[*index] == '"' || prompt[*index] == '\0' ||
+        (prompt[*index] == '\'' && prompt[*index + 1] == '\''))
+        return (0);
+        
+    return (measure_env_var_length(jobs, prompt, index));
 }
 
-static int handle_quest_mark(t_jobs *jobs, int *index)
+static int calculate_exit_status_length(t_jobs *jobs, int *index)
 {
-   char *temp;
-	int len;
+    char *status_str;
+    int length;
 
-	temp = ft_itoa(jobs->mshell->quest_mark);
-	if (!temp)
-		return (0);
-	len = ft_strlen(temp);
-	free(temp);
-	(*index)++;
-	return (len);
+    status_str = ft_itoa(jobs->mshell->quest_mark);
+    if (!status_str)
+        return (0);
+        
+    length = ft_strlen(status_str);
+    free(status_str);
+    (*index)++;
+    
+    return (length);
 }
 
-static int calc_special_len(t_jobs *jobs, char *prompt, int *index)
+static int handle_special_character(t_jobs *jobs, char *prompt, int *index)
 {
-	(*index)++;
-	if (prompt[*index] == '?')
-		return (handle_quest_mark(jobs, index));
-	return (calc_env_var_len(jobs, prompt, index));
+    (*index)++;
+    
+    if (prompt[*index] == '?')
+        return (calculate_exit_status_length(jobs, index));
+        
+    return (get_env_var_length(jobs, prompt, index));
 }
 
 int calc_len(t_jobs *jobs, char *prompt, t_quote_state state)
 {
-	int len;
-	int index;
+    int total_length;
+    int position;
 
-	len = 0;
-	index = 0;
-	state.in_single = false;
-	state.in_double = false;
-	while (prompt[index])
-	{
-		update_quote_state(&state, prompt[index]);
-		if (prompt[index] == '$' && !state.in_single)
-		{
-            len += calc_special_len(jobs, prompt, &index);
-        }
-		else
-		{
-            len++;
-            index++;
+    total_length = 0;
+    position = 0;
+    
+    state.in_single = false;
+    state.in_double = false;
+    
+    while (prompt[position]) {
+        update_quote_state(&state, prompt[position]);
+        
+        if (prompt[position] == '$' && !state.in_single) {
+            total_length += handle_special_character(jobs, prompt, &position);
+        } else {
+            total_length++;
+            position++;
         }
     }
-    return (len + 1);
+    
+    return (total_length + 1);
 }

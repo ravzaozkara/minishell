@@ -15,60 +15,83 @@
 
 #include "../../inc/minishell.h"
 
-static char job_init(t_job **temp, char **splitted)
+static char initialize_job(t_job **job_node, char **token_array)
 {
-	(*temp)->next_job = ft_calloc(1, sizeof(t_job));
-	if (!(*temp)->next_job)
-		return (free_str_arr(splitted), EXIT_FAILURE);
-	*temp = (*temp)->next_job;
-	(*temp)->redir = ft_calloc(1, sizeof(t_redir));
-	if (!(*temp)->redir)
-		return (free_str_arr(splitted), EXIT_FAILURE);
-	(*temp)->redir->app_file = -1;
-	(*temp)->redir->in_file = -1;
-	(*temp)->redir->out_file = -1;
-	(*temp)->redir->last_in = 0;
-	(*temp)->redir->last_out = 0;
-	return (EXIT_SUCCESS);
+    t_job *new_job = ft_calloc(1, sizeof(t_job));
+    if (new_job == NULL)
+    {
+        free_str_arr(token_array);
+        return EXIT_FAILURE;
+    }
+    (*job_node)->next_job = new_job;
+    *job_node = new_job;
+
+    new_job->redir = ft_calloc(1, sizeof(t_redir));
+    if (new_job->redir == NULL)
+    {
+        free_str_arr(token_array);
+        return EXIT_FAILURE;
+    }
+
+    t_redir *redir_struct = new_job->redir;
+    redir_struct->app_file = -1;
+    redir_struct->in_file = -1;
+    redir_struct->out_file = -1;
+    redir_struct->last_in = 0;
+    redir_struct->last_out = 0;
+
+    return EXIT_SUCCESS;
 }
 
-char distribute(t_mshell *mshell, char **splitted)
+char distribute(t_mshell *shell_instance, char **token_array)
 {
-	t_job *temp;
-	char redir_status;
-	int i;
+    t_job *current_job;
+    char redirect_flag;
+    int token_index;
 
-	redir_status = -1;
-	mshell->jobs->len = 1;
-	temp = mshell->jobs->job_list;
-	i = -1;
-	while (splitted[++i])
-	{
-		if (splitted[i][0] == '|')
-		{
-			mshell->jobs->len += 1;
-			if (job_init(&temp, splitted))
-				return (EXIT_FAILURE);
-		}
-		else if (handle_distribute(temp, splitted[i], &redir_status))
-			return (free_str_arr(splitted), EXIT_FAILURE);
-	}
-	return (free_str_arr(splitted), EXIT_SUCCESS);
+	current_job = shell_instance->jobs->job_list;
+    redirect_flag = -1;
+    token_index = 0;
+    shell_instance->jobs->len = 1;
+    while (token_array[token_index] != NULL)
+    {
+        if (token_array[token_index][0] == '|')
+        {
+            shell_instance->jobs->len++;
+            if (initialize_job(&current_job, token_array) != EXIT_SUCCESS)
+				return (free_str_arr(token_array), EXIT_FAILURE);
+        }
+		else if (handle_distribute(current_job, token_array[token_index], &redirect_flag))
+			return (free_str_arr(token_array), EXIT_FAILURE);
+        token_index++;
+    }
+    return (free_str_arr(token_array), EXIT_SUCCESS);
 }
 
-char parser(t_jobs *jobs, char *prompt)
+char parser(t_jobs *jobs, char *input_line)
 {
-	char **splitted;
+    char **tokens;
 
-	add_history(prompt);
-	expander(jobs, &prompt);
-	if (!prompt[0] || check_unclosed_quotes(jobs, prompt))
-		return (free(prompt), EXIT_FAILURE);
-	splitted = word_split(prompt);
-	free(prompt);
-	if (!splitted)
-		return (EXIT_FAILURE);
-	if (check_syntax_errors(jobs, splitted))
-		return (free_str_arr(splitted), EXIT_FAILURE);
-	return (distribute(jobs->mshell, splitted));
+    add_history(input_line);
+    expander(jobs, &input_line);
+
+    if (input_line[0] == '\0' || check_unclosed_quotes(jobs, input_line))
+    {
+        free(input_line);
+        return EXIT_FAILURE;
+    }
+
+    tokens = split_into_words(input_line);
+    free(input_line);
+
+    if (tokens == NULL)
+        return EXIT_FAILURE;
+
+    if (check_syntax_errors(jobs, tokens))
+    {
+        free_str_arr(tokens);
+        return EXIT_FAILURE;
+    }
+
+    return distribute(jobs->mshell, tokens);
 }

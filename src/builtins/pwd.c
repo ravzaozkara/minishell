@@ -14,15 +14,19 @@
 
 char pwd(t_jobs *jobs)
 {
-	char wd[512];
+    char current_path[512];
+    const int ERROR_STATUS = 1;
+    size_t path_length;
 
-	if (!getcwd(wd, 512))
-	{
-		jobs->mshell->quest_mark = 1;
-		perror("pwd");
-		return (EXIT_FAILURE);
-	}
-	write(1, wd, ft_strlen(wd));
-	write(1, "\n", 1);
-	return (EXIT_SUCCESS);
+    if (!getcwd(current_path, sizeof(current_path))) {
+        jobs->mshell->quest_mark = ERROR_STATUS;
+        perror("pwd");
+        return (EXIT_FAILURE);
+    }
+
+    path_length = ft_strlen(current_path);
+    write(STDOUT_FILENO, current_path, path_length);
+    write(STDOUT_FILENO, "\n", 1);
+    
+    return (EXIT_SUCCESS);
 }

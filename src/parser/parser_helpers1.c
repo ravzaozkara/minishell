@@ -12,96 +12,118 @@
 
 #include "../../inc/minishell.h"
 
-static char append_files(t_job *temp, char *arg)
+static bool is_redirect_operator(char *arg)
 {
-	temp->redir->files = str_arr_realloc(temp->redir->files, arg);
-	if (!temp->redir->files)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+    return (arg[0] == '<' && !arg[1]) ||
+           (arg[0] == '>' && !arg[1]) ||
+           (arg[0] == '<' && arg[1] == arg[0] && !arg[2]) ||
+           (arg[0] == '>' && arg[1] == arg[0] && !arg[2]);
 }
 
-static void get_status(char *arg, char *redir_status)
+static char append_to_files(t_job *job, char *arg)
 {
-	if (arg[0] == '<' && !arg[1])
-		*redir_status = 0;
-	else if (arg[0] == '>' && !arg[1])
-		*redir_status = 1;
-	else if (arg[0] == '<' && arg[1] == arg[0] && !arg[2])
-		*redir_status = 2;
-	else if (arg[0] == '>' && arg[1] == arg[0] && !arg[2])
-		*redir_status = 3;
-	else
-		*redir_status = -1;
+    if (!job || !arg)
+        return (EXIT_FAILURE);
+        
+    job->redir->files = str_arr_realloc(job->redir->files, arg);
+    if (!job->redir->files)
+        return (EXIT_FAILURE);
+        
+    return (EXIT_SUCCESS);
 }
 
-static char ctrl_redirect_line_helper(t_job *job, char *arg, char *redir_status)
+static void determine_redirect_type(char *arg, char *status)
 {
-	if (*redir_status == 2)
-	{
-		*redir_status = -1;
-		job->redir->last_in = 2;
-		job->redir->eof = str_arr_realloc(job->redir->eof, arg);
-		if (!job->redir->eof || append_files(job, arg))
-			return (EXIT_FAILURE);
-	}
-	else if (*redir_status == 3)
-	{
-		*redir_status = -1;
-		job->redir->last_out = 2;
-		job->redir->app_f = str_arr_realloc(job->redir->app_f, arg);
-		if (!job->redir->app_f || append_files(job, arg))
-			return (EXIT_FAILURE);
-	}
-	else
-		get_status(arg, redir_status);
-	return (EXIT_SUCCESS);
+    if (!arg || !arg[0]) {
+        *status = -1;
+        return;
+    }
+
+    if (arg[0] == '<') {
+        if (!arg[1])
+            *status = 0;
+        else if (arg[1] == '<' && !arg[2])
+            *status = 2;
+        else 
+            *status = -1;
+    }
+    else if (arg[0] == '>') {
+        if (!arg[1])
+            *status = 1;
+        else if (arg[1] == '>' && !arg[2])
+            *status = 3;
+        else
+            *status = -1;
+    }
+    else
+        *status = -1;
 }
 
-static char ctrl_redirect(t_job *job, char *arg, char *redir_status)
+static char handle_special_redirect(t_job *job, char *arg, char *status)
 {
-	if (*redir_status == 0)
-	{
-		*redir_status = -1;
-		job->redir->last_in = 1;
-		job->redir->in_f = str_arr_realloc(job->redir->in_f, arg);
-		if (!job->redir->in_f || append_files(job, arg))
-			return (EXIT_FAILURE);
-	}
-	else if (*redir_status == 1)
-	{
-		*redir_status = -1;
-		job->redir->last_out = 1;
-		job->redir->out_f = str_arr_realloc(job->redir->out_f, arg);
-		if (!job->redir->out_f || append_files(job, arg))
-			return (EXIT_FAILURE);
-	}
-	return (ctrl_redirect_line_helper(job, arg, redir_status));
+    if (*status == 2) {
+        *status = -1;
+        job->redir->last_in = 2;
+        job->redir->eof = str_arr_realloc(job->redir->eof, arg);
+        return (!job->redir->eof || append_to_files(job, arg)) ? 
+               EXIT_FAILURE : EXIT_SUCCESS;
+    }
+    
+    if (*status == 3) {
+        *status = -1;
+        job->redir->last_out = 2;
+        job->redir->app_f = str_arr_realloc(job->redir->app_f, arg);
+        return (!job->redir->app_f || append_to_files(job, arg)) ? 
+               EXIT_FAILURE : EXIT_SUCCESS;
+    }
+    
+    determine_redirect_type(arg, status);
+    return (EXIT_SUCCESS);
 }
 
-char handle_distribute(t_job *temp, char *arg, char *redir_status)
+static char handle_redirect(t_job *job, char *arg, char *status)
 {
-	char state;
-	char **temp_args;
+    if (*status == 0) {
+        *status = -1;
+        job->redir->last_in = 1;
+        job->redir->in_f = str_arr_realloc(job->redir->in_f, arg);
+        return (!job->redir->in_f || append_to_files(job, arg)) ? 
+               EXIT_FAILURE : EXIT_SUCCESS;
+    }
+    
+    if (*status == 1) {
+        *status = -1;
+        job->redir->last_out = 1;
+        job->redir->out_f = str_arr_realloc(job->redir->out_f, arg);
+        return (!job->redir->out_f || append_to_files(job, arg)) ? 
+               EXIT_FAILURE : EXIT_SUCCESS;
+    }
+    
+    return handle_special_redirect(job, arg, status);
+}
 
-	temp_args = temp->args;
-	if (!*arg)
-		return (EXIT_FAILURE);
-	state = ctrl_redirect(temp, arg, redir_status);
-	if (arg[0] == '<' && !arg[1])
-		return (EXIT_SUCCESS);
-	else if (arg[0] == '>' && !arg[1])
-		return (EXIT_SUCCESS);
-	else if (arg[0] == '<' && arg[1] == arg[0] && !arg[2])
-		return (EXIT_SUCCESS);
-	else if (arg[0] == '>' && arg[1] == arg[0] && !arg[2])
-		return (EXIT_SUCCESS);
-	if (state == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	else if (*redir_status == -1 && !ctrl_append(temp->redir, arg))
-	{
-		temp->args = str_arr_realloc(temp_args, arg);
-		if (!temp->args)
-			return (free_str_arr(temp->args), EXIT_FAILURE);
-	}
-	return (EXIT_SUCCESS);
+char handle_distribute(t_job *job, char *arg, char *redir_status)
+{
+    char **current_args;
+    char redirect_result;
+
+    if (!job || !arg || !*arg)
+        return (EXIT_FAILURE);
+
+    current_args = job->args;
+    redirect_result = handle_redirect(job, arg, redir_status);
+
+    if (is_redirect_operator(arg))
+        return (EXIT_SUCCESS);
+        
+    if (redirect_result == EXIT_FAILURE)
+        return (EXIT_FAILURE);
+
+    if (*redir_status == -1 && !ctrl_append(job->redir, arg)) {
+        job->args = str_arr_realloc(current_args, arg);
+        if (!job->args)
+            return (free_str_arr(job->args), EXIT_FAILURE);
+    }
+
+    return (EXIT_SUCCESS);
 }

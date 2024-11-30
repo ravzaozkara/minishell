@@ -12,34 +12,45 @@
 
 #include "../../inc/minishell.h"
 
-static char check_redir(char **redir_list, char *arg_trimmed)
+static char check_redirection(char **redirection_list, char *cleaned_arg)
 {
-	int len_str;
-	int len_arg;
-	int len;
+   int list_length;
+   size_t arg_length;
+   size_t last_redir_length;
 
-	if (!redir_list)
-		return (EXIT_SUCCESS);
-	len = str_arr_len(redir_list);
-	len_arg = ft_strlen(arg_trimmed);
-	len_str = ft_strlen(redir_list[len - 1]);
-	if (!ft_strncmp(redir_list[len - 1], arg_trimmed, len_str) && len_str == len_arg)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+   if (!redirection_list)
+       return (EXIT_SUCCESS);
+       
+   list_length = str_arr_len(redirection_list);
+   arg_length = ft_strlen(cleaned_arg);
+   last_redir_length = ft_strlen(redirection_list[list_length - 1]);
+
+   if (last_redir_length == arg_length && 
+       !ft_strncmp(redirection_list[list_length - 1], 
+                   cleaned_arg, last_redir_length)) {
+       return (EXIT_FAILURE);
+   }
+   
+   return (EXIT_SUCCESS);
 }
 
 char ctrl_append(t_redir *redir, char *arg)
 {
-	char *trimmed;
+   char *trimmed_arg;
+   const int APPEND_ERROR = 1;
 
-	trimmed = ft_strtrim(arg, "\"");
-	if (!trimmed)
-		return (1);
-	if (check_redir(redir->app_f, trimmed) || check_redir(redir->in_f, trimmed) || check_redir(redir->out_f, trimmed) || check_redir(redir->eof, trimmed))
-	{
-		free(trimmed);
-		return (1);
-	}
-	free(trimmed);
-	return (0);
+   trimmed_arg = ft_strtrim(arg, "\"");
+   if (!trimmed_arg)
+       return (APPEND_ERROR);
+
+   if (check_redirection(redir->app_f, trimmed_arg) || 
+       check_redirection(redir->in_f, trimmed_arg) ||
+       check_redirection(redir->out_f, trimmed_arg) || 
+       check_redirection(redir->eof, trimmed_arg)) {
+       free(trimmed_arg);
+       return (APPEND_ERROR);
+   }
+
+   free(trimmed_arg);
+   return (0);
 }

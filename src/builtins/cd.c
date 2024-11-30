@@ -14,17 +14,26 @@
 
 char cd(t_jobs *jobs, char *path)
 {
-	if (!path)
-	{
-		path = env_find_value_const(jobs->env, "HOME");
-		if (!path)
-			return (EXIT_FAILURE);
-	}
-	if (chdir(path) == -1)
-	{
-		jobs->mshell->quest_mark = 1;
-		perror("cd");
-		return (EXIT_FAILURE);
-	}
-	return (EXIT_SUCCESS);
+    char *target_directory;
+    const int DIRECTORY_ERROR = 1;
+
+    target_directory = path;
+    
+    if (!target_directory) {
+        target_directory = env_find_value_const(jobs->env, "HOME");
+        
+        if (!target_directory) {
+            jobs->mshell->quest_mark = DIRECTORY_ERROR;
+            return (EXIT_FAILURE);
+        }
+    }
+    
+    if (chdir(target_directory) == -1) {
+        jobs->mshell->quest_mark = DIRECTORY_ERROR;
+        perror("cd");
+        return (EXIT_FAILURE);
+    }
+    
+    jobs->mshell->quest_mark = 0;
+    return (EXIT_SUCCESS);
 }

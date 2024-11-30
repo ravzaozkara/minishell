@@ -12,111 +12,95 @@
 
 #include "../../inc/minishell.h"
 
+static int handle_external_command(t_jobs *jobs, t_job *job)
+{
+    job->pid = fork();
+    if (job->pid == 0)
+    {
+        set_signal(CHILD);
+        run_cmd(jobs, job);
+        exit(jobs->mshell->quest_mark);
+    }
+    return (EXIT_SUCCESS);
+}
+
 char no_pipe(t_jobs *jobs, t_job *job)
 {
-	int fd;
+    int file_descriptor;
 
-	built_in(job);
-	fd = get_fd(jobs, job);
-	if (fd == -1)
-		return (EXIT_FAILURE);
-	if (job->built_in == false)
-	{
-		job->pid = fork();
-		if (job->pid == 0)
-		{
-			set_signal(CHILD);
-			run_cmd(jobs, job);
-			exit(jobs->mshell->quest_mark);
-		}
-	}
-	else
-		return (ctrl_builtins(jobs, job));
-	return (EXIT_SUCCESS);
+    built_in(job);
+    file_descriptor = get_fd(jobs, job);
+
+    if (file_descriptor == -1)
+        return (EXIT_FAILURE);
+
+    if (job->built_in == false)
+        return (handle_external_command(jobs, job));
+
+    return (ctrl_builtins(jobs, job));
 }
 
-static void pipe_handle_child(t_jobs *jobs, t_job *job, int pipe_fd[2])
+
+
+static int setup_pipe(int pipe_ends[2], t_job *job)
 {
-	int fd;
-
-	set_signal(CHILD);
-	close(pipe_fd[0]);
-	if (job->next_job)
-	{
-		dup2(pipe_fd[1], 1);
-		close(pipe_fd[1]);
-	}
-	fd = 1;
-	if (job->redir->in_f || job->redir->out_f || job->redir->app_f)
-	{
-		fd = get_fd(jobs, job);
-		if (fd == -1)
-			exit(1);
-	}
-	built_in(job);
-	if (job->built_in == false)
-		run_cmd(jobs, job);
-	exit(ctrl_builtins(jobs, job));
-}
-
-char pipe_handle(t_jobs *jobs, t_job *job)
-{
-    int pipe_fd[2];
-
-    if (pipe(pipe_fd) == -1)
+    if (pipe(pipe_ends) == -1)
     {
         perror("pipe");
         return (EXIT_FAILURE);
     }
-
     job->pid = fork();
-    if (job->pid == 0)
+    if (job->pid == -1)
     {
-        pipe_handle_child(jobs, job, pipe_fd);
+        close(pipe_ends[0]);
+        close(pipe_ends[1]);
+        return (EXIT_FAILURE);
     }
-    
-    dup2(pipe_fd[0], STDIN_FILENO);
-    close(pipe_fd[0]);
-    close(pipe_fd[1]);
-    
     return (EXIT_SUCCESS);
 }
 
-static char *get_env_for_exec_lh(char *key)
+static void handle_child_process(t_jobs *jobs, t_job *job, int pipe_ends[2])
 {
-	char *temp;
-	char *arg;
+    int file_descriptor;
 
-	arg = ft_strdup(key);
-	if (!arg)
-		return (NULL);
-	temp = arg;
-	arg = ft_strjoin_const(arg, "=");
-	free(temp);
-	return (arg);
+    set_signal(CHILD);
+    close(pipe_ends[0]);
+
+    if (job->next_job && dup2(pipe_ends[1], STDOUT_FILENO) == -1)
+    {
+        perror("dup2");
+        exit(1);
+    }
+    close(pipe_ends[1]);
+
+    if ((job->redir->in_f || job->redir->out_f || job->redir->app_f) &&
+        (file_descriptor = get_fd(jobs, job)) == -1)
+        exit(1);
+
+    built_in(job);
+    exit(job->built_in ? ctrl_builtins(jobs, job) :
+         (run_cmd(jobs, job), jobs->mshell->quest_mark));
 }
 
-char **get_env_for_exec(t_env *env)
+char pipe_handle(t_jobs *jobs, t_job *job)
 {
-	char **rtrn;
-	char *arg;
-	char *temp;
-	int i;
+    int pipe_ends[2];
 
-	rtrn = NULL;
-	i = -1;
-	while (++i < env->len)
-	{
-		arg = get_env_for_exec_lh(env->key[i]);
-		if (!arg)
-			return (NULL);
-		temp = arg;
-		arg = ft_strjoin_const(arg, env->value[i]);
-		free(temp);
-		if (!arg)
-			return (NULL);
-		rtrn = str_arr_realloc(rtrn, arg);
-		free(arg);
-	}
-	return (rtrn);
+    if (setup_pipe(pipe_ends, job) == EXIT_FAILURE)
+        return (EXIT_FAILURE);
+
+    if (job->pid == 0)
+    {
+        handle_child_process(jobs, job, pipe_ends);
+        return (EXIT_SUCCESS);
+    }
+
+    close(pipe_ends[1]);
+    if (dup2(pipe_ends[0], STDIN_FILENO) == -1)
+    {
+        perror("dup2");
+        return (EXIT_FAILURE);
+    }
+    close(pipe_ends[0]);
+    return (EXIT_SUCCESS);
 }

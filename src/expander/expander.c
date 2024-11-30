@@ -14,13 +14,15 @@
 
 void expander(t_jobs *jobs, char **prompt)
 {
-	char *expanded;
+   char *expanded_prompt;
 
-	if (!*prompt)
-		return;
-	expanded = expand_env_vars(jobs, *prompt);
-	if (!expanded)
-		return;
-	free(*prompt);
-	*prompt = expanded;
+   if (!*prompt || !jobs)
+       return;
+
+   expanded_prompt = expand_env_vars(jobs, *prompt);
+   if (!expanded_prompt)
+       return;
+       
+   free(*prompt);
+   *prompt = expanded_prompt;
 }

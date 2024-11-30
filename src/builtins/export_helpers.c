@@ -14,22 +14,30 @@
 
 char update_env(t_env *env, char *key, char *value)
 {
-	size_t key_len;
-	int i;
+    const int ENV_UPDATE_ERROR = -1;
+    size_t target_key_length;
+    int env_index;
+    char *new_value;
 
-	key_len = ft_strlen(key);
-	i = -1;
-	while (env->key[++i])
-	{
-		if (!ft_strncmp(env->key[i], key, key_len) && key_len == ft_strlen(env->key[i]))
-		{
-			free(env->value[i]);
-			env->value[i] = NULL;
-			env->value[i] = ft_strdup(value);
-			if (!env->value[i])
-				return (-1);
-			return (EXIT_SUCCESS);
-		}
-	}
-	return (EXIT_FAILURE);
+    if (!env || !key || !value)
+        return (ENV_UPDATE_ERROR);
+
+    target_key_length = ft_strlen(key);
+    
+    for (env_index = 0; env->key[env_index]; env_index++) {
+        if (ft_strlen(env->key[env_index]) == target_key_length && 
+            !ft_strncmp(env->key[env_index], key, target_key_length)) {
+            
+            new_value = ft_strdup(value);
+            if (!new_value)
+                return (ENV_UPDATE_ERROR);
+                
+            free(env->value[env_index]);
+            env->value[env_index] = new_value;
+            
+            return (EXIT_SUCCESS);
+        }
+    }
+    
+    return (EXIT_FAILURE);
 }

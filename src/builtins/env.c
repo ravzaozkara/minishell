@@ -12,17 +12,25 @@
 
 #include "../../inc/minishell.h"
 
+static void print_env_entry(const char *key, const char *value)
+{
+    write(STDOUT_FILENO, key, ft_strlen(key));
+    write(STDOUT_FILENO, "=", 1);
+    write(STDOUT_FILENO, value, ft_strlen(value));
+    write(STDOUT_FILENO, "\n", 1);
+}
+
 void env(t_jobs *jobs)
 {
-	int i;
-
-	i = -1;
-	while (++i < jobs->env->len)
-	{
-		write(1, jobs->env->key[i], ft_strlen(jobs->env->key[i]));
-		write(1, "=", 1);
-		write(1, jobs->env->value[i], ft_strlen(jobs->env->value[i]));
-		write(1, "\n", 1);
-	}
-	jobs->mshell->quest_mark = 0;
+    t_env *environment;
+    int entry_index;
+    
+    environment = jobs->env;
+    
+    for (entry_index = 0; entry_index < environment->len; entry_index++) {
+        print_env_entry(environment->key[entry_index],
+                       environment->value[entry_index]);
+    }
+    
+    jobs->mshell->quest_mark = 0;
 }

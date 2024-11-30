@@ -14,70 +14,79 @@
 
 char get_first_env(t_jobs *jobs, char **env)
 {
-	char **splitted;
-	int i;
+    char **env_parts;
+    int env_index;
 
-	jobs->env = ft_calloc(1, sizeof(t_env));
-	if (!jobs->env)
-		return (EXIT_FAILURE);
-	i = -1;
-	while (env[++i])
+    jobs->env = ft_calloc(1, sizeof(t_env));
+    if (!jobs->env)
+        return (EXIT_FAILURE);
+
+	env_index = 0;
+    while (env[env_index]) 
 	{
-		splitted = ft_split(env[i], '=');
-		if (!splitted)
-			return (EXIT_FAILURE);
-		if (env_add(jobs->env, splitted[0], splitted[1]))
-			return (free_str_arr(splitted), EXIT_FAILURE);
-		free_str_arr(splitted);
-	}
-	return (EXIT_SUCCESS);
+        env_parts = ft_split(env[env_index], '=');
+        if (!env_parts)
+            return (EXIT_FAILURE);
+        else if (env_add(jobs->env, env_parts[0], env_parts[1]))
+		{
+            free_str_arr(env_parts);
+            return (EXIT_FAILURE);
+        }
+        free_str_arr(env_parts);
+		env_index++;
+    }
+    return (EXIT_SUCCESS);
 }
 
-static char calloc_key_value(char ***key, char ***value, int len)
+static char copy_env_entries(t_env **env, t_env *new_env, int skip_index)
 {
-	*key = ft_calloc(len, sizeof(char *));
-	if (!*key)
-		return (EXIT_FAILURE);
-	*value = ft_calloc(len, sizeof(char *));
-	if (!*value)
-		return (free(*key), EXIT_FAILURE);
-	return (EXIT_SUCCESS);
-}
+    bool skip_done;
+    int write_index;
 
-static char env_del_index_lh(t_env **env, t_env *temp, int index)
-{
-	char state;
-	int i;
-
-	state = 0;
-	i = -1;
-	while (++i < temp->len)
+    skip_done = false;
+    write_index = 0;
+    while (write_index < new_env->len) 
 	{
-		if (i == index)
-			state = 1;
-		temp->key[i] = ft_strdup((*env)->key[i + state]);
-		if (!temp->key[i])
-			return (free_env(temp), EXIT_FAILURE);
-		temp->value[i] = ft_strdup((*env)->value[i + state]);
-		if (!temp->value[i])
-			return (free_env(temp), EXIT_FAILURE);
-	}
-	return (EXIT_SUCCESS);
+        int read_index = write_index + (write_index >= skip_index ? 1 : 0);
+        
+        new_env->key[write_index] = ft_strdup((*env)->key[read_index]);
+        if (!new_env->key[write_index])
+            return (free_env(new_env), EXIT_FAILURE);
+            
+        new_env->value[write_index] = ft_strdup((*env)->value[read_index]);
+        if (!new_env->value[write_index])
+            return (free_env(new_env), EXIT_FAILURE);
+		write_index++;
+    }
+    
+    return (EXIT_SUCCESS);
 }
 
 char env_del_index(t_env **env, int index)
 {
-	t_env *temp;
-
-	temp = ft_calloc(1, sizeof(t_env));
-	if (!temp)
-		return (EXIT_FAILURE);
-	temp->len = (*env)->len - 1;
-	if (calloc_key_value(&temp->key, &temp->value, temp->len + 1))
-		return (EXIT_FAILURE);
-	if (env_del_index_lh(env, temp, index))
-		return (EXIT_FAILURE);
-	free_env(*env);
-	*env = temp;
-	return (EXIT_SUCCESS);
+    t_env *new_env;
+    
+    new_env = ft_calloc(1, sizeof(t_env));
+    if (!new_env)
+        return (EXIT_FAILURE);
+    new_env->len = (*env)->len - 1;
+	new_env->key = ft_calloc(new_env->len + 1, sizeof(char *));
+    if (!new_env->key)
+	{
+		free(new_env);
+        return (EXIT_FAILURE);
+	}
+    new_env->value = ft_calloc(new_env->len + 1, sizeof(char *));
+    if (!new_env->value)
+	{
+        free(new_env->key);
+		free(new_env);
+        return (EXIT_FAILURE);
+    }
+    if (copy_env_entries(env, new_env, index))
+        return (EXIT_FAILURE);
+    free_env(*env);
+    *env = new_env;
+    
+    return (EXIT_SUCCESS);
 }

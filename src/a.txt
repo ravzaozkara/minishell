@@ -1,0 +1,2626 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:36 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:32:37 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char cd(t_jobs *jobs, char *path)
+{
+    char *target_directory;
+    const int DIRECTORY_ERROR = 1;
+
+    target_directory = path;
+    
+    if (!target_directory) {
+        target_directory = env_find_value_const(jobs->env, "HOME");
+        
+        if (!target_directory) {
+            jobs->mshell->quest_mark = DIRECTORY_ERROR;
+            return (EXIT_FAILURE);
+        }
+    }
+    
+    if (chdir(target_directory) == -1) {
+        jobs->mshell->quest_mark = DIRECTORY_ERROR;
+        perror("cd");
+        return (EXIT_FAILURE);
+    }
+    
+    jobs->mshell->quest_mark = 0;
+    return (EXIT_SUCCESS);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ctrl_builtins.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:40 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 18:14:49 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static bool is_command(const char *arg, const char *cmd, size_t len)
+{
+    return (!ft_strncmp(arg, cmd, len) && ft_strlen(arg) == len);
+}
+
+void built_in(t_job *job)
+{
+    const char *cmd = job->args[0];
+    
+    if (!cmd) {
+        job->built_in = false;
+        return;
+    }
+    
+    job->built_in = (
+        is_command(cmd, "pwd", 3) ||
+        is_command(cmd, "cd", 2) ||
+        is_command(cmd, "echo", 4) ||
+        is_command(cmd, "env", 3) ||
+        is_command(cmd, "exit", 4) ||
+        is_command(cmd, "unset", 5) ||
+        is_command(cmd, "export", 6)
+    );
+}
+
+static char handle_basic_commands(t_jobs *jobs, t_job *job)
+{
+    const char *cmd = job->args[0];
+    
+    if (is_command(cmd, "echo", 4)) {
+        echo(jobs, job);
+        return jobs->mshell->quest_mark;
+    }
+    
+    if (is_command(cmd, "env", 3)) {
+        env(jobs);
+        return jobs->mshell->quest_mark;
+    }
+    
+    if (is_command(cmd, "exit", 4)) {
+        exit_d(jobs, job->args);
+        return jobs->mshell->quest_mark;
+    }
+    
+    if (is_command(cmd, "unset", 5)) {
+        jobs->mshell->quest_mark = unset(&jobs->env, job->args);
+        return jobs->mshell->quest_mark;
+    }
+    
+    if (is_command(cmd, "export", 6)) {
+        return export(jobs, job->args);
+    }
+    
+    return -1;
+}
+
+char ctrl_builtins(t_jobs *jobs, t_job *job)
+{
+    const char *cmd = job->args[0];
+    
+    if (is_command(cmd, "pwd", 3)) {
+        jobs->mshell->quest_mark = pwd(jobs);
+        return jobs->mshell->quest_mark;
+    }
+    
+    if (is_command(cmd, "cd", 2)) {
+        jobs->mshell->quest_mark = cd(jobs, job->args[1]);
+        return jobs->mshell->quest_mark;
+    }
+    
+    return handle_basic_commands(jobs, job);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   echo.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: doaltin <doaltin@student.42istanbul.com.tr +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:49 by apalaz            #+#    #+#             */
+/*   Updated: 2024/11/29 23:02:28 by doaltin          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static int validate_n_flag(char *arg)
+{
+    int index;
+
+    if (!arg || arg[0] != '-' || arg[1] != 'n')
+        return (0);
+        
+    index = 2;
+    while (arg[index]) {
+        if (arg[index] != 'n')
+            return (0);
+        index++;
+    }
+    
+    return (1);
+}
+
+static void print_argument(char *arg, bool has_next_arg)
+{
+    if (!arg[0])
+        ft_putchar_fd('\0', STDOUT_FILENO);
+    else
+        ft_putstr_fd(arg, STDOUT_FILENO);
+        
+    if (has_next_arg)
+        ft_putchar_fd(' ', STDOUT_FILENO);
+}
+
+void echo(t_jobs *jobs, t_job *job)
+{
+    int arg_index;
+    bool print_newline;
+    
+    print_newline = true;
+    arg_index = 1;
+    
+    /* Process -n flags */
+    while (job->args[arg_index] && validate_n_flag(job->args[arg_index])) {
+        print_newline = false;
+        arg_index++;
+    }
+
+    /* Print arguments */
+    while (job->args[arg_index]) {
+        print_argument(job->args[arg_index], 
+                      job->args[arg_index + 1] != NULL);
+        arg_index++;
+    }
+
+    if (print_newline)
+        ft_putchar_fd('\n', STDOUT_FILENO);
+        
+    jobs->mshell->quest_mark = 0;
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:51 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:32:52 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void print_env_entry(const char *key, const char *value)
+{
+    write(STDOUT_FILENO, key, ft_strlen(key));
+    write(STDOUT_FILENO, "=", 1);
+    write(STDOUT_FILENO, value, ft_strlen(value));
+    write(STDOUT_FILENO, "\n", 1);
+}
+
+void env(t_jobs *jobs)
+{
+    t_env *environment;
+    int entry_index;
+    
+    environment = jobs->env;
+    
+    for (entry_index = 0; entry_index < environment->len; entry_index++) {
+        print_env_entry(environment->key[entry_index],
+                       environment->value[entry_index]);
+    }
+    
+    jobs->mshell->quest_mark = 0;
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:57 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 16:19:30 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char *remove_quotes(char *input_str)
+{
+    char *clean_str;
+    size_t str_len;
+    int read_pos;
+    int write_pos;
+
+    str_len = ft_strlen(input_str);
+    clean_str = malloc(str_len + 1);
+    
+    if (!clean_str)
+        return (NULL);
+
+    write_pos = 0;
+    for (read_pos = 0; input_str[read_pos]; read_pos++) {
+        if (input_str[read_pos] != '"' && input_str[read_pos] != '\'') {
+            clean_str[write_pos++] = input_str[read_pos];
+        }
+    }
+    clean_str[write_pos] = '\0';
+
+    return (clean_str);
+}
+
+char exit_error(t_jobs *jobs, char *arg, const char *msg)
+{
+    const int EXIT_ERROR_CODE = 255;
+    
+    jobs->mshell->quest_mark = EXIT_ERROR_CODE;
+    
+    ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+    ft_putstr_fd(arg, STDERR_FILENO);
+    ft_putstr_fd(": ", STDERR_FILENO);
+    ft_putstr_fd((char *)msg, STDERR_FILENO);
+    
+    return (EXIT_FAILURE);
+}
+
+void exit_d(t_jobs *jobs, char **args)
+{
+    char *cleaned_arg;
+    const char *MEMORY_ERROR = "memory allocation error\n";
+    
+    ft_putendl_fd("exit", STDOUT_FILENO);
+    
+    if (!args[1]) {
+        jobs->mshell->quest_mark = 0;
+        exit(jobs->mshell->quest_mark);
+    }
+    
+    cleaned_arg = remove_quotes(args[1]);
+    
+    if (!cleaned_arg) {
+        exit_error(jobs, args[1], MEMORY_ERROR);
+        exit(jobs->mshell->quest_mark);
+    }
+    
+    handle_exit_argument(jobs, args, cleaned_arg);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit_helpers.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:55 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 16:19:01 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+#include "limits.h"
+
+static bool check_numeric_overflow(long current_value, char next_digit)
+{
+    long digit_value = next_digit - '0';
+    return current_value > (LONG_MAX - digit_value) / 10;
+}
+
+static char process_numeric_string(const char *str, int *pos, long *result)
+{
+    while (str[*pos] && ft_isdigit(str[*pos])) {
+        if (check_numeric_overflow(*result, str[*pos]))
+            return (EXIT_FAILURE);
+            
+        *result = (*result * 10) + (str[*pos] - '0');
+        (*pos)++;
+    }
+    return (EXIT_SUCCESS);
+}
+
+static int calculate_exit_status(char *str)
+{
+    long numeric_value;
+    int sign_multiplier;
+    int index;
+
+    index = 0;
+    while (str[index] && ((str[index] >= 9 && str[index] <= 13) || str[index] == ' '))
+        index++;
+        
+    sign_multiplier = 1;
+    if (str[index] == '-') {
+        sign_multiplier = -1;
+        index++;
+    } else if (str[index] == '+') {
+        index++;
+    }
+    
+    numeric_value = 0;
+    if (process_numeric_string(str, &index, &numeric_value))
+        return (EXIT_FAILURE);
+        
+    numeric_value = (numeric_value * sign_multiplier) % 256;
+    return (numeric_value < 0) ? numeric_value + 256 : numeric_value;
+}
+
+static bool validate_numeric_string(char *str)
+{
+    int index;
+    
+    if (!str || !*str)
+        return false;
+        
+    index = 0;
+    if (str[index] == '-' || str[index] == '+')
+        index++;
+        
+    while (str[index]) {
+        if (!ft_isdigit(str[index]))
+            return false;
+        index++;
+    }
+    
+    return true;
+}
+
+void handle_exit_argument(t_jobs *jobs, char **args, char *stripped)
+{
+    const char *TOO_MANY_ARGS_MSG = "minishell: exit: too many arguments\n";
+    
+    if (!validate_numeric_string(stripped)) {
+        exit_error(jobs, args[1], "numeric argument required\n");
+        free(stripped);
+        exit(jobs->mshell->quest_mark);
+    }
+    
+    if (args[2]) {
+        jobs->mshell->quest_mark = 1;
+        write(STDERR_FILENO, TOO_MANY_ARGS_MSG, 37);
+        free(stripped);
+        return;
+    }
+    
+    jobs->mshell->quest_mark = calculate_exit_status(stripped);
+    free(stripped);
+    exit(jobs->mshell->quest_mark);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:02 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 13:36:23 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char report_export_error(t_jobs *jobs, char *arg, const char *msg)
+{
+    jobs->mshell->quest_mark = 1;
+    
+    ft_putstr_fd("minishell: export: `", STDERR_FILENO);
+    ft_putstr_fd(arg, STDERR_FILENO);
+    ft_putstr_fd("': ", STDERR_FILENO);
+    ft_putendl_fd((char *)msg, STDERR_FILENO);
+    
+    return (EXIT_FAILURE);
+}
+
+static char validate_identifier(char *arg, bool check_equals)
+{
+    bool has_alpha;
+    int index;
+
+    has_alpha = false;
+    
+    for (index = 0; arg[index]; index++) {
+        if (check_equals && arg[index] == '=')
+            index++;
+            
+        if (ft_isalpha(arg[index]))
+            has_alpha = true;
+            
+        if (!ft_isalnum(arg[index]) && arg[index] != '_')
+            return (EXIT_FAILURE);
+    }
+    
+    return (has_alpha ? EXIT_SUCCESS : EXIT_FAILURE);
+}
+
+static char process_export_arg(t_jobs *jobs, char *arg)
+{
+    char *key;
+    char *value;
+    int equals_pos;
+    char update_status;
+
+    equals_pos = 0;
+    while (arg[equals_pos] && arg[equals_pos] != '=')
+        equals_pos++;
+
+    if (!(key = ft_substr(arg, 0, equals_pos)))
+        return (EXIT_FAILURE);
+
+    if (validate_identifier(key, false)) {
+        free(key);
+        return (report_export_error(jobs, arg, "not a valid identifier"));
+    }
+
+    if (!(value = ft_substr(arg, equals_pos + 1, ft_strlen(arg) - equals_pos))) {
+        free(key);
+        return (EXIT_FAILURE);
+    }
+
+    update_status = update_env(jobs->env, key, value);
+    
+    if (update_status == -1) {
+        free(key);
+        free(value);
+        return (EXIT_FAILURE);
+    }
+
+    if (update_status && env_add(jobs->env, key, value)) {
+        free(key);
+        free(value);
+        return (EXIT_FAILURE);
+    }
+
+    free(key);
+    free(value);
+    return (EXIT_SUCCESS);
+}
+
+static void display_exported_values(t_env *env)
+{
+    int index;
+    
+    for (index = 0; index < env->len; index++) {
+        ft_putstr_fd("declare -x ", STDOUT_FILENO);
+        ft_putstr_fd(env->key[index], STDOUT_FILENO);
+        
+        if (env->value[index][0]) {
+            ft_putstr_fd("=\"", STDOUT_FILENO);
+            ft_putstr_fd(env->value[index], STDOUT_FILENO);
+            ft_putstr_fd("\"\n", STDOUT_FILENO);
+        } else {
+            ft_putstr_fd("\n", STDOUT_FILENO);
+        }
+    }
+}
+
+char export(t_jobs *jobs, char **args)
+{
+    int arg_index;
+
+    if (!args[1]) {
+        display_exported_values(jobs->env);
+        jobs->mshell->quest_mark = 0;
+        return (EXIT_SUCCESS);
+    }
+
+    for (arg_index = 1; args[arg_index]; arg_index++) {
+        if (process_export_arg(jobs, args[arg_index]))
+            return (EXIT_FAILURE);
+    }
+
+    return (EXIT_SUCCESS);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export_helpers.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:32:59 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 17:09:32 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char update_env(t_env *env, char *key, char *value)
+{
+    const int ENV_UPDATE_ERROR = -1;
+    size_t target_key_length;
+    int env_index;
+    char *new_value;
+
+    if (!env || !key || !value)
+        return (ENV_UPDATE_ERROR);
+
+    target_key_length = ft_strlen(key);
+    
+    for (env_index = 0; env->key[env_index]; env_index++) {
+        if (ft_strlen(env->key[env_index]) == target_key_length && 
+            !ft_strncmp(env->key[env_index], key, target_key_length)) {
+            
+            new_value = ft_strdup(value);
+            if (!new_value)
+                return (ENV_UPDATE_ERROR);
+                
+            free(env->value[env_index]);
+            env->value[env_index] = new_value;
+            
+            return (EXIT_SUCCESS);
+        }
+    }
+    
+    return (EXIT_FAILURE);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pwd.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:05 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:33:06 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char pwd(t_jobs *jobs)
+{
+    char current_path[512];
+    const int ERROR_STATUS = 1;
+    size_t path_length;
+
+    if (!getcwd(current_path, sizeof(current_path))) {
+        jobs->mshell->quest_mark = ERROR_STATUS;
+        perror("pwd");
+        return (EXIT_FAILURE);
+    }
+
+    path_length = ft_strlen(current_path);
+    write(STDOUT_FILENO, current_path, path_length);
+    write(STDOUT_FILENO, "\n", 1);
+    
+    return (EXIT_SUCCESS);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:07 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:33:08 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char unset(t_env **env, char **keys)
+{
+    char *env_value;
+    int key_index;
+
+    if (!*env)
+        return (EXIT_FAILURE);
+        
+    if (!keys)
+        return (EXIT_SUCCESS);
+
+    for (key_index = 0; keys[key_index]; key_index++) {
+        env_value = env_find_value(*env, keys[key_index]);
+        
+        if (!env_value)
+            continue;
+            
+        if (env_del_element(env, keys[key_index], env_value))
+            return (EXIT_FAILURE);
+    }
+    
+    return (EXIT_SUCCESS);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_handle1.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:18 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 13:35:51 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char env_del_element(t_env **env, char *key, char *value)
+{
+    t_env *environment;
+    size_t target_length;
+    size_t current_length;
+    int index;
+
+    if (!key || !value)
+        return (EXIT_FAILURE);
+
+    environment = *env;
+    target_length = ft_strlen(key);
+
+    for (index = 0; environment->key[index]; index++) {
+        current_length = ft_strlen(environment->key[index]);
+        
+        if (current_length == target_length && 
+            !ft_strncmp(environment->key[index], key, target_length)) {
+            return (env_del_index(env, index));
+        }
+    }
+    
+    return (EXIT_SUCCESS);
+}
+
+char env_add(t_env *env, char *key, char *value)
+{
+    char *empty_value;
+
+    if (!env)
+        return (EXIT_FAILURE);
+
+    env->key = str_arr_realloc(env->key, key);
+    if (!env->key)
+        return (EXIT_FAILURE);
+
+    if (value) {
+        env->value = str_arr_realloc(env->value, value);
+        if (!env->value)
+            return (EXIT_FAILURE);
+    } else {
+        empty_value = ft_strdup("");
+        if (!empty_value)
+            return (EXIT_FAILURE);
+            
+        env->value = str_arr_realloc(env->value, empty_value);
+        if (!env->value) {
+            free(empty_value);
+            return (EXIT_FAILURE);
+        }
+    }
+
+    env->len++;
+    return (EXIT_SUCCESS);
+}
+
+char *env_find_value(t_env *env, char *key)
+{
+    size_t target_length;
+    int index;
+
+    if (!env || !key)
+        return (NULL);
+
+    target_length = ft_strlen(key);
+    
+    for (index = 0; env->key[index]; index++) {
+        if (ft_strlen(env->key[index]) == target_length && 
+            !ft_strncmp(env->key[index], key, target_length)) {
+            return (env->value[index]);
+        }
+    }
+    
+    return (NULL);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_handle2.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:20 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 20:27:54 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char get_first_env(t_jobs *jobs, char **env)
+{
+    char **env_parts;
+    int env_index;
+
+    jobs->env = ft_calloc(1, sizeof(t_env));
+    if (!jobs->env)
+        return (EXIT_FAILURE);
+
+    for (env_index = 0; env[env_index]; env_index++) {
+        env_parts = ft_split(env[env_index], '=');
+        if (!env_parts)
+            return (EXIT_FAILURE);
+            
+        if (env_add(jobs->env, env_parts[0], env_parts[1])) {
+            free_str_arr(env_parts);
+            return (EXIT_FAILURE);
+        }
+        
+        free_str_arr(env_parts);
+    }
+    
+    return (EXIT_SUCCESS);
+}
+
+static char allocate_env_arrays(char ***key_array, char ***value_array, int size)
+{
+    *key_array = ft_calloc(size, sizeof(char *));
+    if (!*key_array)
+        return (EXIT_FAILURE);
+        
+    *value_array = ft_calloc(size, sizeof(char *));
+    if (!*value_array) {
+        free(*key_array);
+        return (EXIT_FAILURE);
+    }
+    
+    return (EXIT_SUCCESS);
+}
+
+static char copy_env_entries(t_env **env, t_env *new_env, int skip_index)
+{
+    bool skip_done;
+    int write_index;
+
+    skip_done = false;
+    
+    for (write_index = 0; write_index < new_env->len; write_index++) {
+        int read_index = write_index + (write_index >= skip_index ? 1 : 0);
+        
+        new_env->key[write_index] = ft_strdup((*env)->key[read_index]);
+        if (!new_env->key[write_index])
+            return (free_env(new_env), EXIT_FAILURE);
+            
+        new_env->value[write_index] = ft_strdup((*env)->value[read_index]);
+        if (!new_env->value[write_index])
+            return (free_env(new_env), EXIT_FAILURE);
+    }
+    
+    return (EXIT_SUCCESS);
+}
+
+char env_del_index(t_env **env, int index)
+{
+    t_env *new_env;
+    
+    new_env = ft_calloc(1, sizeof(t_env));
+    if (!new_env)
+        return (EXIT_FAILURE);
+        
+    new_env->len = (*env)->len - 1;
+    
+    if (allocate_env_arrays(&new_env->key, &new_env->value, new_env->len + 1))
+        return (free(new_env), EXIT_FAILURE);
+        
+    if (copy_env_entries(env, new_env, index))
+        return (EXIT_FAILURE);
+        
+    free_env(*env);
+    *env = new_env;
+    
+    return (EXIT_SUCCESS);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:29 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 21:07:34 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void wait_child(t_mshell *mshell)
+{
+    t_job *current;
+    int process_status;
+    int final_status;
+
+    current = mshell->jobs->job_list;
+    if (mshell->jobs->len == 1 && current->built_in == true)
+        return;
+
+    final_status = 0;
+    for (; current != NULL; current = current->next_job)
+    {
+        signal(SIGINT, &handler_sigint);
+        if (current->pid <= 0)
+            continue;
+            
+        if (waitpid(current->pid, &process_status, 0) > 0)
+        {
+            final_status = WIFEXITED(process_status) ? 
+                          WEXITSTATUS(process_status) : 
+                          (WIFSIGNALED(process_status) ? 128 + WTERMSIG(process_status) : 0);
+        }
+    }
+    
+    mshell->quest_mark = (mshell->quest_mark == 130) ? 
+                        mshell->quest_mark : final_status;
+}
+
+static int executer_while(t_mshell *mshell, t_job *current_job)
+{
+    const int is_single_job = mshell->jobs->len == 1;
+    
+    if (is_single_job)
+    {
+        if (current_job->redir->eof && 
+            heredoc(mshell->jobs, current_job, 1))
+            return (0);
+            
+        if (no_pipe(mshell->jobs, current_job))
+            return (0);
+    }
+    else
+    {
+        if (current_job->redir->eof && 
+            heredoc(mshell->jobs, current_job, 0))
+            return (0);
+            
+        if (mshell->quest_mark == 130 || 
+            pipe_handle(mshell->jobs, current_job))
+            return (0);
+            
+        mshell->quest_mark = 0;
+    }
+    
+    return (1);
+}
+
+void get_backup(t_mshell *mshell)
+{
+    const int stdin_backup = mshell->backup[0];
+    const int stdout_backup = mshell->backup[1];
+    
+    if (dup2(stdin_backup, STDIN_FILENO) != -1)
+        close(stdin_backup);
+        
+    if (dup2(stdout_backup, STDOUT_FILENO) != -1)
+        close(stdout_backup);
+}
+
+char executor(t_mshell *mshell)
+{
+    t_job *current_job;
+    int execution_status;
+
+    execution_status = 1;
+    
+    mshell->backup[0] = dup(STDIN_FILENO);
+    mshell->backup[1] = dup(STDOUT_FILENO);
+    
+    for (current_job = mshell->jobs->job_list; 
+         current_job && execution_status == 1; 
+         current_job = current_job->next_job)
+    {
+        execution_status = executer_while(mshell, current_job);
+    }
+    
+    get_backup(mshell);
+    
+    if (execution_status)
+        wait_child(mshell);
+        
+    return (EXIT_SUCCESS);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_helpers1.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:24 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 11:10:41 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char no_pipe(t_jobs *jobs, t_job *job)
+{
+    int file_descriptor;
+
+    built_in(job);
+    file_descriptor = get_fd(jobs, job);
+    
+    if (file_descriptor == -1)
+        return (EXIT_FAILURE);
+
+    if (job->built_in == false) {
+        job->pid = fork();
+        
+        if (job->pid == 0) {
+            set_signal(CHILD);
+            run_cmd(jobs, job);
+            exit(jobs->mshell->quest_mark);
+        }
+    } else {
+        return (ctrl_builtins(jobs, job));
+    }
+    
+    return (EXIT_SUCCESS);
+}
+
+char pipe_handle(t_jobs *jobs, t_job *job)
+{
+    int pipe_ends[2];
+    int file_descriptor;
+
+    if (pipe(pipe_ends) == -1) {
+        perror("pipe");
+        return (EXIT_FAILURE);
+    }
+
+    job->pid = fork();
+    
+    if (job->pid == -1) {
+        close(pipe_ends[0]);
+        close(pipe_ends[1]);
+        return (EXIT_FAILURE);
+    }
+
+    if (job->pid == 0) {
+        set_signal(CHILD);
+        close(pipe_ends[0]);
+
+        if (job->next_job && 
+            dup2(pipe_ends[1], STDOUT_FILENO) == -1) {
+            perror("dup2");
+            exit(1);
+        }
+        
+        close(pipe_ends[1]);
+
+        if ((job->redir->in_f || job->redir->out_f || job->redir->app_f) &&
+            (file_descriptor = get_fd(jobs, job)) == -1) {
+            exit(1);
+        }
+
+        built_in(job);
+        exit(job->built_in ? ctrl_builtins(jobs, job) : 
+             (run_cmd(jobs, job), jobs->mshell->quest_mark));
+    }
+    
+    close(pipe_ends[1]);
+    
+    if (dup2(pipe_ends[0], STDIN_FILENO) == -1) {
+        perror("dup2");
+        return (EXIT_FAILURE);
+    }
+    
+    close(pipe_ends[0]);
+    return (EXIT_SUCCESS);
+}
+
+static char *build_env_string(char *key)
+{
+    char *env_entry;
+    char *temp_str;
+
+    if (!(env_entry = ft_strdup(key)))
+        return (NULL);
+        
+    temp_str = env_entry;
+    env_entry = ft_strjoin_const(env_entry, "=");
+    
+    free(temp_str);
+    return (env_entry);
+}
+
+char **get_env_for_exec(t_env *env)
+{
+    char **env_array = NULL;
+    char *env_entry;
+    char *temp_str;
+    int index;
+
+    for (index = 0; index < env->len; index++) {
+        if (!(env_entry = build_env_string(env->key[index])))
+            return (NULL);
+            
+        temp_str = env_entry;
+        env_entry = ft_strjoin_const(env_entry, env->value[index]);
+        free(temp_str);
+        
+        if (!env_entry)
+            return (NULL);
+            
+        env_array = str_arr_realloc(env_array, env_entry);
+        free(env_entry);
+        
+        if (!env_array)
+            return (NULL);
+    }
+    
+    return (env_array);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_helpers2.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem < yunozdem@student.42istanbul.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:26 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 01:10:27 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void run_cmd_error_ctrl(t_jobs *jobs, char *path)
+{
+    t_stat file_info;
+    const int PERMISSION_ERROR = 126;
+    const int NOT_FOUND_ERROR = 127;
+
+    if (stat(path, &file_info) == -1)
+        return;
+
+    if (S_ISDIR(file_info.st_mode)) {
+        jobs->mshell->quest_mark = 1;
+        error_msg(jobs, path, ": Is a directory\n");
+        exit(PERMISSION_ERROR);
+    }
+
+    if (!S_ISREG(file_info.st_mode)) {
+        jobs->mshell->quest_mark = 1;
+        error_msg(jobs, path, ": No such file or directory\n");
+        exit(NOT_FOUND_ERROR);
+    }
+
+    if (access(path, R_OK) != 0) {
+        jobs->mshell->quest_mark = 1;
+        error_msg(jobs, path, ": Permission denied\n");
+        exit(PERMISSION_ERROR);
+    }
+}
+
+static char *accessor(char *env_path, char *cmd)
+{
+    char **path_directories;
+    char *full_path;
+    char *dir_with_slash;
+    int i;
+
+    if (!(path_directories = ft_split(env_path, ':')))
+        return (NULL);
+
+    for (i = 0; path_directories[i]; i++) {
+        if (!(dir_with_slash = ft_strjoin_const(path_directories[i], "/")))
+            continue;
+        
+        full_path = ft_strjoin(dir_with_slash, cmd);
+        free(dir_with_slash);
+        
+        if (!full_path) {
+            free_str_arr(path_directories);
+            return (NULL);
+        }
+        
+        if (access(full_path, X_OK) == 0) {
+            free_str_arr(path_directories);
+            return (full_path);
+        }
+        free(full_path);
+    }
+    free_str_arr(path_directories);
+    return (NULL);
+}
+
+static char *get_exec_path(t_jobs *jobs, t_job *job, char *env_path)
+{
+    char *executable_path;
+
+    if (ft_strchr(job->args[0], '/')) {
+        run_cmd_error_ctrl(jobs, job->args[0]);
+        executable_path = ft_strdup(job->args[0]);
+    } else {
+        executable_path = accessor(env_path, job->args[0]);
+    }
+
+    if (!executable_path) {
+        error_msg(jobs, job->args[0], ": command not found\n");
+        exit(127);
+    }
+
+    return executable_path;
+}
+
+static char handle_env_path_null(t_jobs *jobs, t_job *job, char **env)
+{
+    const int NO_PATH_ERROR = 127;
+
+    if (access(job->args[0], X_OK) == 0) {
+        execve(job->args[0], job->args, env);
+        exit(NO_PATH_ERROR);
+    }
+
+    jobs->mshell->quest_mark = 1;
+    ft_putstr_fd("minishell: ", STDERR_FILENO);
+    ft_putstr_fd(job->args[0], STDERR_FILENO);
+    ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+    return (EXIT_FAILURE);
+}
+
+void run_cmd(t_jobs *jobs, t_job *job)
+{
+    char **environment;
+    char *executable_path;
+    char *path_var;
+    const int EXEC_FAILURE = 127;
+
+    path_var = env_find_value_const(jobs->env, "PATH");
+    environment = get_env_for_exec(jobs->env);
+
+    if (!path_var) {
+        if (handle_env_path_null(jobs, job, environment))
+            return;
+    }
+
+    executable_path = get_exec_path(jobs, job, path_var);
+    jobs->mshell->quest_mark = 0;
+    
+    execve(executable_path, job->args, environment);
+    exit(EXEC_FAILURE);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:44 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:33:45 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void expander(t_jobs *jobs, char **prompt)
+{
+   char *expanded_prompt;
+
+   if (!*prompt || !jobs)
+       return;
+
+   expanded_prompt = expand_env_vars(jobs, *prompt);
+   if (!expanded_prompt)
+       return;
+       
+   free(*prompt);
+   *prompt = expanded_prompt;
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander_helpers_1.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:34 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 17:09:38 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void copy_env_value(char *value, char *result, int *positions)
+{
+    if (value) {
+        size_t value_len = ft_strlen(value);
+        ft_strlcpy(result + positions[1], value, value_len + 1);
+        positions[1] += value_len;
+    }
+}
+
+static void process_environment_variable(char *prompt, char *result, 
+                                      t_jobs *jobs, int *positions)
+{
+    char *key;
+    char *value;
+    int var_end;
+
+    var_end = positions[0];
+    while (ft_isalnum(prompt[var_end]) || prompt[var_end] == '_')
+        var_end++;
+
+    key = ft_substr(prompt, positions[0], var_end - positions[0]);
+    if (!key)
+        return;
+
+    value = env_find_value(jobs->env, key);
+    free(key);
+    
+    copy_env_value(value, result, positions);
+    positions[0] = var_end;
+}
+
+static void handle_exit_status(char *result, t_jobs *jobs, int *positions)
+{
+    char *status_str;
+
+    status_str = ft_itoa(jobs->mshell->quest_mark);
+    if (!status_str)
+        return;
+
+    copy_env_value(status_str, result, positions);
+    free(status_str);
+    positions[0]++;
+}
+
+static void handle_variable(char *prompt, char *result, 
+                          t_jobs *jobs, int *positions)
+{
+    positions[0]++;
+
+    if (!prompt[positions[0]] || prompt[positions[0]] == ' ' || 
+        prompt[positions[0]] == '"' || prompt[positions[0]] == '\'') {
+        result[positions[1]++] = '$';
+        return;
+    }
+
+    if ((prompt[positions[0]] == '"') || 
+        (prompt[positions[0]] == '\'' && prompt[positions[0] + 1] == '\'')) {
+        positions[0] += 2;
+        return;
+    }
+
+    if (prompt[positions[0]] == '?')
+        handle_exit_status(result, jobs, positions);
+    else if (ft_isalnum(prompt[positions[0]]) || prompt[positions[0]] == '_')
+        process_environment_variable(prompt, result, jobs, positions);
+    else
+        result[positions[1]++] = '$';
+}
+
+static char *initialize_expansion(t_jobs *jobs, char *prompt, int **positions)
+{
+    char *result;
+    t_quote_state initial_state = {false, false};
+
+    if (!prompt)
+        return (NULL);
+
+    *positions = ft_calloc(3, sizeof(int));
+    if (!*positions)
+        return (NULL);
+
+    (*positions)[2] = calc_len(jobs, prompt, initial_state);
+    result = ft_calloc(1, (*positions)[2] + 2);
+    
+    if (!result) {
+        free(*positions);
+        return (NULL);
+    }
+
+    return result;
+}
+
+char *expand_env_vars(t_jobs *jobs, char *prompt)
+{
+    t_quote_state quote_state = {false, false};
+    char *result;
+    int *positions;
+
+    result = initialize_expansion(jobs, prompt, &positions);
+    if (!result)
+        return (NULL);
+
+    while (prompt[positions[0]]) {
+        update_quote_state(&quote_state, prompt[positions[0]]);
+
+        if (prompt[positions[0]] == '$' && !quote_state.in_single) {
+            if (!prompt[positions[0] + 1] || prompt[positions[0] + 1] == ' ') {
+                result[positions[1]++] = prompt[positions[0]++];
+                continue;
+            }
+            handle_variable(prompt, result, jobs, positions);
+        } else {
+            result[positions[1]++] = prompt[positions[0]++];
+        }
+    }
+
+    result[positions[1]] = '\0';
+    free(positions);
+    return result;
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander_helpers_2.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:42 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/24 17:09:40 by nozkara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void update_quote_state(t_quote_state *state, char c)
+{
+    if (c == '\'' && !state->in_double)
+        state->in_single = !state->in_single;
+    else if (c == '\"' && !state->in_single)
+        state->in_double = !state->in_double;
+}
+
+static int measure_env_var_length(t_jobs *jobs, char *prompt, int *index)
+{
+    char *key;
+    char *value;
+    int start_pos;
+    int value_len;
+    
+    start_pos = *index;
+    while (ft_isalnum(prompt[*index]) || prompt[*index] == '_')
+        (*index)++;
+
+    key = ft_substr(prompt, start_pos, *index - start_pos);
+    if (!key)
+        return (0);
+
+    value = env_find_value(jobs->env, key);
+    value_len = value ? ft_strlen(value) : 0;
+    
+    free(key);
+    return (value_len);
+}
+
+static int get_env_var_length(t_jobs *jobs, char *prompt, int *index)
+{
+    if (prompt[*index] == '"' || prompt[*index] == '\0' ||
+        (prompt[*index] == '\'' && prompt[*index + 1] == '\''))
+        return (0);
+        
+    return (measure_env_var_length(jobs, prompt, index));
+}
+
+static int calculate_exit_status_length(t_jobs *jobs, int *index)
+{
+    char *status_str;
+    int length;
+
+    status_str = ft_itoa(jobs->mshell->quest_mark);
+    if (!status_str)
+        return (0);
+        
+    length = ft_strlen(status_str);
+    free(status_str);
+    (*index)++;
+    
+    return (length);
+}
+
+static int handle_special_character(t_jobs *jobs, char *prompt, int *index)
+{
+    (*index)++;
+    
+    if (prompt[*index] == '?')
+        return (calculate_exit_status_length(jobs, index));
+        
+    return (get_env_var_length(jobs, prompt, index));
+}
+
+int calc_len(t_jobs *jobs, char *prompt, t_quote_state state)
+{
+    int total_length;
+    int position;
+
+    total_length = 0;
+    position = 0;
+    
+    state.in_single = false;
+    state.in_double = false;
+    
+    while (prompt[position]) {
+        update_quote_state(&state, prompt[position]);
+        
+        if (prompt[position] == '$' && !state.in_single) {
+            total_length += handle_special_character(jobs, prompt, &position);
+        } else {
+            total_length++;
+            position++;
+        }
+    }
+    
+    return (total_length + 1);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_helpers_1.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:50 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 11:03:13 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void free_str_arr(char **array)
+{
+   int index;
+
+   if (!array)
+       return;
+
+   for (index = 0; array[index]; index++) {
+       free(array[index]);
+   }
+   free(array);
+}
+
+void free_jobs(t_jobs *jobs)
+{
+   t_job *current;
+   t_job *next;
+
+   if (!jobs)
+       return;
+       
+   if (jobs->job_list) {
+       current = jobs->job_list;
+       while (current) {
+           next = current->next_job;
+           free_job_list(current);
+           current = next;
+       }
+   }
+
+   if (jobs->env)
+       free_env(jobs->env);
+       
+   free(jobs);
+}
+
+void free_job_list(t_job *job)
+{
+   if (!job)
+       return;
+       
+   if (job->args)
+       free_str_arr_null(&job->args);
+       
+   if (job->redir) {
+       free_redir(job->redir);
+       job->redir = NULL;
+   }
+   
+   free(job);
+}
+
+void free_redir(t_redir *redir)
+{
+   if (!redir)
+       return;
+
+   if (redir->files)
+       free_str_arr_null(&redir->files);
+   if (redir->eof)
+       free_str_arr_null(&redir->eof);
+   if (redir->in_f)
+       free_str_arr_null(&redir->in_f);
+   if (redir->out_f)
+       free_str_arr_null(&redir->out_f);
+   if (redir->app_f)
+       free_str_arr_null(&redir->app_f);
+       
+   free(redir);
+}
+
+void free_mshell(t_mshell *mshell)
+{
+   if (!mshell)
+       return;
+       
+   if (mshell->jobs)
+       free_jobs(mshell->jobs);
+       
+   free(mshell);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_helpers_2.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:53 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 11:03:09 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void free_nec(t_mshell *mshell)
+{
+   t_job *current;
+   t_job *next;
+
+   if (!mshell || !mshell->jobs)
+       return;
+
+   current = mshell->jobs->job_list;
+   while (current) {
+       next = current->next_job;
+       free_job_list(current);
+       current = next;
+   }
+   
+   mshell->jobs->job_list = NULL;
+}
+
+void free_str_arr_null(char ***array)
+{
+   if (!array || !*array)
+       return;
+       
+   free_str_arr(*array);
+   *array = NULL;
+}
+
+void free_env(t_env *env)
+{
+   if (!env)
+       return;
+       
+   free_str_arr_null(&env->key);
+   free_str_arr_null(&env->value);
+   free(env);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   helpers.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:33:57 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:33:58 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+char *env_find_value_const(t_env *env, const char *key)
+{
+    size_t key_length;
+    int index;
+
+    if (!env || !key)
+        return (NULL);
+
+    key_length = ft_strlen(key);
+    
+    for (index = 0; env->key[index]; index++) {
+        if (ft_strlen(env->key[index]) == key_length && 
+            !ft_strncmp(env->key[index], key, key_length)) {
+            return (env->value[index]);
+        }
+    }
+    
+    return (NULL);
+}
+
+char *ft_strjoin_const(char *s1, const char *s2)
+{
+    char *result;
+    size_t len1, len2;
+    int i;
+
+    if (!s1) {
+        s1 = malloc(sizeof(char));
+        if (!s1)
+            return (NULL);
+        s1[0] = '\0';
+    }
+
+    len1 = ft_strlen(s1);
+    len2 = ft_strlen(s2);
+    
+    result = malloc((len1 + len2 + 1) * sizeof(char));
+    if (!result)
+        return (NULL);
+
+    for (i = 0; s1[i]; i++)
+        result[i] = s1[i];
+    for (int j = 0; s2[j]; j++)
+        result[i + j] = s2[j];
+        
+    result[len1 + len2] = '\0';
+    return (result);
+}
+
+int str_arr_len(char **array)
+{
+    int length;
+
+    if (!array)
+        return (0);
+        
+    for (length = 0; array[length]; length++);
+    return (length);
+}
+
+char **str_arr_realloc(char **array, char *element)
+{
+    char **new_array;
+    int index;
+    int new_size;
+
+    if (!array) {
+        new_array = ft_calloc(2, sizeof(char *));
+        if (!new_array)
+            return (NULL);
+            
+        new_array[0] = ft_strdup(element);
+        return (new_array);
+    }
+
+    new_size = str_arr_len(array) + 2;
+    new_array = ft_calloc(new_size, sizeof(char *));
+    if (!new_array)
+        return (NULL);
+
+    for (index = 0; array[index]; index++) {
+        new_array[index] = ft_strdup(array[index]);
+        if (!new_array[index]) {
+            free_str_arr(new_array);
+            return (NULL);
+        }
+    }
+
+    new_array[index] = ft_strdup(element);
+    free_str_arr(array);
+    
+    return (new_array);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:36 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 13:21:25 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../inc/minishell.h"
+
+static char nuller(t_mshell *mshell)
+{
+	t_job *temp;
+	t_job *next;
+
+	temp = mshell->jobs->job_list;
+	while (temp)
+	{
+		next = temp->next_job;
+		free_job_list(temp);
+		temp = next;
+	}
+	mshell->jobs->job_list = ft_calloc(1, sizeof(t_job));
+	if (!mshell->jobs->job_list)
+		return (EXIT_FAILURE);
+	mshell->jobs->job_list->redir = ft_calloc(1, sizeof(t_redir));
+	if (!mshell->jobs->job_list->redir)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+static t_mshell *mshell_init(char **env)
+{
+	t_mshell *mshell;
+
+	mshell = ft_calloc(1, sizeof(t_mshell));
+	if (!mshell)
+		return (NULL);
+	mshell->jobs = ft_calloc(1, sizeof(t_jobs));
+	if (!mshell->jobs)
+		return (free(mshell), NULL);
+	if (get_first_env(mshell->jobs, env))
+		return (free(mshell->jobs), free(mshell), NULL);
+	mshell->jobs->mshell = mshell;
+	return (mshell);
+}
+
+static char process(t_mshell *mshell, char *prompt)
+{
+	t_job *temp;
+
+	if (parser(mshell->jobs, prompt))
+		return (EXIT_FAILURE);
+	temp = mshell->jobs->job_list;
+	while (temp)
+	{
+		if (!temp->args)
+		{
+			ft_putendl_fd("Syntax error special char got used as a command.",
+						  2);
+			mshell->quest_mark = 2;
+			return (EXIT_FAILURE);
+		}
+		temp = temp->next_job;
+	}
+	if (executor(mshell))
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+static void start_mshell(t_mshell *mshell)
+{
+	char *prompt;
+	char *trim;
+
+	while (1)
+	{
+		set_signal(MAIN);
+		prompt = readline(PROMPT);
+		if (!prompt)
+			break;
+		trim = ft_strtrim(prompt, " \t\r\f\v");
+		free(prompt);
+		if (!trim)
+			break;
+		set_signal(314);
+		if (nuller(mshell))
+		{
+			free(trim);
+			break;
+		}
+		if (process(mshell, trim))
+			continue;
+	}
+}
+
+int main(int argc, char **argv, char **env)
+{
+	t_mshell *mshell;
+
+	(void)argv;
+	if (argc != 1)
+		return (1);
+	mshell = mshell_init(env);
+	if (!mshell)
+		return (EXIT_FAILURE);
+	start_mshell(mshell);
+	free_mshell(mshell);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+
+	+:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+
+	+#+        */
+/*                                                +#+#+#+#+#+
+	+#+           */
+/*   Created: 2024/11/20 21:34:07 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:07 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char job_init(t_job **temp, char **splitted)
+{
+	(*temp)->next_job = ft_calloc(1, sizeof(t_job));
+	if (!(*temp)->next_job)
+		return (free_str_arr(splitted), EXIT_FAILURE);
+	*temp = (*temp)->next_job;
+	(*temp)->redir = ft_calloc(1, sizeof(t_redir));
+	if (!(*temp)->redir)
+		return (free_str_arr(splitted), EXIT_FAILURE);
+	(*temp)->redir->app_file = -1;
+	(*temp)->redir->in_file = -1;
+	(*temp)->redir->out_file = -1;
+	(*temp)->redir->last_in = 0;
+	(*temp)->redir->last_out = 0;
+	return (EXIT_SUCCESS);
+}
+
+char distribute(t_mshell *mshell, char **splitted)
+{
+	t_job *temp;
+	char redir_status;
+	int i;
+
+	redir_status = -1;
+	mshell->jobs->len = 1;
+	temp = mshell->jobs->job_list;
+	i = -1;
+	while (splitted[++i])
+	{
+		if (splitted[i][0] == '|')
+		{
+			mshell->jobs->len += 1;
+			if (job_init(&temp, splitted))
+				return (EXIT_FAILURE);
+		}
+		else if (handle_distribute(temp, splitted[i], &redir_status))
+			return (free_str_arr(splitted), EXIT_FAILURE);
+	}
+	return (free_str_arr(splitted), EXIT_SUCCESS);
+}
+
+char parser(t_jobs *jobs, char *prompt)
+{
+	char **splitted;
+
+	add_history(prompt);
+	expander(jobs, &prompt);
+	if (!prompt[0] || check_unclosed_quotes(jobs, prompt))
+		return (free(prompt), EXIT_FAILURE);
+	splitted = word_split(prompt);
+	free(prompt);
+	if (!splitted)
+		return (EXIT_FAILURE);
+	if (check_syntax_errors(jobs, splitted))
+		return (free_str_arr(splitted), EXIT_FAILURE);
+	return (distribute(jobs->mshell, splitted));
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_helpers1.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:02 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:03 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static bool is_redirect_operator(char *arg)
+{
+    return (arg[0] == '<' && !arg[1]) ||
+           (arg[0] == '>' && !arg[1]) ||
+           (arg[0] == '<' && arg[1] == arg[0] && !arg[2]) ||
+           (arg[0] == '>' && arg[1] == arg[0] && !arg[2]);
+}
+
+static char append_to_files(t_job *job, char *arg)
+{
+    if (!job || !arg)
+        return (EXIT_FAILURE);
+        
+    job->redir->files = str_arr_realloc(job->redir->files, arg);
+    if (!job->redir->files)
+        return (EXIT_FAILURE);
+        
+    return (EXIT_SUCCESS);
+}
+
+static void determine_redirect_type(char *arg, char *status)
+{
+    if (!arg || !arg[0]) {
+        *status = -1;
+        return;
+    }
+
+    if (arg[0] == '<') {
+        if (!arg[1])
+            *status = 0;
+        else if (arg[1] == '<' && !arg[2])
+            *status = 2;
+        else 
+            *status = -1;
+    }
+    else if (arg[0] == '>') {
+        if (!arg[1])
+            *status = 1;
+        else if (arg[1] == '>' && !arg[2])
+            *status = 3;
+        else
+            *status = -1;
+    }
+    else
+        *status = -1;
+}
+
+static char handle_special_redirect(t_job *job, char *arg, char *status)
+{
+    if (*status == 2) {
+        *status = -1;
+        job->redir->last_in = 2;
+        job->redir->eof = str_arr_realloc(job->redir->eof, arg);
+        return (!job->redir->eof || append_to_files(job, arg)) ? 
+               EXIT_FAILURE : EXIT_SUCCESS;
+    }
+    
+    if (*status == 3) {
+        *status = -1;
+        job->redir->last_out = 2;
+        job->redir->app_f = str_arr_realloc(job->redir->app_f, arg);
+        return (!job->redir->app_f || append_to_files(job, arg)) ? 
+               EXIT_FAILURE : EXIT_SUCCESS;
+    }
+    
+    determine_redirect_type(arg, status);
+    return (EXIT_SUCCESS);
+}
+
+static char handle_redirect(t_job *job, char *arg, char *status)
+{
+    if (*status == 0) {
+        *status = -1;
+        job->redir->last_in = 1;
+        job->redir->in_f = str_arr_realloc(job->redir->in_f, arg);
+        return (!job->redir->in_f || append_to_files(job, arg)) ? 
+               EXIT_FAILURE : EXIT_SUCCESS;
+    }
+    
+    if (*status == 1) {
+        *status = -1;
+        job->redir->last_out = 1;
+        job->redir->out_f = str_arr_realloc(job->redir->out_f, arg);
+        return (!job->redir->out_f || append_to_files(job, arg)) ? 
+               EXIT_FAILURE : EXIT_SUCCESS;
+    }
+    
+    return handle_special_redirect(job, arg, status);
+}
+
+char handle_distribute(t_job *job, char *arg, char *redir_status)
+{
+    char **current_args;
+    char redirect_result;
+
+    if (!job || !arg || !*arg)
+        return (EXIT_FAILURE);
+
+    current_args = job->args;
+    redirect_result = handle_redirect(job, arg, redir_status);
+
+    if (is_redirect_operator(arg))
+        return (EXIT_SUCCESS);
+        
+    if (redirect_result == EXIT_FAILURE)
+        return (EXIT_FAILURE);
+
+    if (*redir_status == -1 && !ctrl_append(job->redir, arg)) {
+        job->args = str_arr_realloc(current_args, arg);
+        if (!job->args)
+            return (free_str_arr(job->args), EXIT_FAILURE);
+    }
+
+    return (EXIT_SUCCESS);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_helpers2.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:05 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:44:41 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char check_redirection(char **redirection_list, char *cleaned_arg)
+{
+   int list_length;
+   size_t arg_length;
+   size_t last_redir_length;
+
+   if (!redirection_list)
+       return (EXIT_SUCCESS);
+       
+   list_length = str_arr_len(redirection_list);
+   arg_length = ft_strlen(cleaned_arg);
+   last_redir_length = ft_strlen(redirection_list[list_length - 1]);
+
+   if (last_redir_length == arg_length && 
+       !ft_strncmp(redirection_list[list_length - 1], 
+                   cleaned_arg, last_redir_length)) {
+       return (EXIT_FAILURE);
+   }
+   
+   return (EXIT_SUCCESS);
+}
+
+char ctrl_append(t_redir *redir, char *arg)
+{
+   char *trimmed_arg;
+   const int APPEND_ERROR = 1;
+
+   trimmed_arg = ft_strtrim(arg, "\"");
+   if (!trimmed_arg)
+       return (APPEND_ERROR);
+
+   if (check_redirection(redir->app_f, trimmed_arg) || 
+       check_redirection(redir->in_f, trimmed_arg) ||
+       check_redirection(redir->out_f, trimmed_arg) || 
+       check_redirection(redir->eof, trimmed_arg)) {
+       free(trimmed_arg);
+       return (APPEND_ERROR);
+   }
+
+   free(trimmed_arg);
+   return (0);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   word_split.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:10 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:41:48 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static int get_word_len(t_parser_state *parser, char *prompt)
+{
+	int len;
+
+	if (prompt[parser->i] == '<' || prompt[parser->i] == '>' || prompt[parser->i] == '|')
+	{
+		if (prompt[parser->i] != '|' && prompt[parser->i] == prompt[parser->i + 1])
+			return (2);
+		else
+			return (1);
+	}
+	len = -1;
+	while (prompt[++len + parser->i])
+	{
+		if (prompt[parser->i + len] == '\'' || prompt[parser->i + len] == '\"')
+			update_quote_state(parser->state, prompt[parser->i + len]);
+		else if (!parser->state->in_single && !parser->state->in_double && (prompt[parser->i + len] == ' ' || prompt[parser->i + len] == '<' || prompt[parser->i + len] == '>' || prompt[parser->i + len] == '|'))
+			break;
+	}
+	return (len);
+}
+
+static char *get_word(t_parser_state *parser, char *prompt)
+{
+	char *word;
+	int i;
+
+	while (prompt[parser->i] && (prompt[parser->i] == ' ' || prompt[parser->i] == '\t' || prompt[parser->i] == '\v' || prompt[parser->i] == '\f' || prompt[parser->i] == '\r'))
+		parser->i++;
+	if (!prompt[parser->i])
+		return (NULL);
+	parser->len = get_word_len(parser, prompt);
+	word = ft_calloc(1, parser->len + 1);
+	if (!word)
+		return (NULL);
+	i = 0;
+	while (i < parser->len)
+		word[i++] = prompt[parser->i++];
+	word[i] = 0;
+	return (word);
+}
+
+static char *get_trimmed(char *word)
+{
+    char *trimmed;
+    char quote_type;
+    int i, j;
+    
+    trimmed = ft_calloc(1, ft_strlen(word) + 1);
+    if (!trimmed)
+        return (NULL);
+        
+    i = 0;
+    j = 0;
+    quote_type = 0;
+    
+    while (word[i])
+    {
+        if ((word[i] == '\'' || word[i] == '\"') && !quote_type)
+            quote_type = word[i];
+        else if (word[i] == quote_type)
+            quote_type = 0;
+        else
+            trimmed[j++] = word[i];
+        i++;
+    }
+    
+    return trimmed;
+}
+
+char **word_split(char *prompt)
+{
+	t_quote_state quote_state;
+	t_parser_state parser;
+	char **words;
+	char *word;
+	char *trimmed;
+
+	quote_state = (t_quote_state){false, false};
+	parser = (t_parser_state){&quote_state, 0, 0};
+	words = NULL;
+	while (prompt[parser.i])
+	{
+		word = get_word(&parser, prompt);
+		if (!word)
+			break;
+		trimmed = get_trimmed(word);
+		free(word);
+		if (!trimmed)
+			return (free_str_arr(words), NULL);
+		words = str_arr_realloc(words, trimmed);
+		free(trimmed);
+		if (!words)
+			return (NULL);
+	}
+	return (words);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error_ctrl.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:18 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:19 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void error_msg(t_jobs *jobs, char *file, const char *message)
+{
+	jobs->mshell->quest_mark = 1;
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(file, 2);
+	ft_putstr_fd((char *)message, 2);
+}
+
+char redir_error(t_jobs *jobs, t_job *job, char *file_i, int fd)
+{
+	t_stat stat_t;
+
+	if (fd == -1)
+	{
+		jobs->mshell->quest_mark = 1;
+		stat(file_i, &stat_t);
+		if (S_ISDIR(stat_t.st_mode))
+			error_msg(jobs, file_i, ": Is a directory\n");
+		else if (!S_ISDIR(stat_t.st_mode))
+			error_msg(jobs, file_i, ": No such file or directory\n");
+		if (jobs->len == 1)
+			return (EXIT_FAILURE);
+		if (jobs->len != 1 || job->built_in == false)
+			exit(1);
+	}
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_fd.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:22 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 21:51:06 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static void get_fd_init(int indexes[4])
+{
+	indexes[0] = 0;
+	indexes[1] = 0;
+	indexes[2] = 0;
+	indexes[4] = -1;
+}
+
+int get_fd(t_jobs *jobs, t_job *job)
+{
+    int fd;
+    int indexes[5];
+    int last_fd;
+
+    get_fd_init(indexes);
+    if (!job->redir->files)
+        return (1);
+
+    last_fd = 1;
+    indexes[3] = -1;
+    while (job->redir->files[++indexes[3]])
+    {
+        fd = get_fd_lh(jobs, job, indexes);
+        if (fd == -1)
+        {
+            jobs->mshell->quest_mark = 1;
+            return (-1);
+        }
+        
+        if (fd != 1 && indexes[4] == 1)
+        {
+            if (dup2(fd, STDOUT_FILENO) == -1)
+            {
+                close(fd);
+                return (-1);
+            }
+            last_fd = fd; 
+        }
+        else if (fd != 0 && !indexes[4])
+        {
+            if (dup2(fd, STDIN_FILENO) == -1)
+            {
+                close(fd);
+                return (-1);
+            }
+            last_fd = fd;
+        }
+            
+        if (fd != 0 && fd != 1)
+            close(fd);
+    }
+    return (last_fd);
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_fd_helpers.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:20 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:21 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static int open_out(t_jobs *jobs, t_job *job, char *file, int indexes[5])
+{
+	int fd;
+
+	if (!file)
+		return (-1);
+	fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (access(file, F_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": No such file or directory\n");
+		return (-1);
+	}
+	if (access(file, W_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": Permission denied\n");
+		return (-1);
+	}
+	if (redir_error(jobs, job, file, fd))
+		return (-1);
+	job->redir->out_file = fd;
+	indexes[4] = 1;
+	return (fd);
+}
+
+static int open_app(t_jobs *jobs, t_job *job, char *file, int indexes[5])
+{
+	int fd;
+
+	if (!file)
+		return (-1);
+	fd = open(file, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	if (access(file, F_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": No such file or directory\n");
+		return (-1);
+	}
+	if (access(file, W_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": Permission denied\n");
+		return (-1);
+	}
+	if (redir_error(jobs, job, file, fd))
+		return (-1);
+	job->redir->app_file = fd;
+	indexes[4] = 1;
+	return (fd);
+}
+
+static int open_in(t_jobs *jobs, t_job *job, char *file, int indexes[5])
+{
+	int fd;
+
+	if (!file)
+		return (-1);
+	if (access(file, F_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": No such file or directory\n");
+		return (-1);
+	}
+	fd = open(file, O_RDONLY);
+	if (access(file, R_OK))
+	{
+		jobs->mshell->quest_mark = 1;
+		error_msg(jobs, file, ": Permission denied\n");
+		return (-1);
+	}
+	if (redir_error(jobs, job, file, fd))
+		return (-1);
+	job->redir->in_file = fd;
+	indexes[4] = 0;
+	return (fd);
+}
+
+static char get_fd_lh_if(char *ctrl_str, char *file, int len1)
+{
+	int len2;
+
+	if (!ctrl_str)
+		return (-1);
+	len2 = ft_strlen(ctrl_str);
+	return (!ft_strncmp(file, ctrl_str, len1) && len1 == len2);
+}
+
+int get_fd_lh(t_jobs *jobs, t_job *job, int indexes[5])
+{
+	int fd;
+	char *file;
+
+	fd = 1;
+	file = NULL;
+	if (job->redir->files)
+		file = job->redir->files[indexes[3]];
+	if (job->redir->out_f && get_fd_lh_if(job->redir->out_f[indexes[0]], file,
+										  ft_strlen(file)) != -1)
+		fd = open_out(jobs, job, job->redir->out_f[indexes[0]++], indexes);
+	else if (job->redir->app_f && get_fd_lh_if(job->redir->app_f[indexes[1]],
+											   file, ft_strlen(file)) != -1)
+		fd = open_app(jobs, job, job->redir->app_f[indexes[1]++], indexes);
+	else if (job->redir->in_f && get_fd_lh_if(job->redir->in_f[indexes[2]],
+											  file, ft_strlen(file)) != -1)
+		fd = open_in(jobs, job, job->redir->in_f[indexes[2]++], indexes);
+	return (fd);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:24 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/22 10:27:02 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+static char calc_state(char *arg, char *test)
+{
+	int len;
+	int len_test;
+
+	len = ft_strlen(arg);
+	len_test = ft_strlen(test);
+	return (!ft_strncmp(arg, test, len) && len == len_test);
+}
+
+static void handle_arg(t_jobs *jobs, t_job *job, int pipe_fd[2])
+{
+	char *arg;
+	char c_state;
+	int i;
+
+	i = 0;
+	while (job->redir->eof[i])
+	{
+		arg = readline(">");
+		if (!arg)
+		{
+			jobs->mshell->quest_mark = 130;
+			exit(jobs->mshell->quest_mark);
+		}
+		c_state = calc_state(arg, job->redir->eof[i]);
+		if (!c_state && arg && !job->redir->eof[i + 1])
+			ft_putendl_fd(arg, pipe_fd[1]);
+		if (c_state)
+			i++;
+		free(arg);
+	}
+}
+
+static void heredoc_child(t_jobs *jobs, t_job *job, int pipe_fd[2], char state)
+{
+	if (state)
+		set_signal(HDOC);
+	dup2(jobs->mshell->backup[0], 0);
+	handle_arg(jobs, job, pipe_fd);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	exit(0);
+}
+
+char heredoc(t_jobs *jobs, t_job *job, char state)
+{
+	int temp_status;
+	int pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+		return (EXIT_FAILURE);
+	dup2(pipe_fd[0], 0);
+	job->pid = fork();
+	if (job->pid == 0)
+		heredoc_child(jobs, job, pipe_fd, state);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	waitpid(job->pid, &temp_status, 0);
+	if (state)
+	{
+		if (WIFEXITED(temp_status))
+			jobs->mshell->quest_mark = WEXITSTATUS(temp_status);
+	}
+	return (EXIT_SUCCESS);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signal_handle.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:32 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/20 21:34:33 by nozkara           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../inc/minishell.h"
+
+void handler_sigint(int sig)
+{
+	if (sig == SIGINT)
+	{
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+	}
+}
+
+static void handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+}
+
+static void handler_heredoc(int status)
+{
+	if (status == SIGINT)
+	{
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		exit(130);
+	}
+}
+
+void set_signal(int c)
+{
+	if (c == MAIN)
+	{
+		signal(SIGINT, &handler);
+		signal(SIGQUIT, SIG_IGN);
+	}
+	else if (c == CHILD)
+	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+	}
+	else if (c == HDOC)
+	{
+		signal(SIGINT, &handler_heredoc);
+		signal(SIGQUIT, SIG_IGN);
+	}
+	else
+		signal(SIGINT, SIG_IGN);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   syntax_check.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yunozdem <yunozdem@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 21:34:40 by nozkara            #+#    #+#             */
+/*   Updated: 2024/11/21 18:34:02 by yunozdem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../inc/minishell.h"
+
+bool is_special_char(const char *token)
+{
+	return (ft_strncmp(token, "|", 2) == 0 || ft_strncmp(token, "<", 2) == 0 || ft_strncmp(token, ">", 2) == 0 || ft_strncmp(token, "<<", 3) == 0 || ft_strncmp(token, ">>", 3) == 0);
+}
+
+static bool cse_lh(t_jobs *jobs, const char *msg)
+{
+	jobs->mshell->quest_mark = 2;
+	ft_putendl_fd((char *)msg, 2);
+	return (true);
+}
+
+bool check_syntax_errors(t_jobs *jobs, char **tokens)
+{
+    int i;
+
+    i = -1;
+    while (tokens[++i])
+    {
+        if (ft_strncmp(tokens[i], "|", 2) == 0)
+        {
+            // Pipe başta veya sonda olamaz
+            if (i == 0 || tokens[i + 1] == NULL)
+                return (cse_lh(jobs, "Syntax error near unexpected token '|'"));
+        }
+        else if (is_special_char(tokens[i]))
+        {
+            // Redirection işaretinden sonra dosya adı/komut olmalı
+            if (tokens[i + 1] == NULL)
+                return (cse_lh(jobs, "Syntax error near unexpected token"));
+            
+            // Ardışık redirection işaretleri kontrol edilmeli
+            if (is_special_char(tokens[i + 1]) && 
+                ft_strncmp(tokens[i + 1], "|", 2) == 0)
+                return (cse_lh(jobs, "Syntax error near unexpected token"));
+        }
+    }
+    return (false);
+}
+
+bool check_unclosed_quotes(t_jobs *jobs, const char *input)
+{
+	char quote;
+
+	quote = 0;
+	while (*input)
+	{
+		if ((*input == '\'' || *input == '"') && (quote == '\0' || quote == *input))
+		{
+			if (!quote)
+				quote = *input;
+			else
+				quote = 0;
+		}
+		input++;
+	}
+	if (quote)
+	{
+		ft_putendl_fd("Syntax error: Unclosed quote", 2);
+		jobs->mshell->quest_mark = 2;
+		return (true);
+	}
+	return (false);
+}

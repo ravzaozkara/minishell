@@ -12,51 +12,62 @@
 
 #include "../../inc/minishell.h"
 
-static char *strip_quotes(char *str)
+static char *remove_quotes(char *input_str)
 {
-	char *new_str;
-	int i;
-	int j;
+    char *clean_str;
+    size_t str_len;
+    int read_pos;
+    int write_pos;
 
-	new_str = malloc(ft_strlen(str) + 1);
-	if (!new_str)
-		return (NULL);
-	j = 0;
-	i = -1;
-	while (str[++i])
-	{
-		if (str[i] != '"' && str[i] != '\'')
-			new_str[j++] = str[i];
-	}
-	new_str[j] = '\0';
-	return (new_str);
+    str_len = ft_strlen(input_str);
+    clean_str = malloc(str_len + 1);
+    
+    if (!clean_str)
+        return (NULL);
+
+    write_pos = 0;
+    for (read_pos = 0; input_str[read_pos]; read_pos++) {
+        if (input_str[read_pos] != '"' && input_str[read_pos] != '\'') {
+            clean_str[write_pos++] = input_str[read_pos];
+        }
+    }
+    clean_str[write_pos] = '\0';
+
+    return (clean_str);
 }
 
 char exit_error(t_jobs *jobs, char *arg, const char *msg)
 {
-	jobs->mshell->quest_mark = 255;
-	ft_putstr_fd("minishell: exit: ", 2);
-	ft_putstr_fd(arg, 2);
-	ft_putstr_fd(": ", 2);
-	ft_putstr_fd((char *)msg, 2);
-	return (EXIT_FAILURE);
+    const int EXIT_ERROR_CODE = 255;
+    
+    jobs->mshell->quest_mark = EXIT_ERROR_CODE;
+    
+    ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+    ft_putstr_fd(arg, STDERR_FILENO);
+    ft_putstr_fd(": ", STDERR_FILENO);
+    ft_putstr_fd((char *)msg, STDERR_FILENO);
+    
+    return (EXIT_FAILURE);
 }
 
 void exit_d(t_jobs *jobs, char **args)
 {
-    char *stripped;
-
-    ft_putendl_fd("exit", 1);
-    if (!args[1])
-    {
+    char *cleaned_arg;
+    const char *MEMORY_ERROR = "memory allocation error\n";
+    
+    ft_putendl_fd("exit", STDOUT_FILENO);
+    
+    if (!args[1]) {
         jobs->mshell->quest_mark = 0;
         exit(jobs->mshell->quest_mark);
     }
-    stripped = strip_quotes(args[1]);
-    if (!stripped)
-    {
-        exit_error(jobs, args[1], "memory allocation error\n");
+    
+    cleaned_arg = remove_quotes(args[1]);
+    
+    if (!cleaned_arg) {
+        exit_error(jobs, args[1], MEMORY_ERROR);
         exit(jobs->mshell->quest_mark);
     }
-    handle_exit_argument(jobs, args, stripped);
+    
+    handle_exit_argument(jobs, args, cleaned_arg);
 }
