@@ -21,9 +21,8 @@ static void wait_child(t_mshell *mshell)
     current = mshell->jobs->job_list;
     if (mshell->jobs->len == 1 && current->built_in == true)
         return;
-
     final_status = 0;
-    for (; current != NULL; current = current->next_job)
+    while (current)
     {
         signal(SIGINT, &handler_sigint);
         if (current->pid <= 0)
@@ -35,8 +34,8 @@ static void wait_child(t_mshell *mshell)
                           WEXITSTATUS(process_status) : 
                           (WIFSIGNALED(process_status) ? 128 + WTERMSIG(process_status) : 0);
         }
+        current = current->next_job;
     }
-    
     mshell->quest_mark = (mshell->quest_mark == 130) ? 
                         mshell->quest_mark : final_status;
 }
@@ -68,14 +67,10 @@ static int executer_while(t_mshell *mshell, t_job *current_job)
 
 void get_backup(t_mshell *mshell)
 {
-    const int stdin_backup = mshell->backup[0];
-    const int stdout_backup = mshell->backup[1];
-    
-    if (dup2(stdin_backup, STDIN_FILENO) != -1)
-        close(stdin_backup);
-        
-    if (dup2(stdout_backup, STDOUT_FILENO) != -1)
-        close(stdout_backup);
+    if (dup2(mshell->backup[0], STDIN_FILENO) != -1)
+        close(mshell->backup[0]);
+    if (dup2(mshell->backup[1], STDOUT_FILENO) != -1)
+        close(mshell->backup[1]);
 }
 
 char executor(t_mshell *mshell)

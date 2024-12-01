@@ -40,47 +40,34 @@ void built_in(t_job *job)
 static char handle_basic_commands(t_jobs *jobs, t_job *job)
 {
     const char *cmd = job->args[0];
-    
-    if (is_command(cmd, "echo", 4)) {
-        echo(jobs, job);
-        return jobs->mshell->quest_mark;
-    }
-    
-    if (is_command(cmd, "env", 3)) {
-        env(jobs);
-        return jobs->mshell->quest_mark;
-    }
-    
-    if (is_command(cmd, "exit", 4)) {
-        exit_d(jobs, job->args);
-        return jobs->mshell->quest_mark;
-    }
-    
-    if (is_command(cmd, "unset", 5)) {
-        jobs->mshell->quest_mark = unset(&jobs->env, job->args);
-        return jobs->mshell->quest_mark;
-    }
-    
-    if (is_command(cmd, "export", 6)) {
+
+    if (is_command(cmd, "echo", 4))
+        return (echo(jobs, job), jobs->mshell->quest_mark);
+    else if (is_command(cmd, "env", 3))
+        return (env(jobs), jobs->mshell->quest_mark);
+    else if (is_command(cmd, "exit", 4))
+        return (exit_d(jobs, job->args), jobs->mshell->quest_mark);
+    else if (is_command(cmd, "unset", 5))
+        return ((jobs->mshell->quest_mark = unset(&jobs->env, job->args)));
+    else if (is_command(cmd, "export", 6))
         return export(jobs, job->args);
-    }
-    
-    return -1;
+    else
+        return -1;
 }
 
 char ctrl_builtins(t_jobs *jobs, t_job *job)
 {
     const char *cmd = job->args[0];
     
-    if (is_command(cmd, "pwd", 3)) {
+    if (is_command(cmd, "pwd", 3)) 
+    {
         jobs->mshell->quest_mark = pwd(jobs);
         return jobs->mshell->quest_mark;
     }
-    
-    if (is_command(cmd, "cd", 2)) {
+    else if (is_command(cmd, "cd", 2)) 
+    {
         jobs->mshell->quest_mark = cd(jobs, job->args[1]);
         return jobs->mshell->quest_mark;
     }
-    
     return handle_basic_commands(jobs, job);
 }

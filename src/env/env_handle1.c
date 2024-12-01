@@ -21,19 +21,19 @@ char env_del_element(t_env **env, char *key, char *value)
 
     if (!key || !value)
         return (EXIT_FAILURE);
-
     environment = *env;
     target_length = ft_strlen(key);
-
-    for (index = 0; environment->key[index]; index++) {
+    index = 0;
+    while (environment->key[index]) 
+    {
         current_length = ft_strlen(environment->key[index]);
-        
         if (current_length == target_length && 
-            !ft_strncmp(environment->key[index], key, target_length)) {
+            !ft_strncmp(environment->key[index], key, target_length)) 
+        {
             return (env_del_index(env, index));
         }
+        index++;
     }
-    
     return (EXIT_SUCCESS);
 }
 
@@ -44,13 +44,9 @@ static char	no_value(t_env *env)
 	empty_value = ft_strdup("");
     if (!empty_value)
         return (EXIT_FAILURE);
-        
     env->value = str_arr_realloc(env->value, empty_value);
     if (!env->value) 
-	{
-        free(empty_value);
-        return (EXIT_FAILURE);
-    }
+	    return (free(empty_value), EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -61,7 +57,7 @@ char env_add(t_env *env, char *key, char *value)
     env->key = str_arr_realloc(env->key, key);
     if (!env->key)
         return (EXIT_FAILURE);
-	if(!value && no_value(env))
+	else if(!value && no_value(env))
 		return(EXIT_FAILURE);
 	else
 	{
@@ -80,15 +76,16 @@ char *env_find_value(t_env *env, char *key)
 
     if (!env || !key)
         return (NULL);
-
     target_length = ft_strlen(key);
-    
-    for (index = 0; env->key[index]; index++) {
+    index = 0;
+    while ( env->key[index])
+    {
         if (ft_strlen(env->key[index]) == target_length && 
-            !ft_strncmp(env->key[index], key, target_length)) {
+            !ft_strncmp(env->key[index], key, target_length)) 
+        {
             return (env->value[index]);
         }
-    }
-    
+        index++;
+    }    
     return (NULL);
 }
