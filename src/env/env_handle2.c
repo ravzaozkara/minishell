@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/02 18:30:06 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 18:30:07 by nozkara          ###   ########.fr       */
+/*   Created: 2024/12/02 22:23:11 by nozkara           #+#    #+#             */
+/*   Updated: 2024/12/02 22:24:08 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,10 @@ static char	copy_env_entries(t_env **env, t_env *new_env, int skip_index)
 	write_index = 0;
 	while (write_index < new_env->len)
 	{
-		read_index = write_index + (write_index >= skip_index ? 1 : 0);
+		if (write_index >= skip_index)
+			read_index = write_index + 1;
+		else
+			read_index = write_index;
 		new_env->key[write_index] = ft_strdup((*env)->key[read_index]);
 		if (!new_env->key[write_index])
 			return (free_env_struct(new_env), EXIT_FAILURE);

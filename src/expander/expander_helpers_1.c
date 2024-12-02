@@ -6,7 +6,7 @@
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 18:37:13 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 18:38:03 by nozkara          ###   ########.fr       */
+/*   Updated: 2024/12/02 21:00:38 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static void	handle_exit_status(char *result, t_jobs *jobs, int *positions)
 	positions[0]++;
 }
 
-static void	handle_variable(char *prompt, char *result, t_jobs *jobs,
+void	handle_variable(char *prompt, char *result, t_jobs *jobs,
 		int *positions)
 {
 	positions[0]++;
@@ -79,12 +79,13 @@ static void	handle_variable(char *prompt, char *result, t_jobs *jobs,
 		result[positions[1]++] = '$';
 }
 
-static char	*initialize_expansion(t_jobs *jobs, char *prompt, int **positions)
+char	*initialize_expansion(t_jobs *jobs, char *prompt, int **positions)
 {
 	char			*result;
 	t_quote_state	initial_state;
 
-	initial_state = {false, false};
+	initial_state.in_single = false;
+	initial_state.in_double = false;
 	if (!prompt)
 		return (NULL);
 	*positions = ft_calloc(3, sizeof(int));
@@ -97,36 +98,5 @@ static char	*initialize_expansion(t_jobs *jobs, char *prompt, int **positions)
 		free(*positions);
 		return (NULL);
 	}
-	return (result);
-}
-
-char	*expand_vars(t_jobs *jobs, char *prompt)
-{
-	t_quote_state	quote_state = {false, false};
-	char			*result;
-	int				*positions;
-
-	result = initialize_expansion(jobs, prompt, &positions);
-	if (!result)
-		return (NULL);
-	while (prompt[positions[0]])
-	{
-		toggle_quotes(&quote_state, prompt[positions[0]]);
-		if (prompt[positions[0]] == '$' && !quote_state.in_single)
-		{
-			if (!prompt[positions[0] + 1] || prompt[positions[0] + 1] == ' ')
-			{
-				result[positions[1]++] = prompt[positions[0]++];
-				continue ;
-			}
-			handle_variable(prompt, result, jobs, positions);
-		}
-		else
-		{
-			result[positions[1]++] = prompt[positions[0]++];
-		}
-	}
-	result[positions[1]] = '\0';
-	free(positions);
 	return (result);
 }

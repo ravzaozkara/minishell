@@ -6,7 +6,7 @@
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/30 23:31:13 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 18:35:25 by nozkara          ###   ########.fr       */
+/*   Updated: 2024/12/02 21:14:36 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,12 @@ char	**array_to_env(t_env *env)
 		index++;
 	}
 	return (env_array);
+}
+
+void	restore_io(t_mshell *mshell)
+{
+	if (dup2(mshell->backup[0], STDIN_FILENO) != -1)
+		close(mshell->backup[0]);
+	if (dup2(mshell->backup[1], STDOUT_FILENO) != -1)
+		close(mshell->backup[1]);
 }

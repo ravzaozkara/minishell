@@ -6,7 +6,7 @@
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 18:26:46 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 18:34:48 by nozkara          ###   ########.fr       */
+/*   Updated: 2024/12/02 21:24:27 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,41 +54,29 @@ static char	process_export_arg(t_jobs *jobs, char *arg)
 	equals_pos = 0;
 	while (arg[equals_pos] && arg[equals_pos] != '=')
 		equals_pos++;
-	if (!(key = ft_substr(arg, 0, equals_pos)))
+	key = ft_substr(arg, 0, equals_pos);
+	if (!key)
 		return (EXIT_FAILURE);
 	if (validate_identifier(key, false))
-	{
-		free(key);
-		return (report_export_error(jobs, arg, "not a valid identifier"));
-	}
-	if (!(value = ft_substr(arg, equals_pos + 1, ft_strlen(arg) - equals_pos)))
-	{
-		free(key);
-		return (EXIT_FAILURE);
-	}
+		return (free(key), \
+			report_export_error(jobs, arg, "not a valid identifier"));
+	value = ft_substr(arg, equals_pos + 1, ft_strlen(arg) - equals_pos);
+	if (!value)
+		return (free(key), EXIT_FAILURE);
 	update_status = env_update(jobs->env, key, value);
 	if (update_status == -1)
-	{
-		free(key);
-		free(value);
-		return (EXIT_FAILURE);
-	}
+		return (free(key), free(value), EXIT_FAILURE);
 	if (update_status && env_add(jobs->env, key, value))
-	{
-		free(key);
-		free(value);
-		return (EXIT_FAILURE);
-	}
-	free(key);
-	free(value);
-	return (EXIT_SUCCESS);
+		return (free(key), free(value), EXIT_FAILURE);
+	return (free(key), free(value), EXIT_SUCCESS);
 }
 
 static void	display_exported_values(t_env *env)
 {
 	int	index;
 
-	for (index = 0; index < env->len; index++)
+	index = 0;
+	while (index < env->len)
 	{
 		ft_putstr_fd("declare -x ", STDOUT_FILENO);
 		ft_putstr_fd(env->key[index], STDOUT_FILENO);
@@ -102,6 +90,7 @@ static void	display_exported_values(t_env *env)
 		{
 			ft_putstr_fd("\n", STDOUT_FILENO);
 		}
+		index++;
 	}
 }
 

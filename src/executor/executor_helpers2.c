@@ -6,7 +6,7 @@
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 18:31:13 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 18:34:01 by nozkara          ###   ########.fr       */
+/*   Updated: 2024/12/02 21:19:32 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,30 +47,25 @@ static char	*accessor(char *env_path, char *cmd)
 	char	*dir_with_slash;
 	int		i;
 
-	if (!(path_directories = ft_split(env_path, ':')))
+	path_directories = ft_split(env_path, ':');
+	if (!path_directories)
 		return (NULL);
 	i = 0;
 	while (path_directories[i])
 	{
-		if (!(dir_with_slash = str_join(path_directories[i], "/")))
+		dir_with_slash = str_join(path_directories[i], "/");
+		if (!dir_with_slash)
 			continue ;
 		full_path = ft_strjoin(dir_with_slash, cmd);
 		free(dir_with_slash);
 		if (!full_path)
-		{
-			free_array(path_directories);
-			return (NULL);
-		}
+			return (free_array(path_directories), NULL);
 		if (access(full_path, X_OK) == 0)
-		{
-			free_array(path_directories);
-			return (full_path);
-		}
+			return (free_array(path_directories), full_path);
 		free(full_path);
 		i++;
 	}
-	free_array(path_directories);
-	return (NULL);
+	return (free_array(path_directories), NULL);
 }
 
 static char	*get_exec_path(t_jobs *jobs, t_job *job, char *env_path)

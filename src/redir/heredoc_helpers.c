@@ -1,26 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expander.c                                         :+:      :+:    :+:   */
+/*   heredoc_helpers.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/02 20:56:41 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 20:57:08 by nozkara          ###   ########.fr       */
+/*   Created: 2024/12/02 19:52:38 by nozkara           #+#    #+#             */
+/*   Updated: 2024/12/02 19:53:36 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-void	expand_cmd(t_jobs *jobs, char **prompt)
+void	initialize_fd_indexes(int indexes[4])
 {
-	char	*expanded_prompt;
+	indexes[0] = 0;
+	indexes[1] = 0;
+	indexes[2] = 0;
+	indexes[4] = -1;
+}
 
-	if (!*prompt || !jobs)
-		return ;
-	expanded_prompt = expand_vars(jobs, *prompt);
-	if (!expanded_prompt)
-		return ;
-	free(*prompt);
-	*prompt = expanded_prompt;
+int	handle_redirection_setup(t_jobs *jobs, int fd)
+{
+	if (fd == -1)
+	{
+		jobs->mshell->quest_mark = 1;
+		return (-1);
+	}
+	return (0);
 }

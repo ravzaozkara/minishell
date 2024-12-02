@@ -6,7 +6,7 @@
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 18:30:33 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 18:30:36 by nozkara          ###   ########.fr       */
+/*   Updated: 2024/12/02 21:18:10 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,6 @@ static int	setup_pipe(int pipe_ends[2], t_job *job)
 
 static void	handle_child_process(t_jobs *jobs, t_job *job, int pipe_ends[2])
 {
-	int	file_descriptor;
-
 	set_signals(CHILD);
 	close(pipe_ends[0]);
 	if (job->next_job && dup2(pipe_ends[1], STDOUT_FILENO) == -1)
@@ -67,11 +65,16 @@ static void	handle_child_process(t_jobs *jobs, t_job *job, int pipe_ends[2])
 	}
 	close(pipe_ends[1]);
 	if ((job->redir->in_f || job->redir->out_f || job->redir->app_f)
-		&& (file_descriptor = get_redirs(jobs, job)) == -1)
+		&& get_redirs(jobs, job) == -1)
 		exit(1);
 	check_builtin(job);
-	exit(job->built_in ? exec_builtin(jobs, job) : (exec_process(jobs, job),
-			jobs->mshell->quest_mark));
+	if (job->built_in)
+		exit(exec_builtin(jobs, job));
+	else
+	{
+		exec_process(jobs, job);
+		exit(jobs->mshell->quest_mark);
+	}
 }
 
 char	handle_pipe(t_jobs *jobs, t_job *job)

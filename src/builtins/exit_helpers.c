@@ -6,7 +6,7 @@
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 18:21:30 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 18:22:37 by nozkara          ###   ########.fr       */
+/*   Updated: 2024/12/02 21:22:15 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,9 @@ static int	calculate_exit_status(char *str)
 	if (process_numeric_string(str, &index, &numeric_value))
 		return (EXIT_FAILURE);
 	numeric_value = (numeric_value * sign_multiplier) % 256;
-	return ((numeric_value < 0) ? numeric_value + 256 : numeric_value);
+	if (numeric_value < 0)
+		numeric_value += 256;
+	return (numeric_value);
 }
 
 static bool	validate_numeric_string(char *str)

@@ -34,6 +34,7 @@ clean:
 
 fclean: clean
 	$(RM) -r inc/readline
+	make -C $(LIBFT_PATH) fclean
 	$(RM) $(NAME)
 
 re: fclean all

@@ -1,26 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expander.c                                         :+:      :+:    :+:   */
+/*   word_split_helper.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nozkara <nozkara@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/02 20:56:41 by nozkara           #+#    #+#             */
-/*   Updated: 2024/12/02 20:57:08 by nozkara          ###   ########.fr       */
+/*   Created: 2024/12/02 22:20:47 by nozkara           #+#    #+#             */
+/*   Updated: 2024/12/02 22:22:55 by nozkara          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-void	expand_cmd(t_jobs *jobs, char **prompt)
+void	tokenize_init(t_quote_state *quote_status, t_parser_state *parser_state,
+		char ***token_array)
 {
-	char	*expanded_prompt;
-
-	if (!*prompt || !jobs)
-		return ;
-	expanded_prompt = expand_vars(jobs, *prompt);
-	if (!expanded_prompt)
-		return ;
-	free(*prompt);
-	*prompt = expanded_prompt;
+	quote_status->in_single = false;
+	quote_status->in_double = false;
+	parser_state->quote_state = quote_status;
+	parser_state->index = 0;
+	parser_state->length = 0;
+	*token_array = NULL;
 }
