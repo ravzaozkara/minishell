@@ -45,7 +45,7 @@ static int handle_file_descriptors(t_jobs *jobs, int fd, int last_fd, int indexe
     return (last_fd);
 }
 
-int get_fd(t_jobs *jobs, t_job *job)
+int get_redirs(t_jobs *jobs, t_job *job)
 {
     int fd;
     int indexes[5];
@@ -59,7 +59,7 @@ int get_fd(t_jobs *jobs, t_job *job)
     indexes[3] = -1;
     while (job->redir->files[++indexes[3]])
     {
-        fd = get_fd_lh(jobs, job, indexes);
+        fd = handle_redir(jobs, job, indexes);
         last_fd = handle_file_descriptors(jobs,fd, last_fd, indexes);
         if (last_fd == -1)
             return (-1);

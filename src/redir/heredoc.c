@@ -46,7 +46,7 @@ static void process_arguments(t_jobs *jobs, t_job *job, int pipe_fd[2])
     }
 }
 
-char heredoc(t_jobs *jobs, t_job *job, char signal_state)
+char handle_heredoc(t_jobs *jobs, t_job *job, char signal_state)
 {
     int status;
     int pipe_fd[2];
@@ -58,7 +58,7 @@ char heredoc(t_jobs *jobs, t_job *job, char signal_state)
     if (job->pid == 0)
     {
         if (signal_state)
-            set_signal(HDOC);
+            set_signals(HDOC);
         dup2(jobs->mshell->backup[0], STDIN_FILENO);
         process_arguments(jobs, job, pipe_fd);
         close(pipe_fd[0]);
@@ -95,7 +95,7 @@ int determine_fd(t_jobs *jobs, t_job *job)
     indexes[3] = -1;
     while (job->redir->files[++indexes[3]])
     {
-        fd = get_fd_lh(jobs, job, indexes);
+        fd = handle_redir(jobs, job, indexes);
         if (fd == -1)
         {
             jobs->mshell->quest_mark = 1;

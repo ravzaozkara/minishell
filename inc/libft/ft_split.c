@@ -3,63 +3,78 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*   By: doaltin <doaltin@42istanbul.com.tr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 20:32:28 by nozkara            #+#    #+#             */
-/*   Updated: 2023/12/17 14:37:33 by nozkara           ###   ########.fr       */
+/*   Created: 2023/12/22 19:39:07 by doaltin           #+#    #+#             */
+/*   Updated: 2023/12/28 00:13:13 by doaltin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int ft_count_word(const char *str, char c)
+int	kontrol(const char *s, char c)
 {
-	size_t counted;
-	size_t i;
-	short state;
+	int	i;
 
-	counted = 0;
 	i = 0;
-	while (str[i])
-	{
-		state = 0;
-		while (str[i] == c)
-			i++;
-		while (str[i] != c && str[i])
-		{
-			state = 1;
-			i++;
-		}
-		if (state == 1)
-			counted++;
-	}
-	return (counted);
+	while (s[i] != c && s[i])
+		i++;
+	return (i);
 }
 
-char **ft_split(char const *s2, char c)
+static void	*free_str(char **ptr, int j)
 {
-	char **rtrn;
-	size_t rtrni;
-	size_t index;
-	size_t ios;
+	while (j > 0)
+		free(ptr[--j]);
+	free(ptr);
+	return (NULL);
+}
 
-	if (!s2)
-		return (0);
-	rtrn = (char **)malloc(sizeof(char *) * (ft_count_word(s2, c) + 1));
-	if (!rtrn)
-		return (0);
-	index = 0;
-	rtrni = 0;
-	while (s2[index])
+int	kelime(const char *s, char c)
+{
+	int	i;
+	int	control;
+
+	i = 0;
+	control = 0;
+	while (s[i])
 	{
-		while (s2[index] == c)
-			index++;
-		ios = index;
-		while (s2[index] != c && s2[index] != '\0')
-			index++;
-		if (ios < index)
-			rtrn[rtrni++] = ft_substr(s2, ios, index - ios);
+		while (s[i] && s[i] == c)
+			i++;
+		if (s[i] && s[i] != c)
+		{
+			control++;
+			while (s[i] && s[i] != c)
+				i++;
+		}
 	}
-	rtrn[rtrni] = 0;
-	return (rtrn);
+	return (control);
+}
+
+char	**ft_split(char const *s, char c)
+{
+	char	**str;
+	int		i;
+	int		x;
+
+	i = 0;
+	x = 0;
+	str = malloc(sizeof(char *) * (kelime(s, c) + 1));
+	if (!str)
+		return (NULL);
+	while (s[x])
+	{
+		while (s[x] && s[x] == c)
+			x++;
+		if (s[x] != c && s[x])
+		{
+			str[i] = ft_substr(&s[x], 0, (kontrol(&s[x], c)));
+			if (!str[i++])
+				return (free_str(str, i));
+		}
+		while (s[x] && s[x] != c)
+			x++;
+	}
+	str[i] = 0;
+	return (str);
 }

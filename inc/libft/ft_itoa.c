@@ -3,57 +3,55 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*   By: doaltin <doaltin@student.42istanbul.com.tr +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 20:35:43 by nozkara            #+#    #+#             */
-/*   Updated: 2023/12/19 17:28:46 by nozkara           ###   ########.fr       */
+/*   Created: 2023/12/28 02:08:03 by doaltin           #+#    #+#             */
+/*   Updated: 2024/01/18 19:22:51 by doaltin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static size_t ft_num_of_digit(int n)
+int	num(int n)
 {
-	size_t counted;
+	int	x;
 
-	counted = 0;
-	if (n < 0)
+	x = 0;
+	if (n <= 0)
+		x++;
+	while (n)
 	{
-		counted++;
-		n *= -1;
-	}
-	while (n > 9)
-	{
+		x++;
 		n /= 10;
-		counted++;
 	}
-	return (counted + 1);
+	return (x);
 }
 
-char *ft_itoa(int n)
+char	*ft_itoa(int n)
 {
-	char *rtrn;
-	size_t len;
+	char		*s1;
+	int			i;
+	long int	x;
 
-	if (n == -2147483648)
-		return (ft_strdup("-2147483648"));
-	len = ft_num_of_digit(n);
-	rtrn = (char *)malloc(len + 1);
-	if (!rtrn)
+	x = (long int)n;
+	i = num(n) + 1;
+	s1 = malloc(sizeof(char) * i);
+	if (!s1)
 		return (0);
-	rtrn[len] = 0;
-	if (n < 0)
+	while (--i)
+		s1[i] = 0;
+	i = num(n);
+	if (x == 0)
+		s1[0] = 48;
+	if (x < 0)
 	{
-		n *= -1;
-		rtrn[0] = '-';
+		s1[0] = '-';
+		x *= -1;
 	}
-	while (n >= 0)
+	while (x && --i > -1)
 	{
-		rtrn[len - 1] = (n % 10) + 48;
-		n /= 10;
-		len--;
-		if (n == 0)
-			break;
+		s1[i] = x % 10 + 48;
+		x = x / 10;
 	}
-	return (rtrn);
+	return (s1);
 }

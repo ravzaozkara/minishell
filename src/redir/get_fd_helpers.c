@@ -22,17 +22,17 @@ static int open_output_file(t_jobs *jobs, t_job *job, char *filepath, int flags[
     if (fd == -1)
     {
         jobs->mshell->quest_mark = 1;
-        error_msg(jobs, filepath, ": No such file or directory\n");
+        print_error(jobs, filepath, ": No such file or directory\n");
         return (-1);
     }
     if (access(filepath, W_OK))
     {
         jobs->mshell->quest_mark = 1;
-        error_msg(jobs, filepath, ": Permission denied\n");
+        print_error(jobs, filepath, ": Permission denied\n");
         close(fd);
         return (-1);
     }
-    if (redir_error(jobs, job, filepath, fd))
+    if (check_redir_error(jobs, job, filepath, fd))
     {
         close(fd);
         return (-1);
@@ -52,17 +52,17 @@ static int open_append_file(t_jobs *jobs, t_job *job, char *filepath, int flags[
     if (fd == -1)
     {
         jobs->mshell->quest_mark = 1;
-        error_msg(jobs, filepath, ": No such file or directory\n");
+        print_error(jobs, filepath, ": No such file or directory\n");
         return (-1);
     }
     if (access(filepath, W_OK))
     {
         jobs->mshell->quest_mark = 1;
-        error_msg(jobs, filepath, ": Permission denied\n");
+        print_error(jobs, filepath, ": Permission denied\n");
         close(fd);
         return (-1);
     }
-    if (redir_error(jobs, job, filepath, fd))
+    if (check_redir_error(jobs, job, filepath, fd))
     {
         close(fd);
         return (-1);
@@ -81,24 +81,24 @@ static int open_input_file(t_jobs *jobs, t_job *job, char *filepath, int flags[5
     if (access(filepath, F_OK))
     {
         jobs->mshell->quest_mark = 1;
-        error_msg(jobs, filepath, ": No such file or directory\n");
+        print_error(jobs, filepath, ": No such file or directory\n");
         return (-1);
     }
     fd = open(filepath, O_RDONLY);
     if (fd == -1)
     {
         jobs->mshell->quest_mark = 1;
-        error_msg(jobs, filepath, ": Unable to open file\n");
+        print_error(jobs, filepath, ": Unable to open file\n");
         return (-1);
     }
     if (access(filepath, R_OK))
     {
         jobs->mshell->quest_mark = 1;
-        error_msg(jobs, filepath, ": Permission denied\n");
+        print_error(jobs, filepath, ": Permission denied\n");
         close(fd);
         return (-1);
     }
-    if (redir_error(jobs, job, filepath, fd))
+    if (check_redir_error(jobs, job, filepath, fd))
     {
         close(fd);
         return (-1);
@@ -118,7 +118,7 @@ static char verify_fd_match(char *redirect_str, char *filepath, int len1)
     return (!ft_strncmp(filepath, redirect_str, len1) && len1 == len2);
 }
 
-int get_fd_lh(t_jobs *jobs, t_job *job, int flags[5])
+int handle_redir(t_jobs *jobs, t_job *job, int flags[5])
 {
     int fd;
     char *filepath;

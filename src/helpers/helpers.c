@@ -12,95 +12,95 @@
 
 #include "../../inc/minishell.h"
 
-char *env_find_value_const(t_env *env, const char *key)
+char *env_getval(t_env *env_struct, const char *search_key)
 {
-    size_t key_length;
-    int index;
+    size_t key_len;
+    int idx;
 
-	index = 0;
-    if (!env || !key)
+    idx = 0;
+    if (!env_struct || !search_key)
         return (NULL);
-    key_length = ft_strlen(key);
-	while (env->key[index])
-	{
-		if (ft_strlen(env->key[index]) == key_length && 
-			!ft_strncmp(env->key[index], key, key_length))
-			return (env->value[index]);
-		index++;
-	}
+    key_len = ft_strlen(search_key);
+    while (env_struct->key[idx])
+    {
+        if (ft_strlen(env_struct->key[idx]) == key_len && 
+            !ft_strncmp(env_struct->key[idx], search_key, key_len))
+            return (env_struct->value[idx]);
+        idx++;
+    }
     return (NULL);
 }
 
-char *ft_strjoin_const(char *s1, const char *s2)
+char *str_join(char *str1, const char *str2)
 {
-    char *result;
-    size_t len1, len2;
-    int i;
+    char *concat_result;
+    size_t str1_len, str2_len;
+    int idx;
 
-    if (!s1) {
-        s1 = malloc(sizeof(char));
-        if (!s1)
+    if (!str1) {
+        str1 = malloc(sizeof(char));
+        if (!str1)
             return (NULL);
-        s1[0] = '\0';
+        str1[0] = '\0';
     }
 
-    len1 = ft_strlen(s1);
-    len2 = ft_strlen(s2);
+    str1_len = ft_strlen(str1);
+    str2_len = ft_strlen(str2);
     
-    result = malloc((len1 + len2 + 1) * sizeof(char));
-    if (!result)
+    concat_result = malloc((str1_len + str2_len + 1) * sizeof(char));
+    if (!concat_result)
         return (NULL);
 
-    for (i = 0; s1[i]; i++)
-        result[i] = s1[i];
-    for (int j = 0; s2[j]; j++)
-        result[i + j] = s2[j];
+    for (idx = 0; str1[idx]; idx++)
+        concat_result[idx] = str1[idx];
+    for (int j = 0; str2[j]; j++)
+        concat_result[idx + j] = str2[j];
         
-    result[len1 + len2] = '\0';
-    return (result);
+    concat_result[str1_len + str2_len] = '\0';
+    return (concat_result);
 }
 
-int str_arr_len(char **array)
+int arr_len(char **str_array)
 {
-    int length;
+    int count;
 
-    if (!array)
+    if (!str_array)
         return (0);
         
-    for (length = 0; array[length]; length++);
-    return (length);
+    for (count = 0; str_array[count]; count++);
+    return (count);
 }
 
-char **str_arr_realloc(char **array, char *element)
+char **arr_append(char **str_array, char *new_element)
 {
-    char **new_array;
-    int index;
-    int new_size;
+    char **resized_array;
+    int idx;
+    int new_array_size;
 
-    if (!array) {
-        new_array = ft_calloc(2, sizeof(char *));
-        if (!new_array)
+    if (!str_array) {
+        resized_array = ft_calloc(2, sizeof(char *));
+        if (!resized_array)
             return (NULL);
             
-        new_array[0] = ft_strdup(element);
-        return (new_array);
+        resized_array[0] = ft_strdup(new_element);
+        return (resized_array);
     }
 
-    new_size = str_arr_len(array) + 2;
-    new_array = ft_calloc(new_size, sizeof(char *));
-    if (!new_array)
+    new_array_size = arr_len(str_array) + 2;
+    resized_array = ft_calloc(new_array_size, sizeof(char *));
+    if (!resized_array)
         return (NULL);
 
-    for (index = 0; array[index]; index++) {
-        new_array[index] = ft_strdup(array[index]);
-        if (!new_array[index]) {
-            free_str_arr(new_array);
+    for (idx = 0; str_array[idx]; idx++) {
+        resized_array[idx] = ft_strdup(str_array[idx]);
+        if (!resized_array[idx]) {
+            free_array(resized_array);
             return (NULL);
         }
     }
 
-    new_array[index] = ft_strdup(element);
-    free_str_arr(array);
+    resized_array[idx] = ft_strdup(new_element);
+    free_array(str_array);
     
-    return (new_array);
+    return (resized_array);
 }

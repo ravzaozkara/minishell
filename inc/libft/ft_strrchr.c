@@ -3,29 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*   By: doaltin <doaltin@42istanbul.com.tr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 17:54:16 by nozkara            #+#    #+#             */
-/*   Updated: 2023/12/21 17:42:14 by nozkara           ###   ########.fr       */
+/*   Created: 2023/12/21 04:47:46 by doaltin           #+#    #+#             */
+/*   Updated: 2023/12/28 00:31:42 by doaltin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char *ft_strrchr(const char *s, int c)
+char	*ft_strrchr(const char *str, int c)
 {
-	char *rtrn;
-	int i;
+	size_t	x;
+	int		control;
 
-	i = (int)ft_strlen(s);
-	rtrn = (char *)s;
-	while (i)
+	x = 0;
+	control = -1;
+	if ((unsigned char)c == 0)
+		return ((char *)str + ft_strlen(str));
+	while (str[x])
 	{
-		if (rtrn[i] == (char)c)
-			return (rtrn + i);
-		i--;
+		if (str[x] == (unsigned char)c)
+		{
+			control = x;
+			x++;
+		}
+		else
+			x++;
 	}
-	if (rtrn[i] == (char)c)
-		return (rtrn + i);
-	return (0);
+	if (control >= 0)
+		return ((char *)str + control);
+	return (NULL);
 }

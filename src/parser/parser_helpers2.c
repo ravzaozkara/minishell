@@ -21,7 +21,7 @@ static char check_redirection(char **redirection_list, char *cleaned_arg)
    if (!redirection_list)
        return (EXIT_SUCCESS);
        
-   list_length = str_arr_len(redirection_list);
+   list_length = arr_len(redirection_list);
    arg_length = ft_strlen(cleaned_arg);
    last_redir_length = ft_strlen(redirection_list[list_length - 1]);
 
@@ -34,7 +34,7 @@ static char check_redirection(char **redirection_list, char *cleaned_arg)
    return (EXIT_SUCCESS);
 }
 
-char ctrl_append(t_redir *redir, char *arg)
+char check_redir(t_redir *redir, char *arg)
 {
    char *trimmed_arg;
    const int APPEND_ERROR = 1;

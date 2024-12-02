@@ -12,84 +12,79 @@
 
 #include "../../inc/minishell.h"
 
-void free_str_arr(char **array)
+void free_array(char **array)
 {
-   int index;
+    if (array == NULL)
+        return;
 
-   if (!array)
-       return;
-
-   for (index = 0; array[index]; index++) {
-       free(array[index]);
-   }
-   free(array);
+    for (int i = 0; array[i] != NULL; i++) {
+        free(array[i]);
+    }
+    free(array);
 }
 
-void free_jobs(t_jobs *jobs)
+void free_all_jobs(t_jobs *jobs)
 {
-   t_job *current;
-   t_job *next;
+    if (jobs == NULL)
+        return;
 
-   if (!jobs)
-       return;
-       
-   if (jobs->job_list) {
-       current = jobs->job_list;
-       while (current) {
-           next = current->next_job;
-           free_job_list(current);
-           current = next;
-       }
-   }
+    if (jobs->job_list != NULL) {
+        t_job *current = jobs->job_list;
+        while (current != NULL) {
+            t_job *next_job = current->next_job;
+            free_job(current);
+            current = next_job;
+        }
+    }
 
-   if (jobs->env)
-       free_env(jobs->env);
-       
-   free(jobs);
+    if (jobs->env != NULL)
+        free_env_struct(jobs->env);
+
+    free(jobs);
 }
 
-void free_job_list(t_job *job)
+void free_job(t_job *job)
 {
-   if (!job)
-       return;
-       
-   if (job->args)
-       free_str_arr_null(&job->args);
-       
-   if (job->redir) {
-       free_redir(job->redir);
-       job->redir = NULL;
-   }
-   
-   free(job);
+    if (job == NULL)
+        return;
+
+    if (job->args != NULL)
+        free_array(job->args);
+
+    if (job->redir != NULL) {
+        free_redirs(job->redir);
+        job->redir = NULL;
+    }
+
+    free(job);
 }
 
-void free_redir(t_redir *redir)
+void free_redirs(t_redir *redir)
 {
-   if (!redir)
-       return;
+    if (redir == NULL)
+        return;
 
-   if (redir->files)
-       free_str_arr_null(&redir->files);
-   if (redir->eof)
-       free_str_arr_null(&redir->eof);
-   if (redir->in_f)
-       free_str_arr_null(&redir->in_f);
-   if (redir->out_f)
-       free_str_arr_null(&redir->out_f);
-   if (redir->app_f)
-       free_str_arr_null(&redir->app_f);
-       
-   free(redir);
+    if (redir->files != NULL)
+        free_array(redir->files);
+    if (redir->eof != NULL)
+        free_array(redir->eof);
+    if (redir->in_f != NULL)
+        free_array(redir->in_f);
+    if (redir->out_f != NULL)
+        free_array(redir->out_f);
+    if (redir->app_f != NULL)
+        free_array(redir->app_f);
+
+    free(redir);
 }
 
-void free_mshell(t_mshell *mshell)
+void free_shell(t_mshell *mshell)
 {
-   if (!mshell)
-       return;
-       
-   if (mshell->jobs)
-       free_jobs(mshell->jobs);
-       
-   free(mshell);
+    if (mshell == NULL)
+        return;
+
+    if (mshell->jobs != NULL)
+        free_all_jobs(mshell->jobs);
+
+    free(mshell);
 }

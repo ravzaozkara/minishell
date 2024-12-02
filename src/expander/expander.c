@@ -12,14 +12,14 @@
 
 #include "../../inc/minishell.h"
 
-void expander(t_jobs *jobs, char **prompt)
+void expand_cmd(t_jobs *jobs, char **prompt)
 {
    char *expanded_prompt;
 
    if (!*prompt || !jobs)
        return;
 
-   expanded_prompt = expand_env_vars(jobs, *prompt);
+   expanded_prompt = expand_vars(jobs, *prompt);
    if (!expanded_prompt)
        return;
        

@@ -21,7 +21,7 @@ static char reset_jobs(t_mshell *mshell)
     while (current)
     {
         next = current->next_job;
-        free_job_list(current);
+        free_job(current);
         current = next;
     }
     mshell->jobs->job_list = ft_calloc(1, sizeof(t_job));
@@ -43,7 +43,7 @@ static t_mshell *initialize_mshell(char **env)
     mshell->jobs = ft_calloc(1, sizeof(t_jobs));
     if (!mshell->jobs)
         return (free(mshell), NULL);
-    if (get_first_env(mshell->jobs, env))
+    if (env_init(mshell->jobs, env))
         return (free(mshell->jobs), free(mshell), NULL);
     mshell->jobs->mshell = mshell;
     return (mshell);
@@ -51,9 +51,9 @@ static t_mshell *initialize_mshell(char **env)
 
 static char execute_process(t_mshell *mshell, char *prompt)
 {
-    if (parser(mshell->jobs, prompt))
+    if (parse_cmd(mshell->jobs, prompt))
         return (EXIT_FAILURE);
-    if (executor(mshell))
+    if (exec_cmd(mshell))
         return (EXIT_FAILURE);
     return (EXIT_SUCCESS);
 }
@@ -65,7 +65,7 @@ static void  run_mshell(t_mshell *mshell)
 
     while (1)
     {
-        set_signal(MAIN);
+        set_signals(MAIN);
         prompt = readline(PROMPT);
         if (!prompt)
             break;
@@ -73,7 +73,7 @@ static void  run_mshell(t_mshell *mshell)
         free(prompt);
         if (!trimmed_prompt)
             break;
-        set_signal(SIGNAL_IGNORE);
+        set_signals(SIGNAL_IGNORE);
         if (reset_jobs(mshell))
         {
             free(trimmed_prompt);
@@ -95,6 +95,6 @@ int main(int argc, char **argv, char **env)
     if (!mshell)
         return (EXIT_FAILURE);
     run_mshell(mshell);
-    free_mshell(mshell);
+    free_shell(mshell);
     return (EXIT_SUCCESS);
 }

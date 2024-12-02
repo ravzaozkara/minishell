@@ -12,7 +12,7 @@
 
 #include "../../inc/minishell.h"
 
-void update_quote_state(t_quote_state *state, char c)
+void toggle_quotes(t_quote_state *state, char c)
 {
     if (c == '\'' && !state->in_double)
         state->in_single = !state->in_single;
@@ -77,7 +77,7 @@ static int handle_special_character(t_jobs *jobs, char *prompt, int *index)
     return (get_env_var_length(jobs, prompt, index));
 }
 
-int calc_len(t_jobs *jobs, char *prompt, t_quote_state state)
+int calc_expanded_len(t_jobs *jobs, char *prompt, t_quote_state state)
 {
     int total_length;
     int position;
@@ -89,7 +89,7 @@ int calc_len(t_jobs *jobs, char *prompt, t_quote_state state)
     state.in_double = false;
     
     while (prompt[position]) {
-        update_quote_state(&state, prompt[position]);
+        toggle_quotes(&state, prompt[position]);
         
         if (prompt[position] == '$' && !state.in_single) {
             total_length += handle_special_character(jobs, prompt, &position);

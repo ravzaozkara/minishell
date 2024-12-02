@@ -3,31 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*   By: doaltin <doaltin@42istanbul.com.tr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 20:31:49 by nozkara            #+#    #+#             */
-/*   Updated: 2023/12/15 16:00:08 by nozkara           ###   ########.fr       */
+/*   Created: 2023/12/28 00:55:03 by doaltin           #+#    #+#             */
+/*   Updated: 2023/12/28 02:03:39 by doaltin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char *ft_strtrim(char const *s1, char const *set)
+int	ft_control(const char *set, const char c)
 {
-	size_t fr;
-	size_t end;
-	size_t len1;
+	size_t	i;
 
-	if (!s1 || !set)
-		return (0);
-	fr = 0;
-	while (s1[fr] && ft_strchr(set, s1[fr]))
-		fr++;
-	len1 = ft_strlen(s1);
-	if (fr == len1)
-		return (ft_strdup(""));
-	end = len1 - 1;
-	while (end > fr && ft_strchr(set, s1[end]))
-		end--;
-	return (ft_substr(s1, fr, end - fr + 1));
+	i = 0;
+	while (set[i])
+	{
+		if (set[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+char	*ft_strtrim(char const *s1, char const *set)
+{
+	int	start;
+	int	len;
+
+	start = 0;
+	len = ft_strlen(s1) - 1;
+	while (s1[start] && ft_control(set, s1[start]))
+		start++;
+	while (len >= start && ft_control(set, s1[len]))
+		len--;
+	return (ft_substr(s1, start, len - start + 1));
 }

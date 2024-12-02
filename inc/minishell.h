@@ -105,71 +105,75 @@ struct s_parser_state
     int length;
 };
 
-/* Fonksiyon Prototipleri */
+void free_array(char **arr);
+void free_all_jobs(t_jobs *jobs);
+void free_redirs(t_redir *redir);
+void free_job(t_job *job);
+void free_shell(t_mshell *mshell);
+void free_env_struct(t_env *env);
+void free_array_ptr(char ***arr);
+void free_cmd(t_mshell *mshell);
 
-bool check_unclosed_quotes(t_jobs *jobs, const char *input);
-bool check_syntax_errors(t_jobs *jobs, char **tokens);
-bool is_special_char(const char *token);
+char exec_cmd(t_mshell *mshell);
+char pipe_no(t_jobs *jobs, t_job *job);
+char handle_pipe(t_jobs *jobs, t_job *job);
+void restore_io(t_mshell *mshell);
+void exec_process(t_jobs *jobs, t_job *job);
+char **array_to_env(t_env *env);
 
-char parser(t_jobs *jobs, char *prompt);
-char handle_distribute(t_job *job, char *arg, char *redir_status);
-char **split_into_words(char *input);
-
-void expander(t_jobs *jobs, char **prompt);
-char *expand_env_vars(t_jobs *jobs, char *prompt);
-char ctrl_append(t_redir *redir, char *arg);
-int calc_len(t_jobs *jobs, char *prompt, t_quote_state state);
-char **get_env_for_exec(t_env *env);
-
-void update_quote_state(t_quote_state *state, char c);
-
-char executor(t_mshell *mshell);
-char pipe_handle(t_jobs *jobs, t_job *job);
-char no_pipe(t_jobs *jobs, t_job *job);
-void get_backup(t_mshell *mshell);
-void run_cmd(t_jobs *jobs, t_job *job);
-char **get_env_for_exec(t_env *env);
-
-int get_fd(t_jobs *jobs, t_job *job);
-int get_fd_lh(t_jobs *jobs, t_job *job, int indexes[5]);
-char redir_error(t_jobs *jobs, t_job *job, char *file_i, int fd);
-char heredoc(t_jobs *jobs, t_job *job, char state);
-
-char env_del_element(t_env **env, char *key, char *value);
 char env_add(t_env *env, char *key, char *value);
+char env_remove(t_env **env, char *key, char *value);
 char *env_find_value(t_env *env, char *key);
-char get_first_env(t_jobs *jobs, char **env);
-char env_del_index(t_env **env, int index);
+char env_delete(t_env **env, int index);
+char env_init(t_jobs *jobs, char **env);
 
-void built_in(t_job *job);
-char ctrl_builtins(t_jobs *jobs, t_job *job);
-char update_env(t_env *env, char *key, char *value);
+
+int handle_redir(t_jobs *jobs, t_job *job, int indexes[5]);
+char handle_heredoc(t_jobs *jobs, t_job *job, char state);
+int get_redirs(t_jobs *jobs, t_job *job);
+char check_redir_error(t_jobs *jobs, t_job *job, char *file_i, int fd);
+
+void toggle_quotes(t_quote_state *state, char c);
+
+void cmd_echo(t_jobs *jobs, t_job *job);
+char cmd_cd(t_jobs *jobs, char *path);
+char cmd_pwd(t_jobs *jobs);
+void cmd_env(t_jobs *jobs);
 char export(t_jobs *jobs, char **args);
-char unset(t_env **env, char **keys);
-void env(t_jobs *jobs);
-char pwd(t_jobs *jobs);
-char cd(t_jobs *jobs, char *path);
-void echo(t_jobs *jobs, t_job *job);
-void exit_d(t_jobs *jobs, char **args);
-void handle_exit_argument(t_jobs *jobs, char **args, char *stripped);
+char cmd_unset(t_env **env, char **keys);
+void check_builtin(t_job *job);
+char exec_builtin(t_jobs *jobs, t_job *job);
+char env_update(t_env *env, char *key, char *value);
+void cmd_exit(t_jobs *jobs, char **args);
+void handle_exit_args(t_jobs *jobs, char **args, char *stripped);
 
-void set_signal(int c);
-void handler_sigint(int sig);
 
-int str_arr_len(char **arr);
-char **str_arr_realloc(char **arr, char *element);
-void error_msg(t_jobs *jobs, char *file, const char *message);
-char *ft_strjoin_const(char *s1, const char *s2);
-char *env_find_value_const(t_env *env, const char *key);
-char exit_error(t_jobs *jobs, char *arg, const char *msg);
+char handle_token(t_job *job, char *arg, char *redir_status);
+char parse_cmd(t_jobs *jobs, char *prompt);
+char **tokenize(char *input);
 
-void free_job_list(t_job *job);
-void free_jobs(t_jobs *jobs);
-void free_str_arr(char **arr);
-void free_redir(t_redir *redir);
-void free_mshell(t_mshell *mshell);
-void free_env(t_env *env);
-void free_str_arr_null(char ***arr);
-void free_nec(t_mshell *mshell);
+
+void expand_cmd(t_jobs *jobs, char **prompt);
+char check_redir(t_redir *redir, char *arg);
+char *expand_vars(t_jobs *jobs, char *prompt);
+int calc_expanded_len(t_jobs *jobs, char *prompt, t_quote_state state);
+char **array_to_env(t_env *env);
+
+
+bool is_special_char(const char *token);
+bool has_unclosed_quotes(t_jobs *jobs, const char *input);
+bool has_syntax_errors(t_jobs *jobs, char **tokens);
+
+
+void set_signals(int c);
+void handle_sigint(int sig);
+
+
+char *str_join(char *s1, const char *s2);
+int arr_len(char **arr);
+char **arr_append(char **arr, char *element);
+void print_error(t_jobs *jobs, char *file, const char *message);
+char *env_getval(t_env *env, const char *key);
+char print_exit_error(t_jobs *jobs, char *arg, const char *msg);
 
 #endif

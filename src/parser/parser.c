@@ -20,7 +20,7 @@ static char initialize_job(t_job **job_node, char **token_array)
     t_job *new_job = ft_calloc(1, sizeof(t_job));
     if (new_job == NULL)
     {
-        free_str_arr(token_array);
+        free_array(token_array);
         return EXIT_FAILURE;
     }
     (*job_node)->next_job = new_job;
@@ -29,7 +29,7 @@ static char initialize_job(t_job **job_node, char **token_array)
     new_job->redir = ft_calloc(1, sizeof(t_redir));
     if (new_job->redir == NULL)
     {
-        free_str_arr(token_array);
+        free_array(token_array);
         return EXIT_FAILURE;
     }
 
@@ -59,37 +59,37 @@ char distribute(t_mshell *shell_instance, char **token_array)
         {
             shell_instance->jobs->len++;
             if (initialize_job(&current_job, token_array) != EXIT_SUCCESS)
-				return (free_str_arr(token_array), EXIT_FAILURE);
+				return (free_array(token_array), EXIT_FAILURE);
         }
-		else if (handle_distribute(current_job, token_array[token_index], &redirect_flag))
-			return (free_str_arr(token_array), EXIT_FAILURE);
+		else if (handle_token(current_job, token_array[token_index], &redirect_flag))
+			return (free_array(token_array), EXIT_FAILURE);
         token_index++;
     }
-    return (free_str_arr(token_array), EXIT_SUCCESS);
+    return (free_array(token_array), EXIT_SUCCESS);
 }
 
-char parser(t_jobs *jobs, char *input_line)
+char parse_cmd(t_jobs *jobs, char *input_line)
 {
     char **tokens;
 
     add_history(input_line);
-    expander(jobs, &input_line);
+    expand_cmd(jobs, &input_line);
 
-    if (input_line[0] == '\0' || check_unclosed_quotes(jobs, input_line))
+    if (input_line[0] == '\0' || has_unclosed_quotes(jobs, input_line))
     {
         free(input_line);
         return EXIT_FAILURE;
     }
 
-    tokens = split_into_words(input_line);
+    tokens = tokenize(input_line);
     free(input_line);
 
     if (tokens == NULL)
         return EXIT_FAILURE;
 
-    if (check_syntax_errors(jobs, tokens))
+    if (has_syntax_errors(jobs, tokens))
     {
-        free_str_arr(tokens);
+        free_array(tokens);
         return EXIT_FAILURE;
     }
 

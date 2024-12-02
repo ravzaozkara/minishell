@@ -30,7 +30,7 @@ static int calculate_word_length(t_parser_state *p_state, char *input)
         current_char = input[p_state->index + word_length];
 
         if (current_char == '\'' || current_char == '\"')
-            update_quote_state(p_state->quote_state, current_char);
+            toggle_quotes(p_state->quote_state, current_char);
         else if (!p_state->quote_state->in_single && !p_state->quote_state->in_double &&
                  (current_char == ' ' || current_char == '<' || current_char == '>' || current_char == '|'))
             break;
@@ -95,7 +95,7 @@ static char *remove_quotes(char *token)
     return result;
 }
 
-char **split_into_words(char *input)
+char **tokenize(char *input)
 {
     t_quote_state quote_status = {false, false};
     t_parser_state parser_state = {&quote_status, 0, 0};
@@ -113,13 +113,13 @@ char **split_into_words(char *input)
         free(token);
         if (clean_token)
 		{
-			token_array = str_arr_realloc(token_array, clean_token);
+			token_array = arr_append(token_array, clean_token);
 			free(clean_token);
 			if (!token_array)
 				return NULL;
 		}
 		else
-            return (free_str_arr(token_array), NULL);
+            return (free_array(token_array), NULL);
     }
     return token_array;
 }

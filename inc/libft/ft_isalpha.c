@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   isalpha.c                                          :+:      :+:    :+:   */
+/*   ft_isalpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*   By: doaltin <doaltin@student.42istanbul.com.tr +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 17:06:04 by nozkara            #+#    #+#             */
-/*   Updated: 2023/12/05 17:36:45 by nozkara           ###   ########.fr       */
+/*   Created: 2023/12/19 10:44:55 by doaltin           #+#    #+#             */
+/*   Updated: 2024/01/18 19:22:30 by doaltin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int ft_isalpha(int c)
+#include "libft.h"
+
+int	ft_isalpha(int c)
 {
-	if (c >= 65 && c <= 90)
-		return (1);
-	else if (c >= 97 && c <= 122)
+	if ((c >= 97 && c <= 122) || (c >= 65 && c <= 90))
 		return (1);
 	return (0);
 }

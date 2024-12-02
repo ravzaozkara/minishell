@@ -12,39 +12,36 @@
 
 #include "../../inc/minishell.h"
 
-void free_nec(t_mshell *mshell)
+void free_cmd(t_mshell *mshell)
 {
-   t_job *current;
-   t_job *next;
+    if (mshell == NULL || mshell->jobs == NULL)
+        return;
 
-   if (!mshell || !mshell->jobs)
-       return;
+    t_job *current = mshell->jobs->job_list;
+    while (current != NULL) {
+        t_job *next_job = current->next_job;
+        free_job(current);
+        current = next_job;
+    }
 
-   current = mshell->jobs->job_list;
-   while (current) {
-       next = current->next_job;
-       free_job_list(current);
-       current = next;
-   }
-   
-   mshell->jobs->job_list = NULL;
+    mshell->jobs->job_list = NULL;
 }
 
-void free_str_arr_null(char ***array)
+void free_array_ptr(char ***array)
 {
-   if (!array || !*array)
-       return;
-       
-   free_str_arr(*array);
-   *array = NULL;
+    if (array == NULL || *array == NULL)
+        return;
+
+    free_array(*array);
+    *array = NULL;
 }
 
-void free_env(t_env *env)
+void free_env_struct(t_env *env)
 {
-   if (!env)
-       return;
-       
-   free_str_arr_null(&env->key);
-   free_str_arr_null(&env->value);
-   free(env);
+    if (env == NULL)
+        return;
+
+    free_array_ptr(&env->key);
+    free_array_ptr(&env->value);
+    free(env);
 }

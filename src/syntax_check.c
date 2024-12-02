@@ -28,7 +28,7 @@ static bool set_error_state(t_jobs *jobs, const char *error_message)
     return true;
 }
 
-bool check_syntax_errors(t_jobs *jobs, char **tokens)
+bool has_syntax_errors(t_jobs *jobs, char **tokens)
 {
 	int index;
 
@@ -50,7 +50,7 @@ bool check_syntax_errors(t_jobs *jobs, char **tokens)
     return false;
 }
 
-bool check_unclosed_quotes(t_jobs *jobs, const char *input)
+bool has_unclosed_quotes(t_jobs *jobs, const char *input)
 {
     char current_quote = 0;
 

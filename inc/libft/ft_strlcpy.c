@@ -3,28 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nozkara <nozkara@student.42.fr>              +#+  +:+       +#+        */
+/*   By: doaltin <doaltin@42istanbul.com.tr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 18:14:08 by nozkara            #+#    #+#             */
-/*   Updated: 2023/12/15 16:00:26 by nozkara           ###   ########.fr       */
+/*   Created: 2023/12/19 14:18:46 by doaltin           #+#    #+#             */
+/*   Updated: 2023/12/21 01:04:17 by doaltin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t ft_strlcpy(char *dst, const char *src, size_t dstsize)
+size_t	ft_strlcpy(char *dest, const char *src, size_t n)
 {
-	size_t i;
-	size_t lensrc;
-
-	i = 0;
-	lensrc = ft_strlen(src);
-	while (src[i] && i + 1 < dstsize)
+	if (ft_strlen(src) + 1 < n)
+		n = ft_strlen(src) + 1;
+	if (n)
 	{
-		dst[i] = src[i];
-		i++;
+		ft_memcpy(dest, src, n - 1);
+		dest[n - 1] = '\0';
 	}
-	if (dstsize != 0)
-		dst[i] = 0;
-	return (lensrc);
+	return (ft_strlen(src));
 }

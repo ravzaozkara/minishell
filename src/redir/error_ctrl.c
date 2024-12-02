@@ -12,7 +12,7 @@
 
 #include "../../inc/minishell.h"
 
-void error_msg(t_jobs *jobs, char *file, const char *message)
+void print_error(t_jobs *jobs, char *file, const char *message)
 {
     // quest_mark değerini 1 olarak ayarla (hata durumunu gösterir)
     jobs->mshell->quest_mark = 1;
@@ -23,7 +23,7 @@ void error_msg(t_jobs *jobs, char *file, const char *message)
     ft_putstr_fd((char *)message, STDERR_FILENO);
 }
 
-char redir_error(t_jobs *jobs, t_job *job, char *file_path, int file_descriptor)
+char check_redir_error(t_jobs *jobs, t_job *job, char *file_path, int file_descriptor)
 {
     t_stat file_stat;
 
@@ -34,13 +34,13 @@ char redir_error(t_jobs *jobs, t_job *job, char *file_path, int file_descriptor)
         if (stat(file_path, &file_stat) == 0)
         {
             if (S_ISDIR(file_stat.st_mode))
-                error_msg(jobs, file_path, ": Is a directory\n");
+                print_error(jobs, file_path, ": Is a directory\n");
             else
-                error_msg(jobs, file_path, ": No such file or directory\n");
+                print_error(jobs, file_path, ": No such file or directory\n");
         }
         else
         {
-            error_msg(jobs, file_path, ": Failed to retrieve file information\n");
+            print_error(jobs, file_path, ": Failed to retrieve file information\n");
         }
 
         if (jobs->len == 1)
